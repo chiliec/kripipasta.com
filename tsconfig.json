@@ -22,5 +22,5 @@
         "preserveWatchOutput": true
     },
     "include": ["src/**/*"],
-    "exclude": ["src/server/frontend/*", "node_modules", "build"]
+    "exclude": ["src/backend/frontend/*", "node_modules", "build"]
 }

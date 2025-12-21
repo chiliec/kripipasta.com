@@ -1,8 +1,8 @@
 import process from 'node:process'
+import { createServer, createServerManager } from '#root/backend/server'
 import { config } from '#root/common/config'
 import { connectDb } from '#root/common/db'
 import { logger } from '#root/common/logger'
-import { createServer, createServerManager } from '#root/server/server'
 
 function onShutdown(cleanUp: () => Promise<void>) {
     let isShuttingDown = false
