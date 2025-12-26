@@ -30,7 +30,7 @@
     "dependencies": {
         "@hono/node-server": "^1.19.7",
         "dotenv": "^17.2.3",
-        "hono": "^4.11.1",
+        "hono": "^4.11.3",
         "mongoose": "^9.0.2",
         "pino": "^10.1.0",
         "pino-pretty": "^13.1.3",
