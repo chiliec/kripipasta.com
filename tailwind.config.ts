@@ -5,26 +5,29 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: {
-          DEFAULT: "#141418",
-          raised: "#17171d",
-          card: "#1c1c24",
-          muted: "#191920",
-          deep: "#151519",
-        },
-        accent: {
+        bg: "#0E0E10",
+        s1: "#141418",
+        s2: "#1A1A20",
+        s3: "#212129",
+        line: "rgba(255,255,255,0.09)",
+        line2: "rgba(255,255,255,0.16)",
+        ink: "#ECECEF",
+        tx2: "rgba(236,236,239,0.66)",
+        tx3: "rgba(236,236,239,0.42)",
+        crimson: {
           DEFAULT: "#B85450",
-          bright: "#CA6E6A",
-          soft: "#E29A96",
-          dim: "#A85C57",
+          2: "#CA6E6A",
           deep: "#6E2C2A",
         },
-        ink: "#ECECEF",
       },
       fontFamily: {
         serif: ["var(--font-serif)", "Georgia", "serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      maxWidth: {
+        shell: "1320px",
+        prose: "64ch",
       },
     },
   },
