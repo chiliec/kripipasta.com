@@ -1,1 +1,13 @@
-/* global styles — populated in Task 5 */
+@import "tailwindcss";
+
+:root {
+  --font-serif: "Georgia", serif;
+  --font-sans: system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+}
+
+body {
+  background-color: #141418;
+  color: #ecececf;
+  font-family: var(--font-sans);
+}
