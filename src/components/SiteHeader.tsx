@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 export default function SiteHeader() {
   const tSite = useTranslations("site");
@@ -39,10 +40,7 @@ export default function SiteHeader() {
         </div>
 
         <div className="ml-auto flex items-center gap-3 md:ml-0">
-          <div className="hidden items-center rounded-[10px] border border-line bg-s1 text-[12px] sm:flex">
-            <span className="rounded-[8px] bg-s3 px-2.5 py-1 text-ink">RU</span>
-            <span className="px-2.5 py-1 text-tx3">EN</span>
-          </div>
+          <LocaleSwitcher />
           <Link
             href="/submit"
             className="rounded-[11px] border border-crimson bg-gradient-to-b from-crimson-2 to-crimson-deep px-3.5 py-2 text-[13px] font-medium text-white"
