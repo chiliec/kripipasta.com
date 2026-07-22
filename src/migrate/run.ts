@@ -36,6 +36,7 @@ export async function clearMigrated(): Promise<void> {
 export async function importStoriesAndTags(c: Connection) {
   const legacyTags = await readTags(c);
   const freqByName = new Map(legacyTags.map((t) => [t.name.trim(), t.frequency]));
+  // approved=2 = community-submitted, bulk-approved at low quality (55% downvote rate); excluded per data decision 2026-07-22
   const stories = (await readStories(c)).filter(s => s.approved !== 2);
 
   // --- Stories (dedupe slugs deterministically) ---

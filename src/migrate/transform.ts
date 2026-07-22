@@ -7,6 +7,7 @@ export function unixToDate(seconds: number): Date {
   return new Date(seconds * 1000);
 }
 
+/** Maps legacy approved field. Only approved===1 (editorial picks) → APPROVED; callers must pre-filter approved=2. */
 export function mapStoryStatus(approved: number): ContentStatus {
   return approved === 1 ? "APPROVED" : "PENDING";
 }
