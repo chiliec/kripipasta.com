@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import sanitizeHtml from "sanitize-html";
-import { decode } from "he";
+import he from "he";
 import type { ContentStatus } from "@prisma/client";
 
 export function unixToDate(seconds: number): Date {
@@ -57,5 +57,5 @@ const SANITIZE_OPTS: sanitizeHtml.IOptions = {
 
 /** Decode legacy HTML entities, then strip to a safe allowlist. */
 export function sanitizeStoryHtml(raw: string): string {
-  return sanitizeHtml(decode(raw), SANITIZE_OPTS);
+  return sanitizeHtml(he.decode(raw), SANITIZE_OPTS);
 }
