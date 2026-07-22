@@ -1,4 +1,4 @@
-# Creepypasta.ru
+# Kripipasta.com
 
 This is a repository with creepypasta archive sources.
 
