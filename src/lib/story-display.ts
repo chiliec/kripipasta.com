@@ -39,9 +39,11 @@ export function formatStoryDate(date: Date, locale = "ru-RU"): string {
   }).format(date);
 }
 
-/** Qualitative RU label derived from a 0–10 score. */
-export function ratingLabel(score10: number): string {
-  if (score10 >= 7.5) return "Стоит прочесть";
-  if (score10 >= 5) return "Неоднозначно";
-  return "На любителя";
+/** Returns a translation key for the qualitative rating label derived from a 0–10 score. */
+export function ratingKey(
+  score10: number,
+): "ratingGood" | "ratingMixed" | "ratingNiche" {
+  if (score10 >= 7.5) return "ratingGood";
+  if (score10 >= 5) return "ratingMixed";
+  return "ratingNiche";
 }

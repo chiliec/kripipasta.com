@@ -25,12 +25,14 @@
   "story": {
     "backToArchive": "‹ Back to the archive",
     "ratingLabel": "Community rating",
-    "votesTemplate": "{count} votes · community rating",
-    "readingProgress": "Reading progress",
     "related": "If you liked this",
     "minRead": "min read",
     "by": "by",
-    "posted": "Posted"
+    "posted": "Posted",
+    "views": "views",
+    "ratingGood": "Worth reading",
+    "ratingMixed": "Mixed",
+    "ratingNiche": "Niche"
   },
   "vote": {
     "prompt": "Was it worth the sleep you're about to lose?",

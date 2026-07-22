@@ -28,7 +28,7 @@ export default function LocaleSwitcher() {
                 : "text-tx3 hover:text-ink transition-colors"
             }
           >
-            {loc}
+            {t(loc as "ru" | "en")}
           </button>
         </span>
       ))}

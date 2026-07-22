@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { requireAdmin } from "@/lib/admin-session";
+import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { Link, redirect } from "@/i18n/navigation";
+import { isAdmin } from "@/lib/admin-session";
 import { getStoryForModeration } from "@/lib/moderation";
 import { approveStory, rejectStory } from "@/app/[locale]/admin/actions";
 import { formatStoryDate } from "@/lib/story-display";
@@ -18,7 +18,10 @@ export default async function AdminStoryPage({
   setRequestLocale(locale);
   const t = await getTranslations("admin");
 
-  await requireAdmin();
+  if (!(await isAdmin())) {
+    const currentLocale = await getLocale();
+    redirect({ href: "/admin/login", locale: currentLocale });
+  }
   const story = await getStoryForModeration(id);
   if (!story) notFound();
 

@@ -1,9 +1,11 @@
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { StoryListItem } from "@/lib/stories";
 import { excerpt } from "@/lib/story-display";
 import ScoreBadge from "@/components/ScoreBadge";
 
 export default function StoryCard({ story }: { story: StoryListItem }) {
+  const t = useTranslations("story");
   const primaryTag = story.tags[0];
   const year = (story.approvedAt ?? story.createdAt).getFullYear();
   return (
@@ -33,7 +35,7 @@ export default function StoryCard({ story }: { story: StoryListItem }) {
 
       <div className="mt-5 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.1em] text-tx3">
         <span>{year}</span>
-        <span>{story.viewCount.toLocaleString("ru-RU")} просмотров</span>
+        <span>{story.viewCount.toLocaleString()} {t("views")}</span>
       </div>
     </Link>
   );

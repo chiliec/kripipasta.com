@@ -4,7 +4,7 @@ import {
   excerpt,
   readingTimeMinutes,
   formatStoryDate,
-  ratingLabel,
+  ratingKey,
 } from "./story-display";
 
 describe("stripHtml", () => {
@@ -59,16 +59,16 @@ describe("formatStoryDate", () => {
   });
 });
 
-describe("ratingLabel", () => {
+describe("ratingKey", () => {
   it("labels high scores positively", () => {
-    expect(ratingLabel(8.5)).toBe("Стоит прочесть");
+    expect(ratingKey(8.5)).toBe("ratingGood");
   });
 
   it("labels mid scores neutrally", () => {
-    expect(ratingLabel(6)).toBe("Неоднозначно");
+    expect(ratingKey(6)).toBe("ratingMixed");
   });
 
   it("labels low scores negatively", () => {
-    expect(ratingLabel(3)).toBe("На любителя");
+    expect(ratingKey(3)).toBe("ratingNiche");
   });
 });

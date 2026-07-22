@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import StoryFeed from "@/components/StoryFeed";
 import ScoreBadge from "@/components/ScoreBadge";
 import { getFeaturedStory, type StorySort } from "@/lib/stories";
-import { excerpt, ratingLabel } from "@/lib/story-display";
+import { excerpt, ratingKey } from "@/lib/story-display";
 import { storyScore10 } from "@/lib/scoring/display";
 
 export const revalidate = 3600;
@@ -29,6 +29,7 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("hero");
+  const tStory = await getTranslations("story");
 
   const sp = await searchParams;
   const sort = parseSort(sp.sort);
@@ -67,7 +68,7 @@ export default async function HomePage({
               </Link>
               <div className="flex flex-col">
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-tx3">
-                  {ratingLabel(storyScore10(featured.score))}
+                  {tStory(ratingKey(storyScore10(featured.score)))}
                 </span>
                 <ScoreBadge score={featured.score} size="lg" />
               </div>

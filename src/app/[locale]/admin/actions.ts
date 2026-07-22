@@ -4,11 +4,18 @@ import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { requireAdmin, endAdminSession } from "@/lib/admin-session";
+import { isAdmin, endAdminSession } from "@/lib/admin-session";
 import { setStoryStatus } from "@/lib/moderation";
 
+async function guardAdmin(): Promise<void> {
+  if (!(await isAdmin())) {
+    const locale = await getLocale();
+    redirect({ href: "/admin/login", locale });
+  }
+}
+
 export async function approveStory(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await guardAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
   const result = await setStoryStatus(id, "APPROVED");
@@ -21,7 +28,7 @@ export async function approveStory(formData: FormData): Promise<void> {
 }
 
 export async function rejectStory(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await guardAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
   const result = await setStoryStatus(id, "REJECTED");
@@ -30,7 +37,7 @@ export async function rejectStory(formData: FormData): Promise<void> {
 }
 
 export async function logout(): Promise<void> {
-  await requireAdmin();
+  await guardAdmin();
   await endAdminSession();
   const locale = await getLocale();
   redirect({ href: "/admin/login", locale });

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { requireAdmin } from "@/lib/admin-session";
+import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { Link, redirect } from "@/i18n/navigation";
+import { isAdmin } from "@/lib/admin-session";
 import {
   getPendingStories,
   getPendingCount,
@@ -25,7 +25,10 @@ export default async function AdminQueuePage({
   setRequestLocale(locale);
   const t = await getTranslations("admin");
 
-  await requireAdmin();
+  if (!(await isAdmin())) {
+    const currentLocale = await getLocale();
+    redirect({ href: "/admin/login", locale: currentLocale });
+  }
 
   const sp = await searchParams;
   const source: PendingSource = sp.source === "new" ? "new" : "all";

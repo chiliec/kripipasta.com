@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import ScoreBadge from "@/components/ScoreBadge";
 import { storyScore10 } from "@/lib/scoring/display";
-import { ratingLabel } from "@/lib/story-display";
+import { ratingKey } from "@/lib/story-display";
 import type { VoteEntityType, VoteValue } from "@/lib/voting";
 
 interface Aggregate {
@@ -64,6 +64,7 @@ export default function VotePanel({
 
   const t = useTranslations("vote");
   const tStory = useTranslations("story");
+  const locale = useLocale();
   const total = state.likeCount + state.dislikeCount;
   const pct = Math.round(state.score * 100);
   const voted = state.myVote !== 0;
@@ -112,7 +113,7 @@ export default function VotePanel({
                 />
               </div>
               <div className="font-mono text-[11.5px] text-tx3">
-                {total.toLocaleString("ru-RU")} {t("votesWord")} · {ratingLabel(storyScore10(state.score))}
+                {total.toLocaleString(locale)} {t("votesWord")} · {tStory(ratingKey(storyScore10(state.score)))}
               </div>
             </div>
           </div>
