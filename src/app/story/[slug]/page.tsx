@@ -3,9 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import ScoreBadge from "@/components/ScoreBadge";
 import ReadingProgress from "@/components/ReadingProgress";
 import StoryCard from "@/components/StoryCard";
+import VotePanel from "@/components/VotePanel";
 import {
   getStoryBySlug,
   getRelatedStories,
@@ -14,10 +14,8 @@ import {
 import {
   formatStoryDate,
   readingTimeMinutes,
-  ratingLabel,
   excerpt,
 } from "@/lib/story-display";
-import { storyScore10 } from "@/lib/scoring/display";
 import { copy } from "@/lib/ui-copy";
 
 export const revalidate = 3600;
@@ -56,7 +54,6 @@ export default async function StoryPage({
   const related = await getRelatedStories(story, 3);
   const minutes = readingTimeMinutes(story.contentHtml);
   const posted = formatStoryDate(story.approvedAt ?? story.createdAt);
-  const votes = story.likeCount + story.dislikeCount;
 
   return (
     <>
@@ -110,23 +107,15 @@ export default async function StoryPage({
                 dangerouslySetInnerHTML={{ __html: story.contentHtml }}
               />
 
-              <section className="mt-14 max-w-prose rounded-[16px] border border-line bg-s1 p-7">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-tx3">
-                  {copy.story.ratingLabel}
-                </p>
-                <div className="mt-4 flex items-end justify-between gap-6">
-                  <ScoreBadge score={story.score} size="lg" />
-                  <span className="font-serif text-[19px] text-tx2">
-                    {ratingLabel(storyScore10(story.score))}
-                  </span>
-                </div>
-                <p className="mt-4 font-mono text-[11.5px] text-tx3">
-                  {copy.story.votesTemplate.replace(
-                    "{count}",
-                    votes.toLocaleString("ru-RU"),
-                  )}
-                </p>
-              </section>
+              <VotePanel
+                entityType="STORY"
+                entityId={story.id}
+                initial={{
+                  likeCount: story.likeCount,
+                  dislikeCount: story.dislikeCount,
+                  score: story.score,
+                }}
+              />
             </div>
 
             {related.length > 0 && (
