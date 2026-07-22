@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ContentStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EntityType {
+  STORY
+  DOSSIER
+}
+
+enum ThreatLevel {
+  LOW
+  MODERATE
+  HIGH
+  SEVERE
+  EXTREME
+}
+
+model Story {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  title        String
+  intro        String        @default("")
+  contentHtml  String
+  language     String        @default("ru")
+  status       ContentStatus @default(PENDING)
+  authorName   String        @default("")
+  authorLink   String        @default("")
+  authorEmail  String        @default("")
+  redactor     String        @default("")
+  viewCount    Int           @default(0)
+  likeCount    Int           @default(0)
+  dislikeCount Int           @default(0)
+  score        Float         @default(0)
+  legacyId     Int?          @unique
+  legacyIp     String?
+  createdAt    DateTime      @default(now())
+  approvedAt   DateTime?
+  updatedAt    DateTime      @updatedAt
+  tags         StoryTag[]
+
+  @@index([status, score])
+  @@index([status, createdAt])
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  slug      String     @unique
+  name      String
+  nameEn    String?
+  frequency Int        @default(1)
+  stories   StoryTag[]
+}
+
+model StoryTag {
+  storyId String
+  tagId   String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([storyId, tagId])
+  @@index([tagId])
+}
+
+model Dossier {
+  id            String            @id @default(cuid())
+  slug          String            @unique
+  name          String
+  aliases       String[]          @default([])
+  epithet       String            @default("")
+  category      String            @default("")
+  canonStatus   String            @default("")
+  threatLevel   ThreatLevel       @default(MODERATE)
+  firstSurfaced Int?
+  origin        String            @default("")
+  heroImage     String            @default("")
+  language      String            @default("ru")
+  status        ContentStatus     @default(DRAFT)
+  likeCount     Int               @default(0)
+  dislikeCount  Int               @default(0)
+  score         Float             @default(0)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  sections      DossierSection[]
+  gallery       DossierImage[]
+  popularity    PopularityPoint[]
+
+  @@index([status, score])
+}
+
+model DossierSection {
+  id        String  @id @default(cuid())
+  dossierId String
+  order     Int
+  anchor    String
+  heading   String
+  bodyHtml  String
+  dossier   Dossier @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+
+  @@index([dossierId, order])
+}
+
+model DossierImage {
+  id        String  @id @default(cuid())
+  dossierId String
+  image     String
+  caption   String  @default("")
+  order     Int     @default(0)
+  dossier   Dossier @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+
+  @@index([dossierId, order])
+}
+
+model PopularityPoint {
+  id        String  @id @default(cuid())
+  dossierId String
+  year      Int
+  value     Float
+  dossier   Dossier @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+
+  @@index([dossierId, year])
+}
+
+model Vote {
+  id         String     @id @default(cuid())
+  entityType EntityType
+  entityId   String
+  voterId    String
+  userId     String?
+  value      Int
+  createdAt  DateTime   @default(now())
+
+  @@unique([entityType, entityId, voterId])
+  @@index([entityType, entityId])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+}
+
+model LegacyArchive {
+  id          String @id @default(cuid())
+  sourceTable String
+  sourceId    Int
+  data        Json
+
+  @@unique([sourceTable, sourceId])
+}
