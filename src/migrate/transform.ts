@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import sanitizeHtml from "sanitize-html";
-import he from "he";
 import type { ContentStatus } from "@prisma/client";
+
+export { sanitizeStoryHtml } from "@/lib/sanitize";
 
 export function unixToDate(seconds: number): Date {
   return new Date(seconds * 1000);
@@ -30,33 +30,4 @@ export function hashVoterId(ip: string): string {
 export function storySlug(url: string, legacyId: number): string {
   const s = url.trim();
   return s.length > 0 ? s : `story-${legacyId}`;
-}
-
-const SANITIZE_OPTS: sanitizeHtml.IOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-    "img",
-    "figure",
-    "figcaption",
-    "iframe",
-    "span",
-    "h1",
-    "h2",
-  ]),
-  allowedAttributes: {
-    a: ["href", "name", "target", "rel"],
-    img: ["src", "alt", "title", "width", "height"],
-    iframe: ["src", "width", "height", "frameborder", "allowfullscreen"],
-    span: ["id"],
-  },
-  allowedIframeHostnames: [
-    "www.youtube.com",
-    "youtube.com",
-    "player.vimeo.com",
-    "vk.com",
-  ],
-};
-
-/** Decode legacy HTML entities, then strip to a safe allowlist. */
-export function sanitizeStoryHtml(raw: string): string {
-  return sanitizeHtml(he.decode(raw), SANITIZE_OPTS);
 }
