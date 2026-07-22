@@ -1,6 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import { checkPassword } from "@/lib/admin-auth";
 import { startAdminSession } from "@/lib/admin-session";
 
@@ -17,5 +18,5 @@ export async function login(
     return { error: true };
   }
   await startAdminSession();
-  redirect("/admin");
+  return redirect({ href: "/admin", locale: await getLocale() });
 }

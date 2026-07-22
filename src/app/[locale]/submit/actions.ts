@@ -1,6 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import { validateSubmission } from "@/lib/submission-validate";
 import { createSubmission } from "@/lib/submissions";
 
@@ -27,5 +28,5 @@ export async function submitStory(
   if (!result.ok) return { errors: result.errors };
 
   await createSubmission(result.data);
-  redirect("/submit/thanks");
+  return redirect({ href: "/submit/thanks", locale: await getLocale() });
 }
