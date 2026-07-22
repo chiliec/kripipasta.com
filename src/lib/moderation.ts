@@ -91,10 +91,21 @@ export async function getStoryForModeration(
 export async function setStoryStatus(
   id: string,
   status: "APPROVED" | "REJECTED",
-): Promise<{ slug: string }> {
-  return prisma.story.update({
-    where: { id },
-    data: { status, approvedAt: status === "APPROVED" ? new Date() : null },
-    select: { slug: true },
-  });
+): Promise<{ slug: string } | null> {
+  try {
+    return await prisma.story.update({
+      where: { id, status: "PENDING" },
+      data: { status, approvedAt: status === "APPROVED" ? new Date() : null },
+      select: { slug: true },
+    });
+  } catch (e: unknown) {
+    if (
+      e instanceof Error &&
+      "code" in e &&
+      (e as { code: string }).code === "P2025"
+    ) {
+      return null;
+    }
+    throw e;
+  }
 }

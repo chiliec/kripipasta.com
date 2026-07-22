@@ -9,9 +9,10 @@ export async function approveStory(formData: FormData): Promise<void> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
-  const { slug } = await setStoryStatus(id, "APPROVED");
+  const result = await setStoryStatus(id, "APPROVED");
+  if (!result) return; // already approved/rejected — no-op
   revalidatePath("/");
-  revalidatePath(`/story/${slug}`);
+  revalidatePath(`/story/${result.slug}`);
   revalidatePath("/admin");
 }
 
@@ -19,7 +20,8 @@ export async function rejectStory(formData: FormData): Promise<void> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
-  await setStoryStatus(id, "REJECTED");
+  const result = await setStoryStatus(id, "REJECTED");
+  if (!result) return; // already approved/rejected — no-op
   revalidatePath("/admin");
 }
 

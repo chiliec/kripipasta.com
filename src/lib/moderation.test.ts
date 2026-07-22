@@ -77,4 +77,10 @@ describe("setStoryStatus", () => {
     await setStoryStatus("1", "REJECTED");
     expect(update.mock.calls[0][0].data.approvedAt).toBeNull();
   });
+
+  it("returns null when the story is not PENDING (P2025)", async () => {
+    const err = Object.assign(new Error("not found"), { code: "P2025" });
+    update.mockRejectedValueOnce(err);
+    expect(await setStoryStatus("1", "APPROVED")).toBeNull();
+  });
 });
