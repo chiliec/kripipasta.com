@@ -3,6 +3,8 @@ node_modules/
 npm-debug.log
 yarn-error.log
 /backup/
+.next/
+out/
 # dotenv environment variable files
 .env
 .env.development.local

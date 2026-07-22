@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+:root {
+  --font-serif: "Georgia", serif;
+  --font-sans: system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+}
+
+body {
+  background-color: #141418;
+  color: #ECECEF;
+  font-family: var(--font-sans);
+}
