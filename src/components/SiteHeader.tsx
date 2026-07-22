@@ -40,7 +40,7 @@ export default function SiteHeader() {
             <span className="px-2.5 py-1 text-tx3">EN</span>
           </div>
           <Link
-            href="/#feed"
+            href="/submit"
             className="rounded-[11px] border border-crimson bg-gradient-to-b from-crimson-2 to-crimson-deep px-3.5 py-2 text-[13px] font-medium text-white"
           >
             {copy.header.submit}
