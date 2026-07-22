@@ -1,0 +1,10 @@
+services:
+  legacy-db:
+    image: mariadb:10.11
+    restart: "no"
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: kripipasta_db
+    ports:
+      - "3307:3306"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
