@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { PrismaClient, type Prisma } from "@prisma/client";
 import type { Connection } from "mysql2/promise";
 import {
@@ -75,9 +76,9 @@ export async function importStoriesAndTags(c: Connection) {
 
   // --- Link StoryTag ---
   const storyIdByLegacy = new Map(
-    (await prisma.story.findMany({ select: { id: true, legacyId: true } })).map(
-      (r) => [r.legacyId as number, r.id],
-    ),
+    (await prisma.story.findMany({ select: { id: true, legacyId: true } }))
+      .filter((r): r is typeof r & { legacyId: number } => r.legacyId !== null)
+      .map((r) => [r.legacyId, r.id]),
   );
   const tagIdBySlug = new Map(
     (await prisma.tag.findMany({ select: { id: true, slug: true } })).map((r) => [
@@ -120,7 +121,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
