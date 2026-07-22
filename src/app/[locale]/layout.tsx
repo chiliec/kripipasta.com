@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -24,7 +25,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Nocturne — Архив интернет-хоррора",
   description:
     "Архив интернет-хоррора: истории, сущности и городские легенды сети.",
