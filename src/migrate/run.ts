@@ -5,6 +5,7 @@ import {
   connectLegacy,
   readStories,
   readTags,
+  readStoryRatings,
 } from "./legacy-db";
 import {
   unixToDate,
@@ -12,8 +13,11 @@ import {
   splitTags,
   storySlug,
   sanitizeStoryHtml,
+  mapVoteValue,
+  hashVoterId,
 } from "./transform";
 import { slugify } from "../lib/slugify";
+import { wilsonScore } from "../lib/scoring/wilson";
 
 const prisma = new PrismaClient();
 
@@ -105,6 +109,68 @@ export async function importStoriesAndTags(c: Connection) {
   };
 }
 
+export async function importVotes(
+  c: Connection,
+  storyIdByLegacy: Map<number, string>,
+) {
+  const ratings = await readStoryRatings(c);
+
+  // Dedupe by (storyId, voterId); last row wins (input is ordered by id asc).
+  const byKey = new Map<
+    string,
+    { entityId: string; voterId: string; value: 1 | -1 }
+  >();
+  let orphans = 0;
+  for (const r of ratings) {
+    const entityId = storyIdByLegacy.get(r.target_id);
+    if (!entityId) {
+      orphans++;
+      continue;
+    }
+    const voterId = hashVoterId(r.user);
+    byKey.set(`${entityId}:${voterId}`, {
+      entityId,
+      voterId,
+      value: mapVoteValue(r.value),
+    });
+  }
+
+  const votes: Prisma.VoteCreateManyInput[] = [...byKey.values()].map((v) => ({
+    entityType: "STORY",
+    entityId: v.entityId,
+    voterId: v.voterId,
+    value: v.value,
+  }));
+
+  for (let i = 0; i < votes.length; i += 5000) {
+    await prisma.vote.createMany({
+      data: votes.slice(i, i + 5000),
+      skipDuplicates: true,
+    });
+  }
+
+  // Recompute aggregates from the deduped tallies.
+  const tally = new Map<string, { likes: number; dislikes: number }>();
+  for (const v of votes) {
+    const t = tally.get(v.entityId) ?? { likes: 0, dislikes: 0 };
+    if (v.value === 1) t.likes++;
+    else t.dislikes++;
+    tally.set(v.entityId, t);
+  }
+  for (const [entityId, t] of tally) {
+    await prisma.story.update({
+      where: { id: entityId },
+      data: {
+        likeCount: t.likes,
+        dislikeCount: t.dislikes,
+        score: wilsonScore(t.likes, t.dislikes),
+      },
+    });
+  }
+
+  return { ratings: ratings.length, votes: votes.length, orphans };
+}
+
 async function main(): Promise<void> {
   const c = await connectLegacy();
   try {
@@ -114,6 +180,11 @@ async function main(): Promise<void> {
     const st = await importStoriesAndTags(c);
     console.log(
       `Stories: ${st.stories}  Tags: ${st.tags}  StoryTags: ${st.links}`,
+    );
+
+    const vt = await importVotes(c, st.storyIdByLegacy);
+    console.log(
+      `Ratings: ${vt.ratings}  Votes: ${vt.votes}  Orphans skipped: ${vt.orphans}`,
     );
   } finally {
     await c.end();
