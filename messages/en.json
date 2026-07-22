@@ -1,0 +1,116 @@
+{
+  "site": { "name": "KRIPIPASTA", "tagline": "Internet horror archive" },
+  "nav": {
+    "browse": "Browse",
+    "categories": "Categories",
+    "trending": "Trending",
+    "index": "Index"
+  },
+  "header": {
+    "searchPlaceholder": "Search the archive — stories, categories, eras",
+    "submit": "Submit an entry"
+  },
+  "feed": {
+    "eyebrow": "Archive",
+    "heading": "All stories",
+    "countTemplate": "Showing {shown} of {total}",
+    "sortLabel": "Sort",
+    "sortPopular": "Popular",
+    "sortNewest": "Newest",
+    "allTag": "All",
+    "loadMore": "Load more",
+    "empty": "No published stories yet."
+  },
+  "hero": { "featured": "Story of the week", "read": "Read the story →" },
+  "story": {
+    "backToArchive": "‹ Back to the archive",
+    "ratingLabel": "Community rating",
+    "votesTemplate": "{count} votes · community rating",
+    "readingProgress": "Reading progress",
+    "related": "If you liked this",
+    "minRead": "min read",
+    "by": "by",
+    "posted": "Posted"
+  },
+  "vote": {
+    "prompt": "Was it worth the sleep you're about to lose?",
+    "up": "Worth it",
+    "down": "Not for me",
+    "votesWord": "votes",
+    "ratingWord": "community rating",
+    "youVoted": "Your rating",
+    "valueUp": "Worth it",
+    "valueDown": "Not for me",
+    "change": "Change",
+    "error": "Couldn't save your vote. Please try again."
+  },
+  "submit": {
+    "eyebrow": "Contribute",
+    "heading": "Submit a story",
+    "intro": "Tell your story. After an editor reviews it, it will appear in the archive.",
+    "titleLabel": "Title",
+    "introLabel": "Intro (optional)",
+    "contentLabel": "Story text",
+    "authorNameLabel": "Your name or alias (optional)",
+    "authorLinkLabel": "Author link (optional)",
+    "authorEmailLabel": "Email (not published, optional)",
+    "tagsLabel": "Comma-separated tags (optional)",
+    "submitButton": "Submit for review",
+    "submitting": "Submitting…",
+    "errorGeneric": "Couldn't submit. Please check the form."
+  },
+  "submitThanks": {
+    "heading": "Story submitted",
+    "body": "Thank you! Your story is in the moderation queue. Once reviewed, it will appear in the archive.",
+    "back": "Home"
+  },
+  "footer": {
+    "aboutHeading": "KRIPIPASTA",
+    "about": "A community-tended archive of internet horror — the stories, entities, and folklore the net invents about itself.",
+    "exploreHeading": "Explore",
+    "explore": {
+      "all": "All stories",
+      "categories": "Categories",
+      "trending": "Trending",
+      "index": "Index"
+    },
+    "communityHeading": "Community",
+    "community": {
+      "contribute": "Submit a story",
+      "guidelines": "Editorial guidelines",
+      "recent": "Recent edits"
+    },
+    "estLeft": "EST. MMV · COMMUNITY-EDITED",
+    "estRight": "ALL STORIES ARE COLLECTIVE FICTION"
+  },
+  "notFound": {
+    "heading": "This page got lost in the static",
+    "body": "There's no such story in the archive — it may have been removed or not yet published.",
+    "back": "Home"
+  },
+  "admin": {
+    "loginHeading": "Editor sign-in",
+    "passwordLabel": "Password",
+    "loginButton": "Sign in",
+    "loginError": "Wrong password.",
+    "queueEyebrow": "Moderation",
+    "queueHeading": "Moderation queue",
+    "pendingTemplate": "{count} pending",
+    "filterAll": "All",
+    "filterNew": "New only",
+    "approve": "Approve",
+    "reject": "Reject",
+    "review": "Open",
+    "logout": "Sign out",
+    "empty": "The queue is empty.",
+    "submittedBy": "Author",
+    "submittedOn": "Submitted",
+    "backToQueue": "‹ Back to queue",
+    "loadMore": "Load more"
+  },
+  "localeSwitcher": {
+    "label": "Language",
+    "ru": "Русский",
+    "en": "English"
+  }
+}
