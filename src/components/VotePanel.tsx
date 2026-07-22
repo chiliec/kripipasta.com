@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import ScoreBadge from "@/components/ScoreBadge";
 import { storyScore10 } from "@/lib/scoring/display";
 import { ratingLabel } from "@/lib/story-display";
-import { copy } from "@/lib/ui-copy";
 import type { VoteEntityType, VoteValue } from "@/lib/voting";
 
 interface Aggregate {
@@ -62,7 +62,8 @@ export default function VotePanel({
     }
   }
 
-  const c = copy.vote;
+  const t = useTranslations("vote");
+  const tStory = useTranslations("story");
   const total = state.likeCount + state.dislikeCount;
   const pct = Math.round(state.score * 100);
   const voted = state.myVote !== 0;
@@ -70,13 +71,13 @@ export default function VotePanel({
   return (
     <section className="mt-14 max-w-prose rounded-[16px] border border-line bg-s1 p-7">
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-tx3">
-        {copy.story.ratingLabel}
+        {tStory("ratingLabel")}
       </p>
 
       {!voted ? (
         <div className="mt-4">
           <p className="font-serif text-[19px] italic leading-snug text-tx2">
-            {c.prompt}
+            {t("prompt")}
           </p>
           <div className="mt-5 flex gap-3">
             <button
@@ -86,7 +87,7 @@ export default function VotePanel({
               className="flex flex-1 items-center justify-center gap-2.5 rounded-[12px] border border-line bg-s2 px-4 py-[15px] font-sans text-[14px] font-medium text-ink transition-colors hover:border-line2 disabled:opacity-50"
             >
               <ThumbUp />
-              {c.up}
+              {t("up")}
             </button>
             <button
               type="button"
@@ -95,7 +96,7 @@ export default function VotePanel({
               className="flex flex-1 items-center justify-center gap-2.5 rounded-[12px] border border-line bg-s2 px-4 py-[15px] font-sans text-[14px] font-medium text-tx2 transition-colors hover:border-line2 disabled:opacity-50"
             >
               <ThumbDown />
-              {c.down}
+              {t("down")}
             </button>
           </div>
         </div>
@@ -111,7 +112,7 @@ export default function VotePanel({
                 />
               </div>
               <div className="font-mono text-[11.5px] text-tx3">
-                {total.toLocaleString("ru-RU")} {c.votesWord} · {ratingLabel(storyScore10(state.score))}
+                {total.toLocaleString("ru-RU")} {t("votesWord")} · {ratingLabel(storyScore10(state.score))}
               </div>
             </div>
           </div>
@@ -120,9 +121,9 @@ export default function VotePanel({
               <span className="text-crimson-2">
                 {state.myVote === 1 ? "▲" : "▼"}
               </span>
-              {c.youVoted}:{" "}
+              {t("youVoted")}:{" "}
               <span className="text-ink">
-                {state.myVote === 1 ? c.valueUp : c.valueDown}
+                {state.myVote === 1 ? t("valueUp") : t("valueDown")}
               </span>
             </span>
             <button
@@ -131,14 +132,14 @@ export default function VotePanel({
               onClick={() => send(0)}
               className="ml-auto rounded-[9px] border border-line bg-s2 px-3.5 py-2 font-sans text-[12px] text-tx2 transition-colors hover:border-line2 disabled:opacity-50"
             >
-              {c.change}
+              {t("change")}
             </button>
           </div>
         </div>
       )}
 
       {error && (
-        <p className="mt-3 font-mono text-[11px] text-crimson-2">{c.error}</p>
+        <p className="mt-3 font-mono text-[11px] text-crimson-2">{t("error")}</p>
       )}
     </section>
   );

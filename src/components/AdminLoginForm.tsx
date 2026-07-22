@@ -1,24 +1,25 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { login, type LoginState } from "@/app/[locale]/admin/login/actions";
-import { copy } from "@/lib/ui-copy";
 
 const initial: LoginState = {};
 
 export default function AdminLoginForm() {
+  const t = useTranslations("admin");
   const [state, formAction, pending] = useActionState(login, initial);
 
   return (
     <form action={formAction} className="mt-8 flex flex-col gap-4">
       {state.error && (
         <p className="rounded-[11px] border border-crimson-deep bg-crimson/10 px-4 py-3 text-[13px] text-crimson-2">
-          {copy.admin.loginError}
+          {t("loginError")}
         </p>
       )}
       <label className="block">
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-tx3">
-          {copy.admin.passwordLabel}
+          {t("passwordLabel")}
         </span>
         <input
           name="password"
@@ -33,7 +34,7 @@ export default function AdminLoginForm() {
         disabled={pending}
         className="rounded-[12px] border border-crimson bg-gradient-to-b from-crimson-2 to-crimson-deep px-6 py-3 text-[14px] font-medium text-white disabled:opacity-60"
       >
-        {copy.admin.loginButton}
+        {t("loginButton")}
       </button>
     </form>
   );
