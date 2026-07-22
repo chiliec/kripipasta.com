@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { writeFile, mkdir } from "node:fs/promises";
 import { PrismaClient, type Prisma } from "@prisma/client";
 import type { Connection } from "mysql2/promise";
 import {
@@ -6,6 +7,8 @@ import {
   readStories,
   readTags,
   readStoryRatings,
+  ARCHIVE_TABLES,
+  readArchive,
 } from "./legacy-db";
 import {
   unixToDate,
@@ -171,6 +174,37 @@ export async function importVotes(
   return { ratings: ratings.length, votes: votes.length, orphans };
 }
 
+export async function importArchive(c: Connection): Promise<number> {
+  let total = 0;
+  for (const table of ARCHIVE_TABLES) {
+    const rows = await readArchive(c, table);
+    const data: Prisma.LegacyArchiveCreateManyInput[] = rows.map((row) => ({
+      sourceTable: table,
+      sourceId: Number(row.id),
+      data: row as Prisma.InputJsonValue,
+    }));
+    for (let i = 0; i < data.length; i += 1000) {
+      await prisma.legacyArchive.createMany({
+        data: data.slice(i, i + 1000),
+        skipDuplicates: true,
+      });
+    }
+    total += data.length;
+  }
+  return total;
+}
+
+export async function writeSlugMap(): Promise<number> {
+  const stories = await prisma.story.findMany({
+    select: { slug: true, legacyId: true },
+    orderBy: { legacyId: "asc" },
+  });
+  const map = stories.map((s) => ({ legacyId: s.legacyId, slug: s.slug }));
+  await mkdir("data", { recursive: true });
+  await writeFile("data/legacy-slug-map.json", JSON.stringify(map, null, 2));
+  return map.length;
+}
+
 async function main(): Promise<void> {
   const c = await connectLegacy();
   try {
@@ -186,6 +220,12 @@ async function main(): Promise<void> {
     console.log(
       `Ratings: ${vt.ratings}  Votes: ${vt.votes}  Orphans skipped: ${vt.orphans}`,
     );
+
+    const archived = await importArchive(c);
+    console.log(`LegacyArchive rows: ${archived}`);
+
+    const mapped = await writeSlugMap();
+    console.log(`Slug-map entries: ${mapped} → data/legacy-slug-map.json`);
   } finally {
     await c.end();
     await prisma.$disconnect();
