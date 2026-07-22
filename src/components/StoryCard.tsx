@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { StoryListItem } from "@/lib/stories";
 import { excerpt } from "@/lib/story-display";
 import ScoreBadge from "@/components/ScoreBadge";

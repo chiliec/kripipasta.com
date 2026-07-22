@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -16,24 +18,28 @@ import {
   readingTimeMinutes,
   excerpt,
 } from "@/lib/story-display";
-import { copy } from "@/lib/ui-copy";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const slugs = await getAllApprovedSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return routing.locales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug })),
+  );
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const story = await getStoryBySlug(slug);
-  if (!story) return { title: copy.notFound.heading };
+  if (!story) {
+    const t = await getTranslations({ locale, namespace: "notFound" });
+    return { title: t("heading") };
+  }
   const description = excerpt(story.intro, story.contentHtml, 200);
   return {
     title: `${story.title} — Kripipasta`,
@@ -45,9 +51,12 @@ export async function generateMetadata({
 export default async function StoryPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("story");
+
   const story = await getStoryBySlug(slug);
   if (!story) notFound();
 
@@ -63,7 +72,7 @@ export default async function StoryPage({
         <article className="mx-auto max-w-shell px-6 md:px-10">
           <div className="pt-10">
             <Link href="/" className="font-mono text-[11px] text-tx3 hover:text-ink">
-              {copy.story.backToArchive}
+              {t("backToArchive")}
             </Link>
           </div>
 
@@ -84,7 +93,7 @@ export default async function StoryPage({
             <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-tx3">
               {story.authorName && (
                 <span>
-                  {copy.story.by}{" "}
+                  {t("by")}{" "}
                   {story.authorLink ? (
                     <a href={story.authorLink} className="text-crimson-2">
                       {story.authorName}
@@ -95,7 +104,7 @@ export default async function StoryPage({
                 </span>
               )}
               <span>
-                {copy.story.posted} {posted} · {minutes} {copy.story.minRead}
+                {t("posted")} {posted} · {minutes} {t("minRead")}
               </span>
             </div>
           </header>
@@ -121,7 +130,7 @@ export default async function StoryPage({
             {related.length > 0 && (
               <aside className="lg:sticky lg:top-24 lg:self-start">
                 <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-tx3">
-                  {copy.story.related}
+                  {t("related")}
                 </p>
                 <div className="flex flex-col gap-4">
                   {related.map((r) => (

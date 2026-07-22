@@ -1,7 +1,11 @@
-import Link from "next/link";
-import { copy } from "@/lib/ui-copy";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function SiteHeader() {
+  const tSite = useTranslations("site");
+  const tNav = useTranslations("nav");
+  const tHeader = useTranslations("header");
+
   return (
     <header className="fixed inset-x-0 top-0 z-[110] border-b border-line bg-bg/70 backdrop-blur-md">
       <div className="mx-auto flex max-w-shell items-center gap-6 px-6 py-4 md:px-10">
@@ -9,19 +13,19 @@ export default function SiteHeader() {
           <span className="block h-[11px] w-[11px] rotate-45 bg-crimson shadow-[0_0_12px_var(--tw-shadow-color)] shadow-crimson/50" />
           <span className="leading-tight">
             <span className="block font-serif text-[19px] font-semibold tracking-[0.02em] text-ink">
-              {copy.site.name}
+              {tSite("name")}
             </span>
             <span className="block font-mono text-[8px] uppercase tracking-[0.28em] text-tx3">
-              {copy.site.tagline}
+              {tSite("tagline")}
             </span>
           </span>
         </Link>
 
         <nav className="hidden items-center gap-5 text-[13px] text-tx2 lg:flex">
-          <Link href="/" className="hover:text-ink">{copy.nav.browse}</Link>
-          <Link href="/#feed" className="hover:text-ink">{copy.nav.categories}</Link>
-          <Link href="/#feed" className="hover:text-ink">{copy.nav.trending}</Link>
-          <Link href="/#feed" className="hover:text-ink">{copy.nav.index}</Link>
+          <Link href="/" className="hover:text-ink">{tNav("browse")}</Link>
+          <Link href="/#feed" className="hover:text-ink">{tNav("categories")}</Link>
+          <Link href="/#feed" className="hover:text-ink">{tNav("trending")}</Link>
+          <Link href="/#feed" className="hover:text-ink">{tNav("index")}</Link>
         </nav>
 
         <div className="ml-auto hidden min-w-0 flex-1 items-center md:flex md:max-w-[420px]">
@@ -30,7 +34,7 @@ export default function SiteHeader() {
               <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
               <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
-            <span className="truncate text-[12px]">{copy.header.searchPlaceholder}</span>
+            <span className="truncate text-[12px]">{tHeader("searchPlaceholder")}</span>
           </div>
         </div>
 
@@ -43,7 +47,7 @@ export default function SiteHeader() {
             href="/submit"
             className="rounded-[11px] border border-crimson bg-gradient-to-b from-crimson-2 to-crimson-deep px-3.5 py-2 text-[13px] font-medium text-white"
           >
-            {copy.header.submit}
+            {tHeader("submit")}
           </Link>
         </div>
       </div>
