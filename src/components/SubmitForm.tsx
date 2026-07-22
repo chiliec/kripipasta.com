@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitStory, type SubmitState } from "@/app/submit/actions";
+import { submitStory, type SubmitState } from "@/app/[locale]/submit/actions";
 import { copy } from "@/lib/ui-copy";
 
 const initial: SubmitState = {};

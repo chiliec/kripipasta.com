@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin-session";
 import { getStoryForModeration } from "@/lib/moderation";
-import { approveStory, rejectStory } from "@/app/admin/actions";
+import { approveStory, rejectStory } from "@/app/[locale]/admin/actions";
 import { formatStoryDate } from "@/lib/story-display";
 import { copy } from "@/lib/ui-copy";
 

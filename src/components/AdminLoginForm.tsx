@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { login, type LoginState } from "@/app/admin/login/actions";
+import { login, type LoginState } from "@/app/[locale]/admin/login/actions";
 import { copy } from "@/lib/ui-copy";
 
 const initial: LoginState = {};

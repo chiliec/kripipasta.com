@@ -6,7 +6,7 @@ import {
   getPendingCount,
   type PendingSource,
 } from "@/lib/moderation";
-import { approveStory, rejectStory, logout } from "@/app/admin/actions";
+import { approveStory, rejectStory, logout } from "@/app/[locale]/admin/actions";
 import { formatStoryDate } from "@/lib/story-display";
 import { copy } from "@/lib/ui-copy";
 
