@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitStory, type SubmitState } from "@/app/submit/actions";
-import { copy } from "@/lib/ui-copy";
+import { useTranslations } from "next-intl";
+import { submitStory, type SubmitState } from "@/app/[locale]/submit/actions";
 
 const initial: SubmitState = {};
 
@@ -17,6 +17,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export default function SubmitForm() {
+  const t = useTranslations("submit");
   const [state, formAction, pending] = useActionState(submitStory, initial);
   const errors = state.errors ?? {};
 
@@ -24,7 +25,7 @@ export default function SubmitForm() {
     <form action={formAction} className="mt-10 flex flex-col gap-6">
       {errors.form && (
         <p className="rounded-[11px] border border-crimson-deep bg-crimson/10 px-4 py-3 text-[13px] text-crimson-2">
-          {copy.submit.errorGeneric}
+          {t("errorGeneric")}
         </p>
       )}
 
@@ -39,31 +40,31 @@ export default function SubmitForm() {
       />
 
       <label className="block">
-        <span className={labelClass}>{copy.submit.titleLabel}</span>
+        <span className={labelClass}>{t("titleLabel")}</span>
         <input name="title" type="text" required className={fieldClass} />
         <FieldError message={errors.title} />
       </label>
 
       <label className="block">
-        <span className={labelClass}>{copy.submit.introLabel}</span>
+        <span className={labelClass}>{t("introLabel")}</span>
         <input name="intro" type="text" className={fieldClass} />
         <FieldError message={errors.intro} />
       </label>
 
       <label className="block">
-        <span className={labelClass}>{copy.submit.contentLabel}</span>
+        <span className={labelClass}>{t("contentLabel")}</span>
         <textarea name="content" required rows={16} className={fieldClass} />
         <FieldError message={errors.content} />
       </label>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <label className="block">
-          <span className={labelClass}>{copy.submit.authorNameLabel}</span>
+          <span className={labelClass}>{t("authorNameLabel")}</span>
           <input name="authorName" type="text" className={fieldClass} />
           <FieldError message={errors.authorName} />
         </label>
         <label className="block">
-          <span className={labelClass}>{copy.submit.authorLinkLabel}</span>
+          <span className={labelClass}>{t("authorLinkLabel")}</span>
           <input name="authorLink" type="url" className={fieldClass} />
           <FieldError message={errors.authorLink} />
         </label>
@@ -71,12 +72,12 @@ export default function SubmitForm() {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <label className="block">
-          <span className={labelClass}>{copy.submit.authorEmailLabel}</span>
+          <span className={labelClass}>{t("authorEmailLabel")}</span>
           <input name="authorEmail" type="email" className={fieldClass} />
           <FieldError message={errors.authorEmail} />
         </label>
         <label className="block">
-          <span className={labelClass}>{copy.submit.tagsLabel}</span>
+          <span className={labelClass}>{t("tagsLabel")}</span>
           <input name="tags" type="text" className={fieldClass} />
           <FieldError message={errors.tags} />
         </label>
@@ -88,7 +89,7 @@ export default function SubmitForm() {
           disabled={pending}
           className="rounded-[12px] border border-crimson bg-gradient-to-b from-crimson-2 to-crimson-deep px-6 py-3 text-[14px] font-medium text-white disabled:opacity-60"
         >
-          {pending ? copy.submit.submitting : copy.submit.submitButton}
+          {pending ? t("submitting") : t("submitButton")}
         </button>
       </div>
     </form>

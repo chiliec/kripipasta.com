@@ -1,11 +1,11 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   getApprovedStories,
   getFilterTags,
   type StorySort,
 } from "@/lib/stories";
 import StoryCard from "@/components/StoryCard";
-import { copy } from "@/lib/ui-copy";
+import { getTranslations } from "next-intl/server";
 
 const PAGE = 9;
 
@@ -27,14 +27,15 @@ export default async function StoryFeed({
   tagSlug?: string;
   take: number;
 }) {
+  const t = await getTranslations("feed");
   const [{ items, total }, tags] = await Promise.all([
     getApprovedStories({ sort, tagSlug, take }),
     getFilterTags(7),
   ]);
 
   const sorts: { key: StorySort; label: string }[] = [
-    { key: "popular", label: copy.feed.sortPopular },
-    { key: "newest", label: copy.feed.sortNewest },
+    { key: "popular", label: t("sortPopular") },
+    { key: "newest", label: t("sortNewest") },
   ];
 
   return (
@@ -42,34 +43,32 @@ export default async function StoryFeed({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-crimson-2">
-            {copy.feed.eyebrow}
+            {t("eyebrow")}
           </p>
           <h2 className="mt-2 font-serif text-[clamp(34px,4vw,52px)] font-medium text-ink">
-            {copy.feed.heading}
+            {t("heading")}
           </h2>
         </div>
         <p className="font-mono text-[11px] text-tx3">
-          {copy.feed.countTemplate
-            .replace("{shown}", String(items.length))
-            .replace("{total}", String(total))}
+          {t("countTemplate", { shown: items.length, total })}
         </p>
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap gap-2">
-          <Chip href={href({ sort })} active={!tagSlug} label={copy.feed.allTag} />
-          {tags.map((t) => (
+          <Chip href={href({ sort })} active={!tagSlug} label={t("allTag")} />
+          {tags.map((tag) => (
             <Chip
-              key={t.slug}
-              href={href({ sort, tag: t.slug })}
-              active={tagSlug === t.slug}
-              label={t.name}
+              key={tag.slug}
+              href={href({ sort, tag: tag.slug })}
+              active={tagSlug === tag.slug}
+              label={tag.name}
             />
           ))}
         </div>
         <div className="flex items-center gap-2">
           <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-tx3">
-            {copy.feed.sortLabel}
+            {t("sortLabel")}
           </span>
           <div className="flex rounded-[10px] border border-line bg-s1 text-[12px]">
             {sorts.map((s) => (
@@ -90,7 +89,7 @@ export default async function StoryFeed({
       </div>
 
       {items.length === 0 ? (
-        <p className="mt-12 text-tx2">{copy.feed.empty}</p>
+        <p className="mt-12 text-tx2">{t("empty")}</p>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((story) => (
@@ -105,7 +104,7 @@ export default async function StoryFeed({
             href={href({ sort, tag: tagSlug, take: take + PAGE })}
             className="rounded-[12px] border border-line bg-s1 px-6 py-3 text-[13px] text-tx2 hover:border-line2 hover:text-ink"
           >
-            {copy.feed.loadMore}
+            {t("loadMore")}
           </Link>
         </div>
       )}

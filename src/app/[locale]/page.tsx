@@ -1,12 +1,12 @@
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import StoryFeed from "@/components/StoryFeed";
 import ScoreBadge from "@/components/ScoreBadge";
 import { getFeaturedStory, type StorySort } from "@/lib/stories";
-import { excerpt, ratingLabel } from "@/lib/story-display";
+import { excerpt, ratingKey } from "@/lib/story-display";
 import { storyScore10 } from "@/lib/scoring/display";
-import { copy } from "@/lib/ui-copy";
 
 export const revalidate = 3600;
 
@@ -20,10 +20,17 @@ function parseTake(v: string | undefined): number {
 }
 
 export default async function HomePage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ sort?: string; tag?: string; take?: string }>;
 }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("hero");
+  const tStory = await getTranslations("story");
+
   const sp = await searchParams;
   const sort = parseSort(sp.sort);
   const take = parseTake(sp.take);
@@ -38,7 +45,7 @@ export default async function HomePage({
           <section className="relative mx-auto flex min-h-[80vh] max-w-shell flex-col justify-end px-6 pb-16 pt-24 md:px-10">
             <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em]">
               <span className="h-1.5 w-1.5 rounded-full bg-crimson-2" />
-              <span className="text-crimson-2">{copy.hero.featured}</span>
+              <span className="text-crimson-2">{t("featured")}</span>
               {featured.tags[0] && (
                 <>
                   <span className="text-tx3">·</span>
@@ -57,11 +64,11 @@ export default async function HomePage({
                 href={`/story/${featured.slug}`}
                 className="rounded-[11px] border border-crimson bg-gradient-to-b from-crimson-2 to-crimson-deep px-5 py-3 text-[14px] font-medium text-white"
               >
-                {copy.hero.read}
+                {t("read")}
               </Link>
               <div className="flex flex-col">
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-tx3">
-                  {ratingLabel(storyScore10(featured.score))}
+                  {tStory(ratingKey(storyScore10(featured.score)))}
                 </span>
                 <ScoreBadge score={featured.score} size="lg" />
               </div>
