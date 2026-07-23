@@ -24,6 +24,7 @@ export default async function AdminQueuePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("admin");
+  const td = await getTranslations("dossierAdmin");
 
   if (!(await isAdmin())) {
     const currentLocale = await getLocale();
@@ -59,11 +60,19 @@ export default async function AdminQueuePage({
             {t("pendingTemplate", { count })}
           </p>
         </div>
-        <form action={logout}>
-          <button className="rounded-[10px] border border-line bg-s1 px-4 py-2 text-[12px] text-tx2 hover:text-ink">
-            {t("logout")}
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/dossiers"
+            className="rounded-[10px] border border-line bg-s1 px-4 py-2 text-[12px] text-tx2 hover:text-ink"
+          >
+            {td("manageDossiers")}
+          </Link>
+          <form action={logout}>
+            <button className="rounded-[10px] border border-line bg-s1 px-4 py-2 text-[12px] text-tx2 hover:text-ink">
+              {t("logout")}
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="mt-6 flex gap-2">
