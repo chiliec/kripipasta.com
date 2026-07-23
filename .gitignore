@@ -11,3 +11,5 @@ out/
 .env.test.local
 .env.production.local
 .env.local
+
+tsconfig.tsbuildinfo

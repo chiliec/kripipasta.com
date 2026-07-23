@@ -2,23 +2,43 @@ name: Main
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: nocturne
+          POSTGRES_PASSWORD: nocturne
+          POSTGRES_DB: nocturne
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U nocturne"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://nocturne:nocturne@localhost:5432/nocturne?schema=public&connection_limit=5
+      ADMIN_PASSWORD: ci-password
+      ADMIN_SESSION_SECRET: ci-session-secret-0123456789abcdef0123456789abcdef
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
+          cache: npm
       - run: npm ci
-      # - run: npm --prefix src/frontend ci
+      - run: npx prisma generate
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run test
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+      - run: npm run build
