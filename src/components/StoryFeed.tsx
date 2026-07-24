@@ -6,6 +6,7 @@ import {
 } from "@/lib/stories";
 import StoryCard from "@/components/StoryCard";
 import { getTranslations } from "next-intl/server";
+import { buildSafe } from "@/lib/build-safe";
 
 const PAGE = 9;
 
@@ -29,8 +30,11 @@ export default async function StoryFeed({
 }) {
   const t = await getTranslations("feed");
   const [{ items, total }, tags] = await Promise.all([
-    getApprovedStories({ sort, tagSlug, take }),
-    getFilterTags(7),
+    buildSafe(() => getApprovedStories({ sort, tagSlug, take }), {
+      items: [],
+      total: 0,
+    }),
+    buildSafe(() => getFilterTags(7), []),
   ]);
 
   const sorts: { key: StorySort; label: string }[] = [

@@ -16,12 +16,16 @@ import {
   getAllPublishedDossierSlugs,
 } from "@/lib/dossiers";
 import { threatLevelKey, dossierScore100 } from "@/lib/dossier-display";
+import { buildSafe } from "@/lib/build-safe";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const slugs = await getAllPublishedDossierSlugs();
+  const slugs = await buildSafe<string[]>(
+    () => getAllPublishedDossierSlugs(),
+    [],
+  );
   return routing.locales.flatMap((locale) =>
     slugs.map((slug) => ({ locale, slug })),
   );
