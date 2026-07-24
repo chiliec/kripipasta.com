@@ -6,7 +6,10 @@ import DossierCard from "@/components/DossierCard";
 import { getPublishedDossiers } from "@/lib/dossiers";
 import { buildSafe } from "@/lib/build-safe";
 
-export const revalidate = 3600;
+// Render against the live DB per request. As a static/ISR route this page has no
+// dynamic params and gets prerendered empty on the DB-less build server, then
+// serves that stale snapshot (seeds/direct DB writes never fire revalidatePath).
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
