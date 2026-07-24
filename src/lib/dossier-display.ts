@@ -1,4 +1,4 @@
-import type { ThreatLevel } from "@prisma/client";
+import type { ThreatLevel } from "@/generated/prisma/client";
 import { dossierPopularity100 } from "@/lib/scoring/display";
 import type { DossierDetail } from "@/lib/dossiers";
 

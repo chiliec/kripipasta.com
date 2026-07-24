@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { writeFile, mkdir } from "node:fs/promises";
-import { PrismaClient, type Prisma } from "@prisma/client";
+import { PrismaClient, type Prisma } from "@/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import type { Connection } from "mysql2/promise";
 import {
   connectLegacy,
@@ -22,7 +23,9 @@ import {
 import { slugify } from "../lib/slugify";
 import { wilsonScore } from "../lib/scoring/wilson";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+});
 
 /** Delete everything this ETL owns so the script is re-runnable. */
 export async function clearMigrated(): Promise<void> {

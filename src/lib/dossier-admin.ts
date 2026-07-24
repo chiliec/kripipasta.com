@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { slugify } from "@/lib/slugify";
 import type { ValidatedDossier } from "@/lib/dossier-validate";
 import type { DossierDetail } from "@/lib/dossiers";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 export interface AdminDossierListItem {
   id: string;

@@ -3,6 +3,8 @@ node_modules/
 npm-debug.log
 yarn-error.log
 /backup/
+# Prisma 7 generated client (emitted by `prisma generate`)
+/src/generated/
 .next/
 out/
 tsconfig.tsbuildinfo

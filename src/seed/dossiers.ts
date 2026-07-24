@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { sanitizeStoryHtml } from "@/lib/sanitize";
 import { slugify } from "@/lib/slugify";
-import type { ThreatLevel } from "@prisma/client";
+import type { ThreatLevel } from "@/generated/prisma/client";
 import {
   paragraphsHtml,
   editorNoteHtml,

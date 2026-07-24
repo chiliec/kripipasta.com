@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@/generated/prisma/client";
 import { wilsonScore } from "@/lib/scoring/wilson";
 
 export type VoteEntityType = "STORY" | "DOSSIER";

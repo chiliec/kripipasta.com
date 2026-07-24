@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import type { ContentStatus } from "@prisma/client";
+import type { ContentStatus } from "@/generated/prisma/client";
 
 export { sanitizeStoryHtml } from "@/lib/sanitize";
 
