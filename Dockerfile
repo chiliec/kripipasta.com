@@ -35,11 +35,20 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Prisma schema/migrations + CLI + engines so migrations self-apply at startup.
+# Prisma schema + migrations for `migrate deploy`.
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+# Runtime Prisma client + query engine (belt-and-suspenders over standalone tracing).
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+# Prisma CLI with its FULL dependency closure (incl. the hoisted `effect` dep of
+# @prisma/config), installed into an isolated prefix so `migrate deploy` runs at
+# startup and npm can't prune the slim standalone node_modules. Keep the version
+# in sync with package.json's prisma devDependency.
+RUN mkdir -p /opt/prisma-cli \
+  && cd /opt/prisma-cli \
+  && npm init -y >/dev/null 2>&1 \
+  && npm install prisma@6.19.3 >/dev/null 2>&1
 
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
