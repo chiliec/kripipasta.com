@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
+import SearchBox from "@/components/SearchBox";
 
 export default function SiteHeader() {
   const tSite = useTranslations("site");
@@ -31,13 +32,7 @@ export default function SiteHeader() {
         </nav>
 
         <div className="ml-auto hidden min-w-0 flex-1 items-center md:flex md:max-w-[420px]">
-          <div className="flex w-full items-center gap-2 rounded-[11px] border border-line bg-s1 px-3 py-[9px] text-tx3">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-              <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <span className="truncate text-[12px]">{tHeader("searchPlaceholder")}</span>
-          </div>
+          <SearchBox />
         </div>
 
         <div className="ml-auto flex items-center gap-3 md:ml-0">

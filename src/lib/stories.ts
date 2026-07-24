@@ -129,6 +129,30 @@ export async function getRelatedStories(
   return rows.map(toListItem);
 }
 
+export async function searchApprovedStories(
+  query: string,
+  take = 12,
+): Promise<StoryListItem[]> {
+  // Rank by full-text relevance (GIN-indexed searchVector), tie-break on score.
+  const ranked = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id
+    FROM "Story"
+    WHERE status = 'APPROVED'
+      AND "searchVector" @@ websearch_to_tsquery('russian', ${query})
+    ORDER BY ts_rank("searchVector", websearch_to_tsquery('russian', ${query})) DESC,
+             score DESC
+    LIMIT ${take}
+  `;
+  if (ranked.length === 0) return [];
+  const ids = ranked.map((r) => r.id);
+  const rows = await prisma.story.findMany({
+    where: { id: { in: ids } },
+    select: listSelect,
+  });
+  const byId = new Map(rows.map((r) => [r.id, toListItem(r)]));
+  return ids.map((id) => byId.get(id)).filter((s): s is StoryListItem => !!s);
+}
+
 export async function getAllApprovedSlugs(): Promise<string[]> {
   const rows = await prisma.story.findMany({
     where: { status: "APPROVED" },

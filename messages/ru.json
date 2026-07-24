@@ -23,6 +23,17 @@
     "empty": "Пока нет опубликованных историй."
   },
   "hero": { "featured": "История недели", "read": "Читать историю →" },
+  "search": {
+    "eyebrow": "Поиск",
+    "promptHeading": "Поиск по архиву",
+    "prompt": "Введите запрос, чтобы найти истории и досье.",
+    "resultsHeading": "Результаты",
+    "resultsFor": "по запросу «{query}»",
+    "countTemplate": "Найдено: {total}",
+    "empty": "Ничего не найдено по запросу «{query}».",
+    "storiesHeading": "Истории",
+    "dossiersHeading": "Досье"
+  },
   "story": {
     "backToArchive": "‹ Назад в архив",
     "ratingLabel": "Рейтинг сообщества",
