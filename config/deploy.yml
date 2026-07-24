@@ -1,0 +1,41 @@
+# Kamal deploy config for kripipasta.com — Next.js (standalone) behind kamal-proxy.
+
+service: kripipasta
+image:   chiliec/kripipasta        # registry.server (ghcr.io) is prepended → ghcr.io/chiliec/kripipasta
+
+servers:
+  web:
+    hosts:
+      - 5.223.75.86                # axveer VPS public IPv4 (inventory.yml ip)
+
+ssh:
+  user: deploy
+  port: 666                        # hardened sshd (default root:22 is locked out)
+
+proxy:
+  hosts:
+    - kripipasta.com
+    - www.kripipasta.com           # 308-redirects to the apex in next.config.ts
+  app_port: 3000                   # matches EXPOSE in the Dockerfile
+  ssl: true
+  healthcheck:
+    path: /api/health              # DB-backed 200/503 JSON; excluded from the next-intl middleware matcher
+
+registry:
+  server: ghcr.io                  # GitHub Container Registry
+  username: chiliec
+  password:
+    - KAMAL_REGISTRY_PASSWORD      # GHCR PAT — SOPS shared.enc.yaml docker_registry_password
+
+env:
+  clear:
+    NODE_ENV: production
+  secret:
+    - DATABASE_URL                 # postgres://kripipasta:…@postgres:5432/kripipasta (shared platform DB, kamal-net alias)
+    - ADMIN_PASSWORD
+    - ADMIN_SESSION_SECRET
+
+builder:
+  arch: amd64
+  remote: ssh://axveer-builder     # builds on the native-amd64 remote builder, not the laptop; see infra docs/runbook-remote-builder.md
+  local: false                     # force remote; remove to fall back to local QEMU build
