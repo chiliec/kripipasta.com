@@ -8,6 +8,8 @@ import SiteFooter from "@/components/SiteFooter";
 import ReadingProgress from "@/components/ReadingProgress";
 import StoryCard from "@/components/StoryCard";
 import VotePanel from "@/components/VotePanel";
+import JsonLd from "@/components/JsonLd";
+import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
 import {
   getStoryBySlug,
   getRelatedStories,
@@ -42,10 +44,20 @@ export async function generateMetadata({
     return { title: t("heading") };
   }
   const description = excerpt(story.intro, story.contentHtml, 200);
+  const published = (story.approvedAt ?? story.createdAt).toISOString();
   return {
-    title: `${story.title} — Kripipasta`,
+    title: story.title,
     description,
-    openGraph: { title: story.title, description, type: "article" },
+    alternates: alternates(locale, `/story/${slug}`),
+    openGraph: {
+      title: story.title,
+      description,
+      type: "article",
+      url: `/${locale}/story/${slug}`,
+      publishedTime: published,
+      authors: story.authorName ? [story.authorName] : undefined,
+      tags: story.tags.map((tag) => tag.name),
+    },
   };
 }
 
@@ -65,8 +77,30 @@ export default async function StoryPage({
   const minutes = readingTimeMinutes(story.contentHtml);
   const posted = formatStoryDate(story.approvedAt ?? story.createdAt);
 
+  const canonical = `${SITE_URL}/${locale}/story/${slug}`;
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: story.title,
+    description: excerpt(story.intro, story.contentHtml, 200),
+    inLanguage: locale,
+    datePublished: (story.approvedAt ?? story.createdAt).toISOString(),
+    dateModified: (story.approvedAt ?? story.createdAt).toISOString(),
+    author: {
+      "@type": story.authorName ? "Person" : "Organization",
+      name: story.authorName || SITE_NAME,
+      ...(story.authorLink ? { url: story.authorLink } : {}),
+    },
+    publisher: { "@type": "Organization", name: SITE_NAME },
+    keywords: story.tags.map((tag) => tag.name).join(", "),
+    image: `${canonical}/opengraph-image`,
+    mainEntityOfPage: canonical,
+    url: canonical,
+  };
+
   return (
     <>
+      <JsonLd data={articleLd} />
       <ReadingProgress />
       <SiteHeader />
       <main className="pt-16">

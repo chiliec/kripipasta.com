@@ -6,6 +6,7 @@ import StoryCard from "@/components/StoryCard";
 import DossierCard from "@/components/DossierCard";
 import { search } from "@/lib/search";
 import { buildSafe } from "@/lib/build-safe";
+import { alternates } from "@/lib/seo";
 
 // Results depend on the ?q= query param, so this page must render per-request.
 export const dynamic = "force-dynamic";
@@ -17,7 +18,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "search" });
-  return { title: `${t("eyebrow")} — Kripipasta` };
+  return {
+    title: t("eyebrow"),
+    alternates: alternates(locale, "/search"),
+    // Query-parameterized result pages add no index value; keep the base page
+    // canonical but tell crawlers not to index ?q= permutations.
+    robots: { index: false, follow: true },
+  };
 }
 
 export default async function SearchPage({

@@ -55,8 +55,10 @@ export default function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // App routes (unchanged behavior for i18n).
-    "/((?!api|_next|_vercel|.*\\..*).*)",
+    // App routes (unchanged behavior for i18n). `icon`/`apple-icon` are
+    // root-level generated metadata routes with no locale prefix — exclude them
+    // so next-intl doesn't 404 them by redirecting to /<locale>/icon.
+    "/((?!api|_next|_vercel|icon|apple-icon|.*\\..*).*)",
     // Legacy paths (have .html / .php extensions the above excludes).
     "/story/:path*",
     "/sandbox/:path*",

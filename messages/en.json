@@ -1,5 +1,8 @@
 {
-  "site": { "name": "KRIPIPASTA", "tagline": "Internet horror archive" },
+  "site": {
+    "name": "KRIPIPASTA",
+    "tagline": "Internet horror archive"
+  },
   "nav": {
     "browse": "Browse",
     "categories": "Categories",
@@ -22,7 +25,10 @@
     "loadMore": "Load more",
     "empty": "No published stories yet."
   },
-  "hero": { "featured": "Story of the week", "read": "Read the story →" },
+  "hero": {
+    "featured": "Story of the week",
+    "read": "Read the story →"
+  },
   "search": {
     "eyebrow": "Search",
     "promptHeading": "Search the archive",
@@ -201,5 +207,9 @@
     "label": "Language",
     "ru": "Русский",
     "en": "English"
+  },
+  "meta": {
+    "title": "Kripipasta — Internet Horror Archive",
+    "description": "An archive of internet horror: chilling creepypasta stories, entities, and urban legends of the web. Read, rate, and submit your own."
   }
 }

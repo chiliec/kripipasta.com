@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import DossierCard from "@/components/DossierCard";
 import { getPublishedDossiers } from "@/lib/dossiers";
 import { buildSafe } from "@/lib/build-safe";
+import { alternates } from "@/lib/seo";
 
 // Render against the live DB per request. As a static/ISR route this page has no
 // dynamic params and gets prerendered empty on the DB-less build server, then
@@ -18,7 +19,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "dossier" });
-  return { title: `${t("archiveHeading")} — Kripipasta` };
+  return {
+    title: t("archiveHeading"),
+    alternates: alternates(locale, "/dossier"),
+  };
 }
 
 export default async function DossierIndexPage({
