@@ -50,8 +50,13 @@ model Story {
   updatedAt    DateTime      @updatedAt
   tags         StoryTag[]
 
+  // Full-text search vector. Populated by a STORED generated column defined in
+  // the migration (title=A, intro=B, contentHtml=C). Queried via $queryRaw only.
+  searchVector Unsupported("tsvector")?
+
   @@index([status, score])
   @@index([status, createdAt])
+  @@index([searchVector], type: Gin)
 }
 
 model Tag {
@@ -106,7 +111,12 @@ model Dossier {
   gallery       DossierImage[]
   popularity    PopularityPoint[]
 
+  // Full-text search vector. Populated by a STORED generated column defined in
+  // the migration (name/aliases=A, epithet/category=B, lead/origin=C).
+  searchVector Unsupported("tsvector")?
+
   @@index([status, score])
+  @@index([searchVector], type: Gin)
 }
 
 model DossierSection {

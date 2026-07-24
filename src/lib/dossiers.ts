@@ -149,6 +149,30 @@ export async function getPublishedDossiers(): Promise<DossierListItem[]> {
   return rows;
 }
 
+export async function searchPublishedDossiers(
+  query: string,
+  take = 12,
+): Promise<DossierListItem[]> {
+  // Rank by full-text relevance (GIN-indexed searchVector), tie-break on score.
+  const ranked = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id
+    FROM "Dossier"
+    WHERE status = 'APPROVED'
+      AND "searchVector" @@ websearch_to_tsquery('russian', ${query})
+    ORDER BY ts_rank("searchVector", websearch_to_tsquery('russian', ${query})) DESC,
+             score DESC
+    LIMIT ${take}
+  `;
+  if (ranked.length === 0) return [];
+  const ids = ranked.map((r) => r.id);
+  const rows: ListRow[] = await prisma.dossier.findMany({
+    where: { id: { in: ids } },
+    select: listSelect,
+  });
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return ids.map((id) => byId.get(id)).filter((d): d is ListRow => !!d);
+}
+
 export async function getAllPublishedDossierSlugs(): Promise<string[]> {
   const rows = await prisma.dossier.findMany({
     where: { status: "APPROVED" },

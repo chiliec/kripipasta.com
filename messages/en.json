@@ -23,6 +23,17 @@
     "empty": "No published stories yet."
   },
   "hero": { "featured": "Story of the week", "read": "Read the story →" },
+  "search": {
+    "eyebrow": "Search",
+    "promptHeading": "Search the archive",
+    "prompt": "Enter a query to find stories and dossiers.",
+    "resultsHeading": "Results",
+    "resultsFor": "for “{query}”",
+    "countTemplate": "{total} found",
+    "empty": "Nothing found for “{query}”.",
+    "storiesHeading": "Stories",
+    "dossiersHeading": "Dossiers"
+  },
   "story": {
     "backToArchive": "‹ Back to the archive",
     "ratingLabel": "Community rating",
