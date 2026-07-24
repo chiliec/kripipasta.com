@@ -40,6 +40,7 @@
     "@types/react-dom": "^19.0.0",
     "@types/sanitize-html": "^2.16.1",
     "dotenv": "^17.4.2",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.11",
     "he": "^1.2.0",

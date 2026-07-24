@@ -2,6 +2,8 @@
 .github
 node_modules
 .next
+# Prisma client is regenerated in the builder; never copy the host's copy.
+src/generated
 out
 backup
 design

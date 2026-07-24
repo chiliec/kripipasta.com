@@ -11,17 +11,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl \
 COPY package.json package-lock.json ./
 RUN npm ci
 
-COPY prisma ./prisma
-RUN npx prisma generate
-
+# Generate the Prisma 7 client into src/generated/prisma. Needs the full source
+# (schema + prisma.config.ts), so it must run after `COPY . .`.
 COPY . .
+RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Bundle the redirect-map generator so it can be run with plain node at startup.
-RUN ./node_modules/.bin/esbuild --bundle --platform=node --format=cjs \
+# --tsconfig resolves the @/ path alias (incl. the generated client, which gets
+# bundled in); the Prisma runtime deps stay external and resolve from the
+# standalone node_modules at startup. ESM output (not CJS) so `import.meta.url`
+# used by bundled deps resolves at runtime.
+RUN ./node_modules/.bin/esbuild --bundle --platform=node --format=esm \
+  --tsconfig=tsconfig.json \
   --external:@prisma/client \
-  --outfile=/app/gen-redirects.cjs \
+  --external:@prisma/adapter-pg \
+  --external:pg \
+  --outfile=/app/gen-redirects.mjs \
   src/build/gen-legacy-redirects.ts
 
 # ── Runner: minimal standalone image + Prisma CLI for `migrate deploy` ──
@@ -43,20 +50,31 @@ COPY --from=builder /app/.next/static ./.next/static
 
 # Prisma schema + migrations for `migrate deploy`.
 COPY --from=builder /app/prisma ./prisma
-# Runtime Prisma client + query engine (belt-and-suspenders over standalone tracing).
+# The Prisma 7 client is engineless TS bundled into the standalone server output,
+# and pg is traced into standalone node_modules. The redirect-gen script
+# (gen-redirects.mjs) keeps the Prisma packages external, so copy the full @prisma
+# tree (adapter-pg + its @prisma/driver-adapter-utils dep + client) for it to resolve.
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Prisma CLI with its FULL dependency closure (incl. the hoisted `effect` dep of
-# @prisma/config), installed into an isolated prefix so `migrate deploy` runs at
-# startup and npm can't prune the slim standalone node_modules. Keep the version
-# in sync with package.json's prisma devDependency.
+# Prisma CLI with its FULL dependency closure, installed into an isolated prefix so
+# `migrate deploy` runs at startup and npm can't prune the slim standalone
+# node_modules. Keep the version in sync with package.json's prisma devDependency.
+# Prisma 7 needs a config file for the datasource URL (removed from schema.prisma);
+# placing it alongside the CLI makes `prisma/config` resolvable when the entrypoint
+# runs `migrate deploy` from this directory.
 RUN mkdir -p /opt/prisma-cli \
   && cd /opt/prisma-cli \
   && npm init -y >/dev/null 2>&1 \
-  && npm install prisma@6.19.3 >/dev/null 2>&1
+  && npm install prisma@7.9.0 >/dev/null 2>&1 \
+  && printf '%s\n' \
+    'import { defineConfig, env } from "prisma/config";' \
+    'export default defineConfig({' \
+    '  schema: "/app/prisma/schema.prisma",' \
+    '  migrations: { path: "/app/prisma/migrations" },' \
+    '  datasource: { url: env("DATABASE_URL") },' \
+    '});' > /opt/prisma-cli/prisma.config.ts
 
-COPY --from=builder /app/gen-redirects.cjs ./gen-redirects.cjs
+COPY --from=builder /app/gen-redirects.mjs ./gen-redirects.mjs
 
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
