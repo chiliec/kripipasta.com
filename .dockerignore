@@ -14,7 +14,8 @@ Dockerfile
 .dockerignore
 docker-compose.yml
 docker-compose.migrate.yml
-docker-compose.prod.yml
+config
+.kamal
 .env
 .env.*
 !.env.example
