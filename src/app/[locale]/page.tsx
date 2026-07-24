@@ -7,6 +7,7 @@ import ScoreBadge from "@/components/ScoreBadge";
 import { getFeaturedStory, type StorySort } from "@/lib/stories";
 import { excerpt, ratingKey } from "@/lib/story-display";
 import { storyScore10 } from "@/lib/scoring/display";
+import { buildSafe } from "@/lib/build-safe";
 
 export const revalidate = 3600;
 
@@ -35,7 +36,7 @@ export default async function HomePage({
   const sort = parseSort(sp.sort);
   const take = parseTake(sp.take);
   const tagSlug = sp.tag || undefined;
-  const featured = await getFeaturedStory();
+  const featured = await buildSafe(() => getFeaturedStory(), null);
 
   return (
     <>

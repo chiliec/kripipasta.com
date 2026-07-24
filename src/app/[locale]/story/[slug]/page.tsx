@@ -18,12 +18,13 @@ import {
   readingTimeMinutes,
   excerpt,
 } from "@/lib/story-display";
+import { buildSafe } from "@/lib/build-safe";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const slugs = await getAllApprovedSlugs();
+  const slugs = await buildSafe<string[]>(() => getAllApprovedSlugs(), []);
   return routing.locales.flatMap((locale) =>
     slugs.map((slug) => ({ locale, slug })),
   );

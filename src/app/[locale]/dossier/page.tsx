@@ -4,6 +4,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DossierCard from "@/components/DossierCard";
 import { getPublishedDossiers } from "@/lib/dossiers";
+import { buildSafe } from "@/lib/build-safe";
 
 export const revalidate = 3600;
 
@@ -25,7 +26,7 @@ export default async function DossierIndexPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("dossier");
-  const dossiers = await getPublishedDossiers();
+  const dossiers = await buildSafe(() => getPublishedDossiers(), []);
 
   return (
     <>
