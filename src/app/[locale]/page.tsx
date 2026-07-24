@@ -8,6 +8,8 @@ import { getFeaturedStory, type StorySort } from "@/lib/stories";
 import { excerpt, ratingKey } from "@/lib/story-display";
 import { storyScore10 } from "@/lib/scoring/display";
 import { buildSafe } from "@/lib/build-safe";
+import JsonLd from "@/components/JsonLd";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -38,8 +40,25 @@ export default async function HomePage({
   const tagSlug = sp.tag || undefined;
   const featured = await buildSafe(() => getFeaturedStory(), null);
 
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: `${SITE_URL}/${locale}`,
+    inLanguage: locale,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/${locale}/search?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <>
+      <JsonLd data={websiteLd} />
       <SiteHeader />
       <main className="pt-16">
         {featured && (

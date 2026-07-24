@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Bodoni_Moda, Space_Grotesk } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { SITE_NAME, SITE_URL, alternates, ogLocale } from "@/lib/seo";
 
 const serif = Bodoni_Moda({
   subsets: ["latin", "latin-ext"],
@@ -25,11 +26,37 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const metadata: Metadata = {
-  title: "Kripipasta — Архив интернет-хоррора",
-  description:
-    "Архив интернет-хоррора: истории, сущности и городские легенды сети.",
+export const viewport: Viewport = {
+  themeColor: "#0E0E10",
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const title = t("title");
+  const description = t("description");
+  return {
+    metadataBase: new URL(SITE_URL),
+    // Child pages set a bare `title`; the template appends the brand suffix.
+    title: { default: title, template: `%s — ${SITE_NAME}` },
+    description,
+    applicationName: SITE_NAME,
+    alternates: alternates(locale, ""),
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: ogLocale(locale),
+      url: `/${locale}`,
+      title,
+      description,
+    },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 export default async function LocaleLayout({
   children,

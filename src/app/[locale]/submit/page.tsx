@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SubmitForm from "@/components/SubmitForm";
+import { alternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -11,7 +12,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "submit" });
-  return { title: `${t("heading")} — Kripipasta` };
+  return {
+    title: t("heading"),
+    alternates: alternates(locale, "/submit"),
+  };
 }
 
 export default async function SubmitPage({

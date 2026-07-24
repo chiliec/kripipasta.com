@@ -106,6 +106,7 @@ export default async function StoryFeed({
         <div className="mt-10 flex justify-center">
           <Link
             href={href({ sort, tag: tagSlug, take: take + PAGE })}
+            scroll={false}
             className="rounded-[12px] border border-line bg-s1 px-6 py-3 text-[13px] text-tx2 hover:border-line2 hover:text-ink"
           >
             {t("loadMore")}

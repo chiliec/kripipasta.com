@@ -17,6 +17,8 @@ import {
 } from "@/lib/dossiers";
 import { threatLevelKey, dossierScore100 } from "@/lib/dossier-display";
 import { buildSafe } from "@/lib/build-safe";
+import JsonLd from "@/components/JsonLd";
+import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -43,9 +45,15 @@ export async function generateMetadata({
     return { title: t("heading") };
   }
   return {
-    title: `${dossier.name} — Kripipasta`,
+    title: dossier.name,
     description: dossier.lead,
-    openGraph: { title: dossier.name, description: dossier.lead, type: "article" },
+    alternates: alternates(locale, `/dossier/${slug}`),
+    openGraph: {
+      title: dossier.name,
+      description: dossier.lead,
+      type: "article",
+      url: `/${locale}/dossier/${slug}`,
+    },
   };
 }
 
@@ -65,8 +73,22 @@ export default async function DossierPage({
   const threat = t(threatLevelKey(dossier.threatLevel));
   const pop = dossierScore100(dossier.score);
 
+  const canonical = `${SITE_URL}/${locale}/dossier/${slug}`;
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: dossier.name,
+    description: dossier.lead,
+    inLanguage: locale,
+    publisher: { "@type": "Organization", name: SITE_NAME },
+    image: `${canonical}/opengraph-image`,
+    mainEntityOfPage: canonical,
+    url: canonical,
+  };
+
   return (
     <>
+      <JsonLd data={articleLd} />
       <ReadingProgress />
       <SiteHeader />
       <main className="pt-16">
