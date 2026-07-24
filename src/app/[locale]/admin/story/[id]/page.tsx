@@ -35,7 +35,7 @@ export default async function AdminStoryPage({
         {story.title}
       </h1>
       <p className="mt-3 font-mono text-[11px] text-tx3">
-        {t("submittedOn")} {formatStoryDate(story.createdAt)}
+        {t("submittedOn")} {formatStoryDate(story.createdAt, locale)}
         {story.authorName && ` · ${t("submittedBy")}: ${story.authorName}`}
         {story.authorEmail && ` · ${story.authorEmail}`}
       </p>

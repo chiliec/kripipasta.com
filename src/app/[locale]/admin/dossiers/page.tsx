@@ -51,7 +51,7 @@ export default async function AdminDossiersPage({
                   {d.name}
                 </Link>
                 <p className="mt-1 font-mono text-[11px] text-tx3">
-                  {d.status === "APPROVED" ? t("statusApproved") : t("statusDraft")} · {formatStoryDate(d.updatedAt)}
+                  {d.status === "APPROVED" ? t("statusApproved") : t("statusDraft")} · {formatStoryDate(d.updatedAt, locale)}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
