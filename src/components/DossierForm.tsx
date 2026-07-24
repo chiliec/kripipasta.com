@@ -10,6 +10,15 @@ const inputCls =
   "w-full rounded-[10px] border border-line bg-s2 px-3 py-2 text-[14px] text-ink";
 const labelCls = "mb-1 block font-mono text-[11px] uppercase tracking-[0.15em] text-tx3";
 
+function Field({ name, label, value = "" }: { name: string; label: string; value?: string }) {
+  return (
+    <div>
+      <label className={labelCls}>{label}</label>
+      <input name={name} defaultValue={value} className={inputCls} />
+    </div>
+  );
+}
+
 export default function DossierForm({
   action,
   dossier,
@@ -26,15 +35,6 @@ export default function DossierForm({
   const relatedLines = (dossier?.related ?? [])
     .map((r) => `${r.targetSlug}|${r.name}|${r.rel}|${r.threat}`)
     .join("\n");
-
-  function Field({ name, label, value = "" }: { name: string; label: string; value?: string }) {
-    return (
-      <div>
-        <label className={labelCls}>{label}</label>
-        <input name={name} defaultValue={value} className={inputCls} />
-      </div>
-    );
-  }
 
   return (
     <form action={action} className="flex flex-col gap-5">

@@ -42,7 +42,7 @@ function goneResponse(): NextResponse {
   });
 }
 
-export default function middleware(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   const res = resolveLegacyRedirect(req.nextUrl.pathname, approvedSlugById);
   if (res.kind === "redirect") {
     return NextResponse.redirect(new URL(res.location, req.url), res.status);

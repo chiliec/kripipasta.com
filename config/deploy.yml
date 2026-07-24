@@ -19,7 +19,7 @@ proxy:
   app_port: 3000                   # matches EXPOSE in the Dockerfile
   ssl: true
   healthcheck:
-    path: /api/health              # DB-backed 200/503 JSON; excluded from the next-intl middleware matcher
+    path: /api/health              # DB-backed 200/503 JSON; excluded from the next-intl proxy matcher
 
 registry:
   server: ghcr.io                  # GitHub Container Registry
