@@ -75,7 +75,7 @@ export default async function StoryPage({
 
   const related = await getRelatedStories(story, 3);
   const minutes = readingTimeMinutes(story.contentHtml);
-  const posted = formatStoryDate(story.approvedAt ?? story.createdAt);
+  const posted = formatStoryDate(story.approvedAt ?? story.createdAt, locale);
 
   const canonical = `${SITE_URL}/${locale}/story/${slug}`;
   const articleLd = {

@@ -165,6 +165,10 @@ export async function getFilterTags(
   take = 8,
 ): Promise<{ slug: string; name: string }[]> {
   return prisma.tag.findMany({
+    // `frequency` counts all 9,681 legacy stories, but only APPROVED stories are
+    // browsable — so the top-frequency tags often have zero approved stories and
+    // their chips lead to an empty grid. Restrict to tags with ≥1 approved story.
+    where: { stories: { some: { story: { status: "APPROVED" } } } },
     orderBy: { frequency: "desc" },
     take,
     select: { slug: true, name: true },

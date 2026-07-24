@@ -97,7 +97,7 @@ export default async function AdminQueuePage({
                   {s.title}
                 </Link>
                 <p className="mt-1 font-mono text-[11px] text-tx3">
-                  {t("submittedOn")} {formatStoryDate(s.createdAt)}
+                  {t("submittedOn")} {formatStoryDate(s.createdAt, locale)}
                   {s.authorName && ` · ${t("submittedBy")}: ${s.authorName}`}
                   {s.legacyId !== null && " · legacy"}
                 </p>
