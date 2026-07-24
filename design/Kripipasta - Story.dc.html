@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E0E10;--s1:#141418;--s2:#1A1A20;--s3:#212129;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);--tx:#ECECEF;--tx2:rgba(236,236,239,.66);--tx3:rgba(236,236,239,.42);--crimson:#B85450;--crimson2:#CA6E6A;--crimson-deep:#6E2C2A;--crimson-glow:rgba(184,84,80,.30);--fog:.6;--serif:'Bodoni Moda',Georgia,serif;--sans:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;--mono:ui-monospace,'SFMono-Regular',Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--crimson2);text-decoration:none}
+a:hover{color:#E29A96}
+::selection{background:var(--crimson-deep);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-thumb{background:#2a2a31;border-radius:6px;border:3px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+[data-tocitem]{transition:color .2s,background .2s}
+[data-tocitem]:hover{color:var(--tx)}
+[data-tocbar]{transition:transform .25s ease,opacity .25s;transform:scaleY(0);opacity:0;transform-origin:center}
+[data-tocitem][data-active="true"]{color:var(--tx)}
+[data-tocitem][data-active="true"] [data-tocbar]{transform:scaleY(1);opacity:1}
+[data-tocitem][data-active="true"] [data-tocnum]{color:var(--crimson)}
+[data-navrow]{transition:color .2s,background .2s}
+[data-navrow]:hover{color:var(--tx);background:var(--s2)}
+[data-btn]{transition:background .2s,border-color .2s,color .2s,transform .12s}
+[data-btn]:hover{background:var(--s3);border-color:var(--line2)}
+[data-btn]:active{transform:translateY(1px)}
+[data-btn][data-on="true"]{color:var(--crimson2);border-color:var(--crimson-deep);background:rgba(184,84,80,.10)}
+[data-seg]{transition:color .2s,background .25s}
+[data-seg][data-on="true"]{color:var(--tx);background:var(--s3)}
+[data-fig]{transition:transform .3s,border-color .25s,box-shadow .3s}
+[data-fig]:hover{transform:scale(1.01);border-color:var(--line2);box-shadow:0 16px 46px rgba(0,0,0,.5)}
+[data-fig]:hover [data-figzoom]{opacity:1}
+[data-figzoom]{opacity:0;transition:opacity .25s}
+[data-play]{transition:transform .25s,background .25s}
+[data-videobox]:hover [data-play]{transform:scale(1.08);background:var(--crimson)}
+[data-relcard]{transition:transform .25s ease,border-color .25s,background .25s}
+[data-relcard]:hover{transform:translateY(-4px);border-color:var(--line2);background:var(--s2)}
+[data-spwrap] [data-spbody]{filter:blur(9px);transition:filter .5s ease;user-select:none;pointer-events:none}
+[data-spwrap][data-revealed="true"] [data-spbody]{filter:none;user-select:auto;pointer-events:auto}
+[data-spwrap] [data-spcover]{opacity:1;transition:opacity .35s ease}
+[data-spwrap][data-revealed="true"] [data-spcover]{opacity:0;pointer-events:none}
+[data-thumb]{transition:background .2s,border-color .2s,color .2s,transform .12s}
+[data-thumb]:hover{background:var(--s3);border-color:var(--line2)}
+[data-thumb]:active{transform:scale(.97)}
+[data-thumb][data-on="true"]{color:var(--crimson2);border-color:var(--crimson);background:rgba(184,84,80,.14)}
+@keyframes fogA{0%{transform:translate3d(0,0,0) scale(1.05)}50%{transform:translate3d(3%,-2%,0) scale(1.14)}100%{transform:translate3d(0,0,0) scale(1.05)}}
+@keyframes fogB{0%{transform:translate3d(0,0,0) scale(1.1)}50%{transform:translate3d(-4%,3%,0) scale(1.18)}100%{transform:translate3d(0,0,0) scale(1.1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes scrollcue{0%{transform:translateY(-2px);opacity:0}35%{opacity:1}100%{transform:translateY(9px);opacity:0}}
+@keyframes flicker{0%,100%{opacity:.5}45%{opacity:.5}47%{opacity:.16}49%{opacity:.5}70%{opacity:.5}72%{opacity:.2}74%{opacity:.5}}
+#hero-inner{padding:0 48px 62px 260px}
+#page{padding:0 40px 0 252px}
+#main-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:44px;align-items:start;padding:56px 0 90px}
+@media (max-width:1200px){#scrollcue{display:none!important}}
+@media (max-width:980px){#main-grid{grid-template-columns:minmax(0,1fr)}#side-col{order:2}#side-col>div{position:static!important}}
+@media (max-width:720px){#left-rail{display:none!important}#page{padding-left:40px}#hero-inner{padding-left:48px}}
+@media (max-width:560px){#hero-inner{padding:0 22px 44px}#page{padding:0 20px}}
+</style>
+</helmet>
+<div id="m-root">
+
+<div style="position:fixed;top:0;left:0;right:0;height:3px;z-index:120;background:rgba(255,255,255,.05)"><div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));box-shadow:0 0 14px var(--crimson-glow);transition:width .12s linear"></div></div>
+
+<aside id="left-rail" style="position:fixed;top:0;left:0;width:230px;height:100vh;z-index:110;display:flex;flex-direction:column;padding:24px 20px;border-right:1px solid var(--line);background:linear-gradient(180deg,rgba(14,14,16,.86),rgba(14,14,16,.72));backdrop-filter:blur(14px);overflow-y:auto">
+  <a href="Kripipasta%20-%20Home.dc.html" style="display:flex;align-items:center;gap:11px;margin-bottom:20px;text-decoration:none">
+    <span style="width:11px;height:11px;background:var(--crimson);transform:rotate(45deg);box-shadow:0 0 12px var(--crimson-glow)"></span>
+    <span><span style="display:block;font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:.02em;line-height:1;color:var(--tx)">KRIPIPASTA</span><span style="display:block;font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--tx3);margin-top:3px">{{ subtitle }}</span></span>
+  </a>
+
+  <div style="display:flex;gap:3px;padding:3px;background:var(--s1);border:1px solid var(--line);border-radius:10px;margin-bottom:18px">
+    <button data-seg data-on="{{ langEn }}" data-lang="en" onClick="{{ setLang }}" style="flex:1;padding:7px;background:none;border:none;border-radius:7px;color:var(--tx2);font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.06em;cursor:pointer">EN</button>
+    <button data-seg data-on="{{ langRu }}" data-lang="ru" onClick="{{ setLang }}" style="flex:1;padding:7px;background:none;border:none;border-radius:7px;color:var(--tx2);font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.06em;cursor:pointer">RU</button>
+  </div>
+
+  <a data-navrow href="Kripipasta%20-%20Home.dc.html" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--tx2);font-size:12.5px;margin-bottom:22px;border:1px solid var(--line)"><span style="font-size:14px">‹</span> {{ back }}</a>
+
+  <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span>{{ chaptersLabel }}</span><span style="font-family:var(--mono);color:var(--tx3)">{{ progressLabel }}</span></div>
+  <nav style="display:flex;flex-direction:column;gap:1px;margin-bottom:26px">
+    <sc-for list="{{ toc }}" as="t" hint-placeholder-count="4">
+      <a data-tocitem data-active="{{ t.active }}" data-target="{{ t.id }}" href="{{ t.href }}" onClick="{{ tocClick }}" style="display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:7px;color:var(--tx2);text-decoration:none;font-size:12.5px;position:relative">
+        <span data-tocbar style="position:absolute;left:0;top:22%;bottom:22%;width:2px;background:var(--crimson);border-radius:2px"></span>
+        <span data-tocnum style="font-family:var(--mono);font-size:10px;color:var(--tx3);min-width:16px">{{ t.num }}</span>
+        <span style="text-wrap:pretty">{{ t.label }}</span>
+      </a>
+    </sc-for>
+  </nav>
+
+  <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">{{ categoriesLabel }}</div>
+  <div style="display:flex;flex-direction:column;gap:1px;margin-bottom:26px">
+    <sc-for list="{{ cats }}" as="c" hint-placeholder-count="4">
+      <a data-navrow href="#" style="padding:6px 8px;border-radius:7px;color:var(--tx2);font-size:12.5px">{{ c }}</a>
+    </sc-for>
+  </div>
+
+  <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">{{ moreStories }}</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ related }}" as="r" hint-placeholder-count="3">
+      <a data-navrow href="#" style="display:flex;gap:10px;align-items:center;padding:5px 6px;border-radius:7px;color:var(--tx2)"><span style="width:26px;height:26px;border-radius:6px;background:repeating-linear-gradient(135deg,#1b1b22,#1b1b22 4px,#202028 4px,#202028 8px);flex:none"></span><span style="font-size:12px">{{ r.name }}</span></a>
+    </sc-for>
+  </div>
+  <div style="margin-top:auto;padding-top:22px;font-family:var(--mono);font-size:9.5px;color:var(--tx3);letter-spacing:.05em">{{ submissionFlag }}</div>
+</aside>
+
+<section id="hero" style="position:relative;min-height:82vh;overflow:hidden;display:flex;align-items:flex-end;border-bottom:1px solid var(--line)">
+  <div style="position:absolute;top:-8%;right:-6%;width:64%;height:118%;z-index:0;background:repeating-linear-gradient(0deg,#121216,#121216 2px,#16161c 3px,#16161c 4px);opacity:.55;animation:flicker 7s steps(1) infinite"></div>
+  <div style="position:absolute;top:0;right:0;width:64%;height:100%;z-index:0;background:repeating-linear-gradient(122deg,#141418,#141418 13px,#17171d 13px,#17171d 26px);opacity:.8"></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,var(--bg) 24%,rgba(14,14,16,.74) 48%,rgba(14,14,16,.2) 74%,rgba(14,14,16,.5) 100%)"></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(0deg,var(--bg) 2%,rgba(14,14,16,0) 42%)"></div>
+  <div style="position:absolute;top:-30%;left:-10%;width:80%;height:90%;z-index:2;background:radial-gradient(closest-side,rgba(184,84,80,.10),rgba(184,84,80,0) 70%);opacity:var(--fog);animation:fogA 26s ease-in-out infinite;pointer-events:none"></div>
+  <div style="position:absolute;bottom:-30%;right:5%;width:75%;height:90%;z-index:2;background:radial-gradient(closest-side,rgba(150,150,170,.09),rgba(150,150,170,0) 70%);opacity:var(--fog);animation:fogB 34s ease-in-out infinite;pointer-events:none"></div>
+
+  <div id="hero-inner" style="position:relative;z-index:3;width:100%;max-width:1360px;margin:0 auto;animation:fadeUp .9s ease both">
+    <div style="display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--tx3);margin-bottom:24px">
+      <a href="Kripipasta%20-%20Home.dc.html" style="color:var(--tx3)">{{ bcArchive }}</a><span>/</span><a href="#" style="color:var(--tx3)">{{ bcCat }}</a><span>/</span><span style="color:var(--tx2)">{{ bcTitle }}</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:18px">
+      <span style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson2);font-weight:500">{{ eyebrow }}</span>
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--tx3)"></span>
+      <span style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3)">{{ submission }}</span>
+    </div>
+    <h1 style="font-family:var(--serif);font-weight:500;font-size:clamp(52px,8vw,120px);line-height:.92;letter-spacing:-.01em;margin:0 0 16px;text-wrap:balance">{{ title1 }}<br>{{ title2 }}</h1>
+    <p style="font-family:var(--serif);font-style:italic;font-size:clamp(18px,2.2vw,26px);line-height:1.4;color:var(--tx2);max-width:40ch;margin:0 0 30px">{{ dek }}</p>
+
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:40px;height:40px;border-radius:50%;background:repeating-linear-gradient(135deg,#1c1c24,#1c1c24 4px,#262633 4px,#262633 8px);border:1px solid var(--line2);flex:none"></span>
+        <div style="line-height:1.35"><div style="font-size:13.5px;color:var(--tx)">{{ by }} <span style="color:var(--crimson2)">u/late_signal</span></div><div style="font-size:11.5px;color:var(--tx3)">{{ posted }}</div></div>
+      </div>
+      <div style="width:1px;height:34px;background:var(--line)"></div>
+      <div style="display:flex;align-items:center;gap:9px">
+        <button data-btn data-on="{{ saved }}" onClick="{{ toggleSave }}" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--s1);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer"><span style="width:9px;height:12px;border:1.6px solid currentColor;border-bottom:none;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%);display:inline-block"></span>{{ saveLabel }}</button>
+        <button data-btn data-on="{{ copied }}" onClick="{{ copyLink }}" style="padding:10px 16px;background:var(--s1);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">{{ copyLabel }}</button>
+      </div>
+    </div>
+  </div>
+  <div id="scrollcue" style="position:absolute;left:50%;bottom:22px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--tx3)"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.2em">{{ readCue }}</span><span style="width:1px;height:26px;background:linear-gradient(var(--tx3),transparent);position:relative;overflow:hidden"><span style="position:absolute;top:0;left:0;width:1px;height:8px;background:var(--crimson);animation:scrollcue 2.2s ease-in-out infinite"></span></span></div>
+</section>
+
+<div id="page">
+<div id="main-grid">
+
+  <main id="article-col" style="min-width:0">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg,rgba(184,84,80,.07),var(--s1));border:1px solid var(--crimson-deep);border-radius:11px;margin-bottom:40px;max-width:64ch">
+      <span style="font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--crimson2);border:1px solid var(--crimson-deep);border-radius:5px;padding:3px 7px;white-space:nowrap">{{ cwLabel }}</span>
+      <span style="font-size:12.5px;color:var(--tx2);line-height:1.5">{{ cw }}</span>
+    </div>
+
+    <p style="font-family:var(--serif);font-size:clamp(21px,2.4vw,28px);line-height:1.45;color:var(--tx);margin:0 0 44px;max-width:38ch;text-wrap:pretty">{{ lead }}</p>
+
+    <section id="sec-tape" style="scroll-margin-top:80px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:20px"><span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">01</span><h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(26px,3vw,36px);line-height:1.05;margin:0">{{ chL1 }}</h2></div>
+      <sc-for list="{{ ch1 }}" as="p" hint-placeholder-count="2"><p style="font-size:18px;line-height:1.85;color:var(--tx2);margin:0 0 22px;max-width:64ch;text-wrap:pretty">{{ p }}</p></sc-for>
+
+      <figure data-fig data-index="0" onClick="{{ openLightbox }}" style="margin:8px 0 12px;position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:zoom-in;background:repeating-linear-gradient(135deg,#151519,#151519 12px,#191920 12px,#191920 24px);aspect-ratio:16/10">
+        <span style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 1px,transparent 2px,transparent 4px)"></span>
+        <span data-figzoom style="position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--tx2);background:rgba(14,14,16,.7);border:1px solid var(--line);border-radius:7px;padding:5px 9px;backdrop-filter:blur(6px)">⤢ {{ expand }}</span>
+        <span style="position:absolute;left:16px;bottom:14px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--tx2)">{{ fig1 }}</span>
+      </figure>
+      <figcaption style="font-size:12.5px;line-height:1.6;color:var(--tx3);margin:0 0 40px;max-width:56ch">{{ fig1cap }}</figcaption>
+    </section>
+
+    <section id="sec-channel" style="scroll-margin-top:80px;padding-top:8px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:20px"><span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">02</span><h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(26px,3vw,36px);line-height:1.05;margin:0">{{ chL2 }}</h2></div>
+      <sc-for list="{{ ch2 }}" as="p" hint-placeholder-count="2"><p style="font-size:18px;line-height:1.85;color:var(--tx2);margin:0 0 22px;max-width:64ch;text-wrap:pretty">{{ p }}</p></sc-for>
+
+      <div data-videobox style="position:relative;aspect-ratio:16/9;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;margin:6px 0 12px">
+        <sc-if value="{{ videoPlaying }}" hint-placeholder-val="{{ false }}">
+          <iframe src="https://www.youtube-nocookie.com/embed/{{ videoId }}?autoplay=1&rel=0&modestbranding=1" title="{{ bcTitle }}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </sc-if>
+        <sc-if value="{{ videoIdle }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ playVideo }}" style="position:absolute;inset:0;width:100%;height:100%;border:none;padding:0;cursor:pointer;background:repeating-linear-gradient(135deg,#141418,#141418 14px,#191920 14px,#191920 28px)">
+            <img src="https://i.ytimg.com/vi/{{ videoId }}/hqdefault.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;filter:grayscale(.4) contrast(1.05)">
+            <span style="position:absolute;inset:0;background:radial-gradient(closest-side,rgba(14,14,16,.2),rgba(14,14,16,.72))"></span>
+            <span style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.04),rgba(255,255,255,.04) 1px,transparent 2px,transparent 4px);animation:flicker 6s steps(1) infinite"></span>
+            <span data-play style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:50%;background:var(--crimson-deep);border:1px solid var(--crimson);display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px var(--crimson-glow)"><span style="width:0;height:0;border-left:20px solid #fff;border-top:13px solid transparent;border-bottom:13px solid transparent;margin-left:5px"></span></span>
+            <span style="position:absolute;left:16px;bottom:14px;display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--tx2)"><span style="color:var(--crimson2)">▶</span> {{ videoWatch }}</span>
+            <span style="position:absolute;right:14px;top:14px;font-family:var(--mono);font-size:10px;color:#fff;background:#c00;border-radius:4px;padding:3px 7px;letter-spacing:.06em;display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 2s infinite"></span>REC</span>
+          </button>
+        </sc-if>
+      </div>
+      <figcaption style="font-size:12.5px;line-height:1.6;color:var(--tx3);margin:0 0 20px;max-width:56ch">{{ videoCap }}</figcaption>
+
+      <blockquote style="margin:0 0 40px;padding:22px 28px;border-left:2px solid var(--crimson);background:linear-gradient(90deg,rgba(184,84,80,.07),transparent);border-radius:0 12px 12px 0;max-width:60ch">
+        <p style="font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.5;margin:0;color:var(--tx)">{{ quote }}</p>
+      </blockquote>
+    </section>
+
+    <section id="sec-304" style="scroll-margin-top:80px;padding-top:8px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:20px"><span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">03</span><h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(26px,3vw,36px);line-height:1.05;margin:0">{{ chL3 }}</h2></div>
+      <sc-for list="{{ ch3 }}" as="p" hint-placeholder-count="2"><p style="font-size:18px;line-height:1.85;color:var(--tx2);margin:0 0 22px;max-width:64ch;text-wrap:pretty">{{ p }}</p></sc-for>
+
+      <figure data-fig data-index="1" onClick="{{ openLightbox }}" style="margin:8px 0 12px;position:relative;border:1px solid var(--crimson-deep);border-radius:14px;overflow:hidden;cursor:zoom-in;background:repeating-linear-gradient(135deg,#171317,#171317 12px,#1b1519 12px,#1b1519 24px);aspect-ratio:16/9">
+        <span style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 1px,transparent 2px,transparent 4px);animation:flicker 5s steps(1) infinite"></span>
+        <span data-figzoom style="position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--tx2);background:rgba(14,14,16,.7);border:1px solid var(--line);border-radius:7px;padding:5px 9px;backdrop-filter:blur(6px)">⤢ {{ expand }}</span>
+        <span style="position:absolute;left:16px;bottom:14px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--crimson2)">{{ fig2 }}</span>
+      </figure>
+      <figcaption style="font-size:12.5px;line-height:1.6;color:var(--tx3);margin:0 0 40px;max-width:56ch">{{ fig2cap }}</figcaption>
+
+      <div data-spwrap data-revealed="{{ spoilerOpen }}" style="position:relative;max-width:64ch;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:40px">
+        <div data-spbody style="padding:22px 24px;background:var(--s1)">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--crimson2);margin-bottom:10px">{{ spLabel }}</div>
+          <p style="font-size:16px;line-height:1.75;color:var(--tx);margin:0">{{ spBody }}</p>
+        </div>
+        <button data-spcover onClick="{{ revealSpoiler }}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(18,18,22,.55);backdrop-filter:blur(2px);border:none;cursor:pointer;color:var(--tx)"><span style="width:26px;height:26px;border:1.5px solid var(--crimson2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--crimson2);font-size:13px">!</span><span style="font-size:12.5px;font-weight:500">{{ spReveal }}</span><span style="font-size:11px;color:var(--tx3)">{{ spHint }}</span></button>
+      </div>
+    </section>
+
+    <section id="sec-upload" style="scroll-margin-top:80px;padding-top:8px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:20px"><span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">04</span><h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(26px,3vw,36px);line-height:1.05;margin:0">{{ chL4 }}</h2></div>
+      <sc-for list="{{ ch4 }}" as="p" hint-placeholder-count="2"><p style="font-size:18px;line-height:1.85;color:var(--tx2);margin:0 0 22px;max-width:64ch;text-wrap:pretty">{{ p }}</p></sc-for>
+
+      <div style="display:flex;align-items:center;gap:14px;padding:22px 26px;background:var(--s1);border:1px solid var(--line);border-radius:14px;max-width:64ch;margin-top:8px">
+        <span style="font-family:var(--serif);font-size:34px;color:var(--crimson-deep);line-height:1">“</span>
+        <p style="font-size:14px;line-height:1.65;color:var(--tx2);margin:0">{{ note }}</p>
+      </div>
+    </section>
+
+    <!-- RATE -->
+    <div style="margin-top:44px;padding:26px 28px;background:linear-gradient(180deg,var(--s1),rgba(20,20,24,.35));border:1px solid var(--line);border-radius:16px;max-width:64ch">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:16px">{{ rateTitle }}</div>
+      <sc-if value="{{ notVoted }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <p style="font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.4;color:var(--tx2);margin:0 0 18px">{{ ratePrompt }}</p>
+          <div style="display:flex;gap:12px">
+            <button data-thumb data-vote="up" onClick="{{ vote }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;background:var(--s2);border:1px solid var(--line);border-radius:12px;color:var(--tx);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v10H4V10z"/><path d="M7 10l4-7c1.3 0 2 .9 2 2v3h5.4c1 0 1.8.9 1.6 1.9l-1.4 6.2c-.2.9-1 1.9-2 1.9H7"/></svg>{{ up }}</button>
+            <button data-thumb data-vote="down" onClick="{{ vote }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;background:var(--s2);border:1px solid var(--line);border-radius:12px;color:var(--tx2);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V4h3v10z"/><path d="M17 14l-4 7c-1.3 0-2-.9-2-2v-3H5.6c-1 0-1.8-.9-1.6-1.9l1.4-6.2c.2-.9 1-1.9 2-1.9H17"/></svg>{{ down }}</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ voted }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:flex-end;gap:18px;margin-bottom:8px">
+            <div style="font-family:var(--serif);font-size:56px;line-height:.82;color:var(--tx)">{{ ratingScore }}<span style="font-size:19px;color:var(--tx3)"> / 10</span></div>
+            <div style="flex:1;padding-bottom:6px">
+              <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-bottom:7px"><div style="height:100%;width:{{ ratingPct }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width .5s ease"></div></div>
+              <div style="font-size:11.5px;color:var(--tx3)">{{ totalVotes }} {{ votesWord }} · {{ ratingWord }}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:14px;border-top:1px solid var(--line)">
+            <span style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--tx2)"><span style="color:var(--crimson2)">{{ youVoteGlyph }}</span>{{ youVoted }}: <span style="color:var(--tx)">{{ youVoteLabel }}</span></span>
+            <button data-btn data-vote="reset" onClick="{{ vote }}" style="margin-left:auto;padding:8px 14px;background:var(--s2);border:1px solid var(--line);border-radius:9px;color:var(--tx2);font-family:var(--sans);font-size:12px;cursor:pointer">{{ changeVote }}</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:26px;padding-top:26px;border-top:1px solid var(--line)">
+      <button data-btn data-on="{{ copied }}" onClick="{{ copyLink }}" style="padding:12px 20px;background:var(--s1);border:1px solid var(--line);border-radius:11px;color:var(--tx);font-family:var(--sans);font-size:13.5px;font-weight:500;cursor:pointer">{{ copyLabel }}</button>
+      <button data-btn data-on="{{ saved }}" onClick="{{ toggleSave }}" style="padding:12px 20px;background:var(--s1);border:1px solid var(--line);border-radius:11px;color:var(--tx);font-family:var(--sans);font-size:13.5px;font-weight:500;cursor:pointer">{{ saveLabel }}</button>
+      <a data-btn href="Kripipasta%20-%20Home.dc.html" style="margin-left:auto;padding:12px 20px;background:var(--s1);border:1px solid var(--line);border-radius:11px;color:var(--tx2);font-family:var(--sans);font-size:13.5px;cursor:pointer">{{ moreStoriesCta }} →</a>
+    </div>
+  </main>
+
+  <aside id="side-col" style="min-width:0;display:flex;flex-direction:column;gap:18px">
+    <div style="position:sticky;top:22px;display:flex;flex-direction:column;gap:18px">
+
+    <div style="padding:20px 22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3)">{{ progressTitle }}</span><span style="font-family:var(--serif);font-size:20px;color:var(--tx)">{{ progressLabel }}</span></div>
+      <div style="height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin-bottom:16px"><div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width .12s linear"></div></div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:9px"><div style="font-family:var(--serif);font-size:19px">11<span style="font-size:11px;color:var(--tx3)">m</span></div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:2px">{{ statRead }}</div></div>
+        <div style="flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:9px"><div style="font-family:var(--serif);font-size:19px;color:var(--tx)">4</div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:2px">{{ statParts }}</div></div>
+        <div style="flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:9px"><div style="font-family:var(--serif);font-size:19px;color:var(--crimson2)">{{ ratingScore }}</div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:2px">{{ statRating }}</div></div>
+      </div>
+    </div>
+
+    <div style="padding:22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:16px">{{ authorTitle }}</div>
+      <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">
+        <span style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,#1c1c24,#1c1c24 4px,#262633 4px,#262633 8px);border:1px solid var(--line2);flex:none"></span>
+        <div><div style="font-family:var(--serif);font-size:18px;color:var(--tx);line-height:1.1">late_signal</div><div style="font-size:11.5px;color:var(--tx3)">{{ authorMeta }}</div></div>
+      </div>
+      <p style="font-size:13px;line-height:1.6;color:var(--tx2);margin:0 0 16px">{{ authorBio }}</p>
+      <button data-btn data-on="{{ following }}" onClick="{{ toggleFollow }}" style="width:100%;padding:11px;background:var(--s2);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">{{ followLabel }}</button>
+    </div>
+
+    <div style="padding:22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px">{{ relTitle }}</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ related }}" as="r" hint-placeholder-count="3">
+          <a data-relcard href="#" style="display:flex;gap:13px;padding:12px;background:var(--s2);border:1px solid var(--line);border-radius:12px;text-decoration:none">
+            <span style="width:48px;height:60px;border-radius:8px;background:repeating-linear-gradient(135deg,#17171d,#17171d 6px,#1c1c24 6px,#1c1c24 12px);flex:none"></span>
+            <span style="display:flex;flex-direction:column;justify-content:center;min-width:0">
+              <span style="font-family:var(--serif);font-size:17px;color:var(--tx);line-height:1.1">{{ r.name }}</span>
+              <span style="font-size:11px;color:var(--tx3);margin-top:5px">{{ r.meta }}</span>
+            </span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+
+    </div>
+  </aside>
+
+</div>
+</div>
+
+<sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:200;background:rgba(9,9,11,.92);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;animation:fadeUp .25s ease both">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:900px;margin-bottom:16px">
+      <span style="font-family:var(--mono);font-size:12px;color:var(--tx3)">{{ lightboxNum }}</span>
+      <button onClick="{{ closeLightbox }}" style="width:36px;height:36px;border-radius:50%;background:var(--s1);border:1px solid var(--line);color:var(--tx);font-size:18px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div onClick="{{ stop }}" style="width:100%;max-width:900px;aspect-ratio:16/10;border-radius:16px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,#141418,#141418 16px,#191920 16px,#191920 32px);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center"><span style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 1px,transparent 2px,transparent 4px)"></span><span style="font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--tx3);border:1px dashed var(--line2);padding:10px 16px;border-radius:8px;position:relative">{{ lightboxItem.label }}</span></div>
+    <p onClick="{{ stop }}" style="max-width:640px;text-align:center;font-size:14px;line-height:1.6;color:var(--tx2);margin:20px 0 0">{{ lightboxItem.cap }}</p>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#B85450&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#B85450&quot;,&quot;#9E4B57&quot;,&quot;#8C4A3A&quot;,&quot;#A85C57&quot;,&quot;#7C4A6E&quot;]},&quot;fogIntensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:60,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:10,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;videoId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;aqz-KE-bpKQ&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  state = {
+    progress: 0, active: 'tape', lang: 'en',
+    saved: false, copied: false, following: false,
+    videoPlaying: false, spoilerOpen: false, lightbox: null, rateVote: null,
+  };
+  upBase = 1284; downBase = 401;
+  videoIdFallback = 'aqz-KE-bpKQ';
+  chapters = [ { id:'tape', num:'01' }, { id:'channel', num:'02' }, { id:'304', num:'03' }, { id:'upload', num:'04' } ];
+
+  i18n = {
+    en: {
+      subtitle:'Internet Horror Archive', back:'Back to the archive', chaptersLabel:'Chapters', categoriesLabel:'Categories',
+      cats:['Short Fiction','Analog Horror','Lost Media','Reader Submissions'],
+      moreStories:'More stories', moreStoriesCta:'More stories', submissionFlag:'READER SUBMISSION · UNVERIFIED',
+      bcArchive:'Archive', bcCat:'Short Fiction', bcTitle:'The 3:04 Broadcast',
+      eyebrow:'Analog Horror · Short Fiction', submission:'Reader Submission',
+      title1:'The 3:04', title2:'Broadcast',
+      dek:'Every night the dead channel plays the same four minutes of tape. Last week, it started showing my street.',
+      by:'by', posted:'Posted March 3, 2026 · 11 min read', readCue:'READ',
+      saveW:'Save', savedW:'Saved', copyW:'Copy link', copiedW:'Link copied',
+      cwLabel:'CONTENT WARNING', cw:'Contains themes of paranoia, insomnia, and unsettling imagery. Reader discretion advised.',
+      lead:'It always begins the same way — a hiss, a held breath of static, and then the number in the corner: 3:04.',
+      chapterLabels:['The Tape','Channel 8','3:04 A.M.','The Last Upload'],
+      ch1:['I found the VHS in a box of my grandfather\u2019s things, unlabeled except for a strip of masking tape gone amber with age. I only played it because the machine was already out, already humming, already hungry for something to read.','What came up was not a home movie. It was a broadcast — or the ghost of one. A test card, a low tone, and a timestamp that never moved past four minutes past three.'],
+      fig1:'FIG. 01 — the test card, paused at 3:04', fig1cap:'A frame from the tape, captured on my phone because screenshots of the playback come out black. Image: submitter.',
+      ch2:['Curiosity is a slow leak. I digitised the tape and uploaded the four minutes, expecting nothing — a curio for the analog-horror forums, a few polite comments. Instead, people wrote to say they recognised the tone. That they\u2019d heard it too, on a channel that shouldn\u2019t exist above the static: Channel 8.','Here is the clip, exactly as I uploaded it. Watch the lower-left corner at the ninety-second mark. I didn\u2019t notice the shape the first dozen times either.'],
+      videoWatch:'WATCH — recovered_ch8_0304.mp4 · 4:00', videoCap:'The clip as uploaded. Placeholder embed — swap the video ID for your own footage. Watch with sound.',
+      quote:'\u201CTurn it off,\u201D one comment read. \u201CTurn it off and don\u2019t upload it again. It counts the views.\u201D',
+      ch3:['I started waking at the same time every night. Not by an alarm — by the sense that the room had just finished being looked at. On the fourth night I got up and looked out the window, and the streetlight across the road was flickering in a rhythm I already knew. Four beats. A pause. Four beats.','The next morning a viewer sent me a still from the clip\u2019s final seconds — a frame I had never managed to reach before the tape cut out. They asked if the house in the background was mine.'],
+      fig2:'FIG. 02 — the final frame, enhanced by a viewer', fig2cap:'The building in the far right of the frame. I have not been able to prove it isn\u2019t my house. Image: u/deinterlaced.',
+      spLabel:'The part I haven\u2019t told anyone', spBody:'When I finally let the clip run to the end with the lights off, the timestamp changed. For a single frame it read 3:05 — one minute further than it has ever gone. I have four minutes of tape. I do not know where that extra minute is being recorded.', spReveal:'Reveal spoiler', spHint:'A detail from the ending',
+      ch4:['I\u2019m posting this at 2:58. I don\u2019t expect to take it down. The comment was right about one thing — it counts the views — but wrong about the rest. I don\u2019t think it wants to be turned off. I think it wants an audience, and now it has one the size of the internet.','If your streetlight is flickering as you read this — four beats, a pause, four beats — do me one small kindness. Don\u2019t look at the window. Just finish the story, and let it think you never noticed.'],
+      note:'This is a work of collaborative fiction submitted to the Kripipasta archive. Any resemblance to a channel above the static is, we are fairly sure, coincidental.',
+      expand:'Expand',
+      rateTitle:'Rate this story', ratePrompt:'Was it worth the sleep you\u2019re about to lose?',
+      up:'Worth it', down:'Not for me', votesWord:'votes', ratingWord:'community rating', youVoted:'You rated it', changeVote:'Change',
+      authorTitle:'The author', authorMeta:'Contributor · joined 2019', authorBio:'Collects dead broadcasts and the stories people tell about them. Three entries in the archive; this is the first they\u2019ve admitted is true.',
+      followW:'Follow author', followingW:'Following', relTitle:'If you liked this',
+      progressTitle:'Reading progress', statRead:'Read', statParts:'Parts', statRating:'Rating',
+      figWord:'Figure', ofWord:'of',
+      related:[{name:'The Last Channel',meta:'Analog Horror · 9 min'},{name:'Do Not Answer',meta:'Short Fiction · 6 min'},{name:'The Tenant Below',meta:'Urban Legend · 14 min'}],
+    },
+    ru: {
+      subtitle:'Архив интернет-хоррора', back:'Назад в архив', chaptersLabel:'Главы', categoriesLabel:'Категории',
+      cats:['Короткая проза','Аналоговый хоррор','Потерянные плёнки','Читательские истории'],
+      moreStories:'Другие истории', moreStoriesCta:'Другие истории', submissionFlag:'ЧИТАТЕЛЬСКАЯ ИСТОРИЯ · НЕ ПРОВЕРЕНО',
+      bcArchive:'Архив', bcCat:'Короткая проза', bcTitle:'Эфир в 3:04',
+      eyebrow:'Аналоговый хоррор · Короткая проза', submission:'Читательская история',
+      title1:'Эфир', title2:'в 3:04',
+      dek:'Каждую ночь мёртвый канал показывает одни и те же четыре минуты плёнки. На прошлой неделе на них появилась моя улица.',
+      by:'автор', posted:'Опубликовано 3 марта 2026 · 11 мин чтения', readCue:'ЧИТАТЬ',
+      saveW:'Сохранить', savedW:'Сохранено', copyW:'Скопировать ссылку', copiedW:'Ссылка скопирована',
+      cwLabel:'ПРЕДУПРЕЖДЕНИЕ', cw:'Содержит темы паранойи, бессонницы и тревожные образы. На усмотрение читателя.',
+      lead:'Всё всегда начинается одинаково — шипение, задержанный вдох помех, и число в углу экрана: 3:04.',
+      chapterLabels:['Плёнка','Канал 8','3:04 ночи','Последняя загрузка'],
+      ch1:['Я нашёл эту VHS-кассету в коробке с вещами деда, без подписи, если не считать полоски малярного скотча, пожелтевшей от времени. Я включил её только потому, что видеомагнитофон и так уже стоял наготове, уже гудел, уже жаждал что-нибудь прочитать.','На экране оказалось не домашнее видео. Это была трансляция — или её призрак. Настроечная таблица, низкий тон и таймкод, который так и не сдвинулся дальше четырёх минут четвёртого.'],
+      fig1:'КАДР 01 — настроечная таблица, остановлено на 3:04', fig1cap:'Кадр с плёнки, снятый на телефон, потому что скриншоты воспроизведения выходят чёрными. Фото: автор.',
+      ch2:['Любопытство — это медленная течь. Я оцифровал плёнку и выложил эти четыре минуты, ни на что не рассчитывая — диковинка для форумов об аналоговом хорроре, пара вежливых комментариев. Вместо этого мне стали писать, что узнают этот тон. Что тоже слышали его — на канале, которого не должно быть поверх помех: Канал 8.','Вот этот ролик, ровно в том виде, в каком я его загрузил. Смотрите на левый нижний угол на девяностой секунде. Я тоже не замечал эту фигуру первую дюжину раз.'],
+      videoWatch:'СМОТРЕТЬ — recovered_ch8_0304.mp4 · 4:00', videoCap:'Ролик как он был загружен. Заглушка — подставьте свой ID видео. Смотрите со звуком.',
+      quote:'«Выключи это, — было в одном комментарии. — Выключи и больше не загружай. Оно считает просмотры.»',
+      ch3:['Я начал просыпаться каждую ночь в одно и то же время. Не от будильника — от ощущения, что комнату только что закончили разглядывать. На четвёртую ночь я встал и посмотрел в окно: фонарь через дорогу мигал в ритме, который я уже знал. Четыре удара. Пауза. Четыре удара.','На следующее утро зритель прислал мне стоп-кадр из последних секунд ролика — кадр, до которого мне ни разу не удавалось досмотреть, прежде чем плёнка обрывалась. Он спросил, не мой ли это дом на заднем плане.'],
+      fig2:'КАДР 02 — последний кадр, улучшенный зрителем', fig2cap:'Здание в правой части кадра. Я так и не смог доказать, что это не мой дом. Фото: u/deinterlaced.',
+      spLabel:'То, о чём я никому не рассказывал', spBody:'Когда я наконец досмотрел ролик в темноте до конца, таймкод изменился. На один кадр он показал 3:05 — на минуту дальше, чем когда-либо. У меня четыре минуты плёнки. Я не знаю, где записывается эта лишняя минута.', spReveal:'Показать спойлер', spHint:'Деталь из концовки',
+      ch4:['Я публикую это в 2:58. Вряд ли я это удалю. Комментарий был прав в одном — оно считает просмотры, — но ошибся в остальном. Не думаю, что оно хочет, чтобы его выключили. Думаю, оно хочет зрителей, и теперь их у него размером с весь интернет.','Если фонарь за вашим окном мигает, пока вы это читаете — четыре удара, пауза, четыре удара, — сделайте мне маленькое одолжение. Не смотрите в окно. Просто дочитайте историю и позвольте ему думать, что вы ничего не заметили.'],
+      note:'Это художественный вымысел, присланный в архив Kripipasta. Любое сходство с каналом поверх помех, мы почти уверены, случайно.',
+      expand:'Открыть',
+      rateTitle:'Оцените историю', ratePrompt:'Стоила ли она сна, который вы вот-вот потеряете?',
+      up:'Стоило', down:'Не моё', votesWord:'голосов', ratingWord:'рейтинг сообщества', youVoted:'Ваша оценка', changeVote:'Изменить',
+      authorTitle:'Автор', authorMeta:'Участник · с 2019', authorBio:'Коллекционирует мёртвые эфиры и истории, которые о них рассказывают. Три записи в архиве; эту он впервые признал правдой.',
+      followW:'Читать автора', followingW:'Вы подписаны', relTitle:'Если вам понравилось',
+      progressTitle:'Прогресс чтения', statRead:'Чтение', statParts:'Части', statRating:'Рейтинг',
+      figWord:'Кадр', ofWord:'из',
+      related:[{name:'Последний канал',meta:'Аналоговый хоррор · 9 мин'},{name:'Не отвечай',meta:'Короткая проза · 6 мин'},{name:'Жилец снизу',meta:'Городская легенда · 14 мин'}],
+    },
+  };
+
+  componentDidMount() {
+    this._onScroll = this._onScroll.bind(this);
+    window.addEventListener('scroll', this._onScroll, { passive:true });
+    window.addEventListener('resize', this._onScroll, { passive:true });
+    this._onScroll();
+    this._applyTheme();
+  }
+  componentDidUpdate() { this._applyTheme(); }
+  _applyTheme() {
+    const el = document.getElementById('m-root');
+    if (!el) return;
+    if (this.props.accentColor) el.style.setProperty('--crimson', this.props.accentColor);
+    if (this.props.fogIntensity != null) el.style.setProperty('--fog', String(this.props.fogIntensity / 100));
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onScroll);
+    clearTimeout(this._ct);
+  }
+  _onScroll() {
+    if (this._ticking) return; this._ticking = true;
+    requestAnimationFrame(() => {
+      this._ticking = false;
+      const el = document.scrollingElement || document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0;
+      let active = this.state.active;
+      const y = el.scrollTop + 150;
+      for (const t of this.chapters) {
+        const node = document.getElementById('sec-' + t.id);
+        if (node && node.offsetTop <= y) active = t.id;
+      }
+      if (Math.abs(progress - this.state.progress) > 0.001 || active !== this.state.active)
+        this.setState({ progress, active });
+    });
+  }
+
+  setLang(e) { this.setState({ lang: e.currentTarget.dataset.lang }); }
+  toggleSave() { this.setState(s => ({ saved: !s.saved })); }
+  toggleFollow() { this.setState(s => ({ following: !s.following })); }
+  copyLink() {
+    try { if (navigator.clipboard) navigator.clipboard.writeText(location.href); } catch (e) {}
+    this.setState({ copied:true });
+    clearTimeout(this._ct);
+    this._ct = setTimeout(() => this.setState({ copied:false }), 1800);
+  }
+  playVideo() { this.setState({ videoPlaying:true }); }
+  revealSpoiler() { this.setState({ spoilerOpen:true }); }
+  vote(e) {
+    const v = e.currentTarget.dataset.vote;
+    this.setState(s => ({ rateVote: v === 'reset' ? null : (s.rateVote === v ? null : v) }));
+  }
+  tocClick(e) {
+    e.preventDefault();
+    const id = e.currentTarget.dataset.target;
+    const t = document.getElementById('sec-' + id);
+    if (t) { const y = t.getBoundingClientRect().top + window.scrollY - 92; window.scrollTo({ top:y, behavior:'smooth' }); }
+    this.setState({ active:id });
+  }
+  openLightbox(e) { this.setState({ lightbox: +e.currentTarget.dataset.index }); }
+  closeLightbox() { this.setState({ lightbox:null }); }
+
+  renderVals() {
+    const s = this.state;
+    const t = this.i18n[s.lang] || this.i18n.en;
+
+    const up = this.upBase + (s.rateVote === 'up' ? 1 : 0);
+    const down = this.downBase + (s.rateVote === 'down' ? 1 : 0);
+    const rating = up / (up + down) * 10;
+
+    const toc = this.chapters.map((c, i) => ({ id:c.id, num:c.num, label:t.chapterLabels[i], active: s.active === c.id, href:'#sec-'+c.id }));
+    const figures = [ { label:t.fig1, cap:t.fig1cap }, { label:t.fig2, cap:t.fig2cap } ];
+
+    return {
+      ...t,
+      chL1: t.chapterLabels[0], chL2: t.chapterLabels[1], chL3: t.chapterLabels[2], chL4: t.chapterLabels[3],
+      progressPct: (s.progress * 100).toFixed(2) + '%',
+      progressLabel: Math.round(s.progress * 100) + '%',
+      toc, active: s.active,
+      langEn: s.lang === 'en', langRu: s.lang === 'ru',
+      saved: s.saved, saveLabel: s.saved ? t.savedW : t.saveW,
+      copied: s.copied, copyLabel: s.copied ? t.copiedW : t.copyW,
+      following: s.following, followLabel: s.following ? t.followingW : t.followW,
+      videoId: this.props.videoId || this.videoIdFallback, videoPlaying: s.videoPlaying, videoIdle: !s.videoPlaying,
+      spoilerOpen: s.spoilerOpen,
+      notVoted: s.rateVote === null, voted: s.rateVote !== null,
+      ratingScore: rating.toFixed(2), ratingPct: (rating * 10).toFixed(1) + '%',
+      totalVotes: (up + down).toLocaleString(),
+      youVoteLabel: s.rateVote === 'up' ? t.up : t.down,
+      youVoteGlyph: s.rateVote === 'down' ? '▼' : '▲',
+      lightboxOpen: s.lightbox !== null,
+      lightboxItem: s.lightbox !== null ? figures[s.lightbox] : {},
+      lightboxNum: s.lightbox !== null ? t.figWord + ' ' + (s.lightbox + 1) + ' ' + t.ofWord + ' ' + figures.length : '',
+      setLang: e => this.setLang(e),
+      toggleSave: () => this.toggleSave(),
+      toggleFollow: () => this.toggleFollow(),
+      copyLink: () => this.copyLink(),
+      playVideo: () => this.playVideo(),
+      revealSpoiler: () => this.revealSpoiler(),
+      vote: e => this.vote(e),
+      tocClick: e => this.tocClick(e),
+      openLightbox: e => this.openLightbox(e),
+      closeLightbox: () => this.closeLightbox(),
+      stop: e => e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>

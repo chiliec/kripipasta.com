@@ -27,6 +27,7 @@ export default function SiteHeader() {
           <Link href="/#feed" className="hover:text-ink">{tNav("categories")}</Link>
           <Link href="/#feed" className="hover:text-ink">{tNav("trending")}</Link>
           <Link href="/#feed" className="hover:text-ink">{tNav("index")}</Link>
+          <Link href="/dossier" className="hover:text-ink">{tNav("dossiers")}</Link>
         </nav>
 
         <div className="ml-auto hidden min-w-0 flex-1 items-center md:flex md:max-w-[420px]">

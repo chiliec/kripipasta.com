@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E0E10;--s1:#141418;--s2:#1A1A20;--s3:#212129;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);--tx:#ECECEF;--tx2:rgba(236,236,239,.66);--tx3:rgba(236,236,239,.42);--crimson:#B85450;--crimson2:#CA6E6A;--crimson-deep:#6E2C2A;--crimson-glow:rgba(184,84,80,.30);--fog:.6;--serif:'Bodoni Moda',Georgia,serif;--sans:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;--mono:ui-monospace,'SFMono-Regular',Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--crimson2);text-decoration:none}
+a:hover{color:#E29A96}
+::selection{background:var(--crimson-deep);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-thumb{background:#2a2a31;border-radius:6px;border:3px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+#nav{transition:padding .3s ease,background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+#nav[data-scrolled="true"]{padding-top:12px;padding-bottom:12px;background:linear-gradient(180deg,rgba(14,14,16,.92),rgba(14,14,16,.78));backdrop-filter:blur(16px);border-color:var(--line)}
+[data-navlink]{transition:color .2s}
+[data-navlink]:hover{color:var(--tx)}
+[data-btn]{transition:background .2s,border-color .2s,color .2s,transform .12s}
+[data-btn]:hover{background:var(--s3);border-color:var(--line2)}
+[data-btn]:active{transform:translateY(1px)}
+[data-btn][data-on="true"]{color:var(--crimson2);border-color:var(--crimson-deep);background:rgba(184,84,80,.10)}
+[data-cta]{transition:background .2s,box-shadow .3s,transform .12s}
+[data-cta]:hover{box-shadow:0 0 30px var(--crimson-glow);transform:translateY(-1px)}
+[data-cta]:active{transform:translateY(0)}
+[data-card]{transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .4s}
+[data-card]:hover{transform:translateY(-6px);border-color:var(--crimson-deep);box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px var(--crimson-deep)}
+[data-cardart]{transition:transform .5s cubic-bezier(.2,.7,.2,1),filter .4s}
+[data-card]:hover [data-cardart]{transform:scale(1.06);filter:brightness(1.12)}
+[data-cardhover]{opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s cubic-bezier(.2,.7,.2,1)}
+[data-card]:hover [data-cardhover]{opacity:1;transform:none}
+[data-chip]{transition:background .2s,border-color .2s,color .2s}
+[data-chip]:hover{border-color:var(--line2);color:var(--tx)}
+[data-chip][data-on="true"]{color:var(--crimson2);border-color:var(--crimson-deep);background:rgba(184,84,80,.12)}
+[data-seg]{transition:color .2s,background .25s}
+[data-seg][data-on="true"]{color:var(--tx);background:var(--s3)}
+[data-catrow]{transition:transform .3s,border-color .3s,background .3s}
+[data-catrow]:hover{transform:translateY(-4px);border-color:var(--line2);background:var(--s2)}
+[data-catrow]:hover [data-catarrow]{transform:translate(4px,-4px);color:var(--crimson2)}
+[data-catarrow]{transition:transform .3s,color .3s}
+[data-actrow]{transition:background .2s}
+[data-actrow]:hover{background:var(--s2)}
+[data-trend]{transition:background .2s,border-color .2s,transform .2s}
+[data-trend]:hover{background:var(--s2);border-color:var(--line2);transform:translateX(3px)}
+[data-search]{transition:opacity .2s,transform .2s;transform:translateY(-8px) scaleY(.98);opacity:0;pointer-events:none;transform-origin:top}
+[data-search][data-open="true"]{transform:none;opacity:1;pointer-events:auto}
+[data-sresult]{transition:background .18s}
+[data-sresult]:hover{background:var(--s2)}
+[data-azletter]{transition:color .2s,border-color .2s,background .2s}
+[data-azletter]:hover{color:var(--crimson2);border-color:var(--crimson-deep);background:rgba(184,84,80,.08)}
+@keyframes fogA{0%{transform:translate3d(0,0,0) scale(1.05)}50%{transform:translate3d(3%,-2%,0) scale(1.14)}100%{transform:translate3d(0,0,0) scale(1.05)}}
+@keyframes fogB{0%{transform:translate3d(0,0,0) scale(1.1)}50%{transform:translate3d(-4%,3%,0) scale(1.18)}100%{transform:translate3d(0,0,0) scale(1.1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes scrollcue{0%{transform:translateY(-2px);opacity:0}35%{opacity:1}100%{transform:translateY(9px);opacity:0}}
+@media (max-width:1080px){#feed-grid{grid-template-columns:repeat(2,1fr)!important}#cat-grid{grid-template-columns:repeat(2,1fr)!important}#lower-grid{grid-template-columns:1fr!important}#tp-grid{grid-template-columns:1fr!important;gap:36px!important}}
+@media (max-width:720px){#feed-grid{grid-template-columns:1fr!important}#cat-grid{grid-template-columns:1fr!important}#nav-links{display:none!important}#hero-inner{padding:0 24px 60px!important}.wrap{padding-left:24px!important;padding-right:24px!important}}
+</style>
+</helmet>
+<div id="m-root">
+
+<div style="position:fixed;top:0;left:0;right:0;height:3px;z-index:120;background:rgba(255,255,255,.05)"><div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));box-shadow:0 0 14px var(--crimson-glow);transition:width .12s linear"></div></div>
+
+<header id="nav" data-scrolled="{{ scrolled }}" style="position:fixed;top:0;left:0;right:0;z-index:110;display:flex;align-items:center;gap:28px;padding:22px 40px;border-bottom:1px solid transparent">
+  <a href="#top" style="display:flex;align-items:center;gap:11px;text-decoration:none">
+    <span style="width:11px;height:11px;background:var(--crimson);transform:rotate(45deg);box-shadow:0 0 12px var(--crimson-glow)"></span>
+    <span><span style="display:block;font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.02em;line-height:1;color:var(--tx)">KRIPIPASTA</span><span style="display:block;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--tx3);margin-top:3px">{{ subtitle }}</span></span>
+  </a>
+  <nav id="nav-links" style="display:flex;align-items:center;gap:22px;font-size:13px">
+    <sc-for list="{{ navLinks }}" as="n" hint-placeholder-count="4">
+      <a data-navlink href="{{ n.href }}" style="color:var(--tx2)">{{ n.label }}</a>
+    </sc-for>
+  </nav>
+  <div style="flex:1;position:relative;max-width:420px;margin-left:auto">
+    <label style="display:flex;align-items:center;gap:9px;padding:9px 13px;background:var(--s1);border:1px solid var(--line);border-radius:11px;cursor:text">
+      <span style="width:13px;height:13px;border:1.5px solid var(--tx3);border-radius:50%;flex:none;position:relative"><span style="position:absolute;right:-3px;bottom:-3px;width:5px;height:1.5px;background:var(--tx3);transform:rotate(45deg)"></span></span>
+      <input value="{{ q }}" onInput="{{ onSearch }}" onFocus="{{ onSearchFocus }}" placeholder="{{ searchPh }}" style="background:none;border:none;outline:none;color:var(--tx);font-family:var(--sans);font-size:13px;width:100%">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--tx3);border:1px solid var(--line);border-radius:4px;padding:2px 5px">/</span>
+    </label>
+    <div data-search data-open="{{ searchOpen }}" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:linear-gradient(180deg,rgba(24,24,29,.98),rgba(16,16,19,.98));backdrop-filter:blur(20px);border:1px solid var(--line2);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6);z-index:5">
+      <div style="padding:11px 14px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--line)">{{ searchHeading }}</div>
+      <div style="max-height:340px;overflow-y:auto">
+        <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="4">
+          <a data-sresult href="{{ r.href }}" onClick="{{ resultClick }}" style="display:flex;align-items:center;gap:13px;padding:12px 14px;text-decoration:none;border-bottom:1px solid var(--line)">
+            <span style="width:34px;height:42px;border-radius:6px;background:repeating-linear-gradient(135deg,#17171d,#17171d 5px,#1c1c24 5px,#1c1c24 10px);flex:none"></span>
+            <span style="flex:1;min-width:0"><span style="display:block;font-family:var(--serif);font-size:16px;color:var(--tx);line-height:1.15">{{ r.name }}</span><span style="font-size:11px;color:var(--tx3)">{{ r.cat }} · {{ r.era }}</span></span>
+            <span style="display:flex;align-items:center;gap:6px;flex:none"><span style="font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.08em">THREAT</span><span style="font-family:var(--mono);font-size:12px;color:var(--crimson2)">{{ r.threat }}</span></span>
+          </a>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}"><div style="padding:22px 14px;text-align:center;font-size:13px;color:var(--tx3)">{{ noResultsText }}</div></sc-if>
+      </div>
+    </div>
+  </div>
+  <div style="flex:none;display:flex;gap:3px;padding:3px;background:var(--s1);border:1px solid var(--line);border-radius:10px">
+    <button data-btn data-on="{{ langEn }}" data-lang="en" onClick="{{ setLang }}" style="padding:8px 11px;background:none;border:none;border-radius:7px;color:var(--tx2);font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.06em;cursor:pointer">EN</button>
+    <button data-btn data-on="{{ langRu }}" data-lang="ru" onClick="{{ setLang }}" style="padding:8px 11px;background:none;border:none;border-radius:7px;color:var(--tx2);font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.06em;cursor:pointer">RU</button>
+  </div>
+  <button data-cta style="flex:none;padding:10px 18px;background:linear-gradient(160deg,var(--crimson2),var(--crimson-deep));border:1px solid var(--crimson);border-radius:11px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">{{ submit }}</button>
+</header>
+
+<span id="top"></span>
+
+<!-- FEATURED HERO -->
+<section style="position:relative;min-height:94vh;overflow:hidden;display:flex;align-items:flex-end;border-bottom:1px solid var(--line)">
+  <canvas id="home-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
+  <div style="position:absolute;top:-10%;right:-6%;width:60%;height:120%;z-index:0;background:repeating-linear-gradient(122deg,#141418,#141418 13px,#17171d 13px,#17171d 26px);opacity:.9"></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,var(--bg) 22%,rgba(14,14,16,.72) 48%,rgba(14,14,16,.15) 74%,rgba(14,14,16,.5) 100%)"></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(0deg,var(--bg) 2%,rgba(14,14,16,0) 42%)"></div>
+  <div style="position:absolute;top:-30%;left:-10%;width:80%;height:90%;z-index:2;background:radial-gradient(closest-side,rgba(184,84,80,.10),rgba(184,84,80,0) 70%);opacity:var(--fog);animation:fogA 26s ease-in-out infinite;pointer-events:none"></div>
+  <div style="position:absolute;bottom:-30%;right:5%;width:75%;height:90%;z-index:2;background:radial-gradient(closest-side,rgba(150,150,170,.09),rgba(150,150,170,0) 70%);opacity:var(--fog);animation:fogB 34s ease-in-out infinite;pointer-events:none"></div>
+
+  <div id="hero-inner" style="position:relative;z-index:3;width:100%;max-width:1320px;margin:0 auto;padding:0 40px 84px;animation:fadeUp .9s ease both">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+      <span style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson2);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--crimson);box-shadow:0 0 8px var(--crimson-glow);animation:pulse 3s ease-in-out infinite"></span>{{ featuredEyebrow }}</span>
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--tx3)"></span>
+      <span style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)">{{ featuredKind }}</span>
+    </div>
+    <h1 style="font-family:var(--serif);font-weight:500;font-size:clamp(60px,9vw,138px);line-height:.9;letter-spacing:-.01em;margin:0 0 14px;text-wrap:balance">The Rake</h1>
+    <p style="font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.2vw,27px);line-height:1.4;color:var(--tx2);max-width:34ch;margin:0 0 30px">{{ heroDek }}</p>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+      <a data-cta href="Entity%20Dossier.dc.html?id=the-rake" style="display:flex;align-items:center;gap:10px;padding:14px 24px;background:linear-gradient(160deg,var(--crimson2),var(--crimson-deep));border:1px solid var(--crimson);border-radius:12px;color:#fff;font-size:14px;font-weight:600">{{ readDossier }} <span style="font-size:16px">→</span></a>
+      <a data-btn href="The%20Rake%20-%20Mobile.dc.html" style="display:flex;align-items:center;gap:9px;padding:14px 22px;background:var(--s1);border:1px solid var(--line);border-radius:12px;color:var(--tx);font-size:14px;font-weight:500">{{ viewMobile }}</a>
+      <div style="display:flex;align-items:center;gap:22px;margin-left:8px">
+        <div><div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">{{ threatLabel }}</div><div style="display:flex;align-items:center;gap:9px"><span style="width:88px;height:5px;background:var(--s3);border-radius:3px;overflow:hidden"><span style="display:block;height:100%;width:{{ featThreatW }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width 1.2s cubic-bezier(.22,1,.36,1)"></span></span><span style="font-family:var(--serif);font-size:18px;color:var(--crimson2)">{{ severe }}</span></div></div>
+        <div><div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">{{ popLabel }}</div><div style="font-family:var(--serif);font-size:20px">91<span style="font-size:12px;color:var(--tx3)"> / 100</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:50%;bottom:22px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--tx3)"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.2em">{{ scrollWord }}</span><span style="width:1px;height:26px;background:linear-gradient(var(--tx3),transparent);position:relative;overflow:hidden"><span style="position:absolute;top:0;left:0;width:1px;height:8px;background:var(--crimson);animation:scrollcue 2.2s ease-in-out infinite"></span></span></div>
+</section>
+
+<!-- FEED -->
+<section id="feed" class="wrap" style="max-width:1320px;margin:0 auto;padding:74px 40px 24px;scroll-margin-top:76px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:8px">
+    <div>
+      <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson2);margin-bottom:12px">{{ feedEyebrow }}</div>
+      <h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(34px,4vw,52px);line-height:1;margin:0">{{ feedTitle }}</h2>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--tx3);letter-spacing:.06em">{{ showingWord }} {{ feedShown }} {{ ofWord }} {{ feedTotal }}</div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin:26px 0 26px">
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="7">
+        <button data-chip data-on="{{ c.active }}" data-cat="{{ c.name }}" onClick="{{ setCat }}" style="padding:8px 15px;background:var(--s1);border:1px solid var(--line);border-radius:20px;color:var(--tx2);font-family:var(--sans);font-size:12.5px;cursor:pointer">{{ c.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)">{{ sortWord }}</span>
+      <div style="display:flex;gap:2px;padding:3px;background:var(--s1);border:1px solid var(--line);border-radius:10px">
+        <sc-for list="{{ sorts }}" as="s" hint-placeholder-count="3">
+          <button data-seg data-on="{{ s.active }}" data-sort="{{ s.key }}" onClick="{{ setSort }}" style="padding:7px 14px;background:none;border:none;border-radius:7px;color:var(--tx2);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer">{{ s.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div id="feed-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <sc-for list="{{ feed }}" as="c" hint-placeholder-count="9">
+      <a data-card href="{{ c.href }}" style="position:relative;display:flex;flex-direction:column;justify-content:flex-end;aspect-ratio:3/4;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--s1);text-decoration:none;padding:16px">
+        <div data-cardart style="position:absolute;inset:0;z-index:0;background:repeating-linear-gradient(135deg,#151519,#151519 11px,#191920 11px,#191920 22px)"></div>
+        <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(9,9,11,.97) 8%,rgba(9,9,11,.35) 46%,rgba(9,9,11,0) 74%)"></div>
+        <div style="position:absolute;top:14px;left:16px;right:16px;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson2);background:rgba(18,18,22,.6);border:1px solid var(--crimson-deep);border-radius:20px;padding:4px 9px;backdrop-filter:blur(6px)">{{ c.cat }}</span>
+          <button data-btn data-on="{{ c.saved }}" data-id="{{ c.id }}" onClick="{{ toggleSave }}" style="width:32px;height:32px;flex:none;display:flex;align-items:center;justify-content:center;background:rgba(18,18,22,.6);border:1px solid var(--line);border-radius:9px;color:var(--tx);cursor:pointer;backdrop-filter:blur(6px)"><span style="width:9px;height:12px;border:1.6px solid currentColor;border-bottom:none;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%);display:inline-block"></span></button>
+        </div>
+        <div style="position:relative;z-index:2">
+          <div data-cardhover style="margin-bottom:14px"><p style="font-size:12.5px;line-height:1.55;color:var(--tx2);margin:0 0 10px;text-wrap:pretty">{{ c.dek }}</p><span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--crimson2)">{{ c.readEntry }} <span style="font-size:14px">→</span></span></div>
+          <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">{{ c.era }}</div>
+          <div style="font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.02;margin-bottom:13px;text-wrap:balance">{{ c.name }}</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="display:flex;align-items:center;gap:7px;flex:1;min-width:0"><span style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--tx3)">THR</span><span style="flex:1;height:3px;background:var(--s3);border-radius:2px;overflow:hidden"><span style="display:block;height:100%;width:{{ c.threatW }};background:var(--crimson)"></span></span><span style="font-family:var(--mono);font-size:10px;color:var(--tx2)">{{ c.threat }}</span></span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--tx3)">{{ c.year }}</span>
+          </div>
+        </div>
+      </a>
+    </sc-for>
+  </div>
+  <div id="feed-sentinel" style="height:1px"></div>
+  <sc-if value="{{ feedHasMore }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;justify-content:center;margin-top:36px"><button data-btn onClick="{{ loadMore }}" style="padding:13px 28px;background:var(--s1);border:1px solid var(--line);border-radius:12px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">{{ loadMore }}</button></div>
+  </sc-if>
+</section>
+
+<!-- CATEGORIES -->
+<section id="categories" class="wrap" style="max-width:1320px;margin:0 auto;padding:70px 40px;scroll-margin-top:76px;border-top:1px solid var(--line)">
+  <div style="margin-bottom:30px">
+    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson2);margin-bottom:12px">{{ collections }}</div>
+    <h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(34px,4vw,52px);line-height:1;margin:0">{{ catTitle }}</h2>
+  </div>
+  <div id="cat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="6">
+      <a data-catrow href="#feed" style="position:relative;display:flex;flex-direction:column;gap:12px;padding:24px;background:var(--s1);border:1px solid var(--line);border-radius:16px;text-decoration:none">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <span style="font-family:var(--serif);font-weight:500;font-size:25px;color:var(--tx);line-height:1.05">{{ cat.name }}</span>
+          <span data-catarrow style="color:var(--tx3);font-size:18px;line-height:1;flex:none">↗</span>
+        </div>
+        <p style="font-size:13px;line-height:1.6;color:var(--tx2);margin:0;flex:1">{{ cat.blurb }}</p>
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--crimson2)">{{ cat.count }} {{ cat.entriesWord }}</div>
+      </a>
+    </sc-for>
+  </div>
+</section>
+
+<!-- TRENDING + PICKS -->
+<section id="trending" class="wrap" style="max-width:1320px;margin:0 auto;padding:8px 40px 66px;scroll-margin-top:76px">
+  <div id="tp-grid" style="display:grid;grid-template-columns:.85fr 1.15fr;gap:44px;align-items:start">
+    <div>
+      <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson2);margin-bottom:12px">{{ rising }}</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:30px;line-height:1;margin:0 0 22px">{{ trendingTitle }}</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ trending }}" as="t" hint-placeholder-count="5">
+          <a data-trend href="#feed" style="display:flex;align-items:center;gap:15px;padding:14px 16px;background:var(--s1);border:1px solid var(--line);border-radius:12px;text-decoration:none">
+            <span style="font-family:var(--serif);font-size:22px;color:var(--tx3);min-width:26px">{{ t.num }}</span>
+            <span style="flex:1;min-width:0"><span style="display:block;font-size:15px;color:var(--tx);line-height:1.2">{{ t.name }}</span><span style="font-size:11px;color:var(--tx3)">{{ t.cat }}</span></span>
+            <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;color:var(--crimson2)"><span style="font-size:9px">▲</span>{{ t.delta }}</span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson2);margin-bottom:12px">{{ curated }}</div>
+      <h3 style="font-family:var(--serif);font-weight:500;font-size:30px;line-height:1;margin:0 0 8px">{{ picksTitle }}</h3>
+      <div>
+        <sc-for list="{{ picks }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;gap:20px;padding:22px 0;border-top:1px solid var(--line)">
+            <span style="font-family:var(--serif);font-size:30px;color:var(--crimson-deep);line-height:1;flex:none">{{ p.num }}</span>
+            <div style="flex:1">
+              <div style="font-family:var(--serif);font-size:22px;color:var(--tx);line-height:1.1;margin-bottom:8px">{{ p.name }}</div>
+              <p style="font-size:14px;line-height:1.65;color:var(--tx2);margin:0 0 10px;text-wrap:pretty">{{ p.note }}</p>
+              <div style="font-size:11px;color:var(--tx3)">{{ p.pickedBy }} <span style="color:var(--tx2)">{{ p.by }}</span></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY ACTIVITY -->
+<section class="wrap" style="max-width:1320px;margin:0 auto;padding:0 40px 70px">
+  <div style="padding:30px 32px;background:linear-gradient(180deg,var(--s1),rgba(20,20,24,.4));border:1px solid var(--line);border-radius:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="width:7px;height:7px;border-radius:50%;background:var(--crimson);box-shadow:0 0 10px var(--crimson-glow);animation:pulse 3s ease-in-out infinite"></span><h3 style="font-family:var(--serif);font-weight:500;font-size:26px;line-height:1;margin:0">{{ activityTitle }}</h3></div>
+      <a data-navlink href="#" style="font-size:12.5px;color:var(--tx3)">{{ viewAll }}</a>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ activity }}" as="a" hint-placeholder-count="6">
+        <div data-actrow style="display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:10px;border-bottom:1px solid var(--line)">
+          <span style="width:8px;height:8px;background:var(--crimson);transform:rotate(45deg);flex:none;opacity:.8"></span>
+          <span style="flex:1;min-width:0;font-size:13.5px;color:var(--tx2);line-height:1.5"><strong style="color:var(--tx);font-weight:600">{{ a.who }}</strong> {{ a.action }} <span style="color:var(--crimson2)">{{ a.target }}</span></span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--tx3);flex:none">{{ a.time }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- A–Z INDEX -->
+<section id="index" class="wrap" style="max-width:1320px;margin:0 auto;padding:8px 40px 80px;scroll-margin-top:76px;border-top:1px solid var(--line)">
+  <div style="padding-top:60px;margin-bottom:30px">
+    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson2);margin-bottom:12px">{{ directory }}</div>
+    <h2 style="font-family:var(--serif);font-weight:500;font-size:clamp(34px,4vw,52px);line-height:1;margin:0">{{ indexTitle }}</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:28px 24px">
+    <sc-for list="{{ azGroups }}" as="g" hint-placeholder-count="10">
+      <div>
+        <div data-azletter style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-family:var(--serif);font-size:16px;color:var(--crimson2);border:1px solid var(--line);border-radius:8px;margin-bottom:14px">{{ g.letter }}</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+            <a href="{{ it.href }}" style="font-size:13.5px;color:var(--tx2);line-height:1.3">{{ it.name }}</a>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="wrap" style="max-width:1320px;margin:0 auto;padding:56px 40px 70px;border-top:1px solid var(--line)">
+  <div id="lower-grid" style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-bottom:44px">
+    <div>
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px"><span style="width:11px;height:11px;background:var(--crimson);transform:rotate(45deg)"></span><span style="font-family:var(--serif);font-weight:600;font-size:20px">KRIPIPASTA</span></div>
+      <p style="font-size:13.5px;line-height:1.7;color:var(--tx2);max-width:38ch;margin:0">{{ footerAbout }}</p>
+    </div>
+    <div>
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px">{{ exploreWord }}</div>
+      <div style="display:flex;flex-direction:column;gap:9px;font-size:13.5px"><sc-for list="{{ fExplore }}" as="l" hint-placeholder-count="4"><a data-navlink href="{{ l.href }}" style="color:var(--tx2)">{{ l.label }}</a></sc-for></div>
+    </div>
+    <div>
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px">{{ communityWord }}</div>
+      <div style="display:flex;flex-direction:column;gap:9px;font-size:13.5px"><sc-for list="{{ fCommunity }}" as="l" hint-placeholder-count="4"><a data-navlink href="{{ l.href }}" style="color:var(--tx2)">{{ l.label }}</a></sc-for></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--tx3);padding-top:24px;border-top:1px solid var(--line)"><span>{{ est }}</span><span>{{ allFiction }}</span></div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#B85450&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#B85450&quot;,&quot;#9E4B57&quot;,&quot;#8C4A3A&quot;,&quot;#A85C57&quot;,&quot;#7C4A6E&quot;]},&quot;fogIntensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:60,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:10,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showParticles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  state = {
+    scrolled: false, progress: 0, meters: false,
+    q: '', searchOpen: false,
+    activeCat: 'All', sortBy: 'popularity',
+    visible: 9, saved: {}, lang: 'en',
+  };
+
+  entities = [
+    { id:'the-rake', name:'The Rake', sortName:'Rake', cat:'Cryptids', year:2005, era:'Community canon', threat:82, pop:91, dek:'A pale watcher that crouches at the foot of the bed and waits until you make yourself look.' },
+    { id:'slender-man', name:'Slender Man', sortName:'Slender Man', cat:'Classic Creepypasta', year:2009, era:'Modern myth', threat:88, pop:96, dek:'A faceless figure in a black suit that stalks the treeline and thins the mind of those who seek it.' },
+    { id:'backrooms', name:'The Backrooms', sortName:'Backrooms', cat:'Liminal Spaces', year:2019, era:'Liminal', threat:61, pop:89, dek:'Endless humming yellow rooms you noclip into when reality briefly gives way.' },
+    { id:'ben-drowned', name:'BEN Drowned', sortName:'BEN Drowned', cat:'Lost Media', year:2010, era:'Haunted cartridge', threat:67, pop:78, dek:'A second-hand game cartridge possessed by a boy who drowned — and knows your name.' },
+    { id:'siren-head', name:'Siren Head', sortName:'Siren Head', cat:'Cryptids', year:2018, era:'Cryptid', threat:79, pop:84, dek:'A towering speaker-headed creature that broadcasts stolen voices across the treeline.' },
+    { id:'candle-cove', name:'Candle Cove', sortName:'Candle Cove', cat:'Lost Media', year:2009, era:'Lost episode', threat:54, pop:72, dek:'A children’s pirate show that only certain adults remember — and never fondly.' },
+    { id:'mandela-catalogue', name:'The Mandela Catalogue', sortName:'Mandela Catalogue', cat:'Analog Horror', year:2021, era:'Analog horror', threat:85, pop:88, dek:'Alternates wear the faces of everyone you trust, and the difference is the terror.' },
+    { id:'walten-files', name:'The Walten Files', sortName:'Walten Files', cat:'Analog Horror', year:2020, era:'Analog horror', threat:74, pop:81, dek:'A defunct family pizzeria and the people who were never allowed to leave it.' },
+    { id:'local58', name:'Local58', sortName:'Local58', cat:'Analog Horror', year:2018, era:'Broadcast horror', threat:71, pop:80, dek:'Late-night emergency broadcasts from a station that should have gone dark years ago.' },
+    { id:'expressionless', name:'The Expressionless', sortName:'Expressionless', cat:'Urban Legends', year:2012, era:'Hospital legend', threat:70, pop:63, dek:'A woman admitted to a hospital with a face wiped smooth of every feature.' },
+    { id:'hachishakusama', name:'Hachishakusama', sortName:'Hachishakusama', cat:'Urban Legends', year:2008, era:'Nocturnal observer', threat:78, pop:66, dek:'An eight-foot woman in white who fixates on a single child and simply waits.' },
+    { id:'smiling-man', name:'The Smiling Man', sortName:'Smiling Man', cat:'Urban Legends', year:2012, era:'Street encounter', threat:63, pop:61, dek:'A man who dances toward you down an empty street, grinning far too widely.' },
+    { id:'smile-dog', name:'Smile Dog', sortName:'Smile Dog', cat:'Classic Creepypasta', year:2008, era:'Cursed image', threat:58, pop:69, dek:'An image that arrives with a single instruction: spread the word.' },
+    { id:'eyeless-jack', name:'Eyeless Jack', sortName:'Eyeless Jack', cat:'Classic Creepypasta', year:2012, era:'Modern myth', threat:72, pop:64, dek:'A blue-masked figure that visits in the night to take what it needs and leave.' },
+    { id:'scp-173', name:'SCP-173', sortName:'SCP-173', cat:'Cryptids', year:2007, era:'Contained anomaly', threat:80, pop:87, dek:'A concrete figure that moves only in the instant no one is looking at it.' },
+    { id:'sonic-exe', name:'Sonic.exe', sortName:'Sonic.exe', cat:'Lost Media', year:2011, era:'Haunted game', threat:65, pop:70, dek:'A corrupted game where a smiling mascot hunts each character in turn.' },
+    { id:'herobrine', name:'Herobrine', sortName:'Herobrine', cat:'Lost Media', year:2010, era:'In-game ghost', threat:49, pop:74, dek:'A hollow-eyed doppelgänger glimpsed building tunnels in an empty world.' },
+    { id:'russian-sleep', name:'The Russian Sleep Experiment', sortName:'Russian Sleep Experiment', cat:'Urban Legends', year:2010, era:'Creepypasta classic', threat:76, pop:77, dek:'Test subjects kept awake for fifteen days by a stimulant gas — and what remained.' },
+  ];
+
+  categories = [
+    { name:'Cryptids', count:48, blurb:'Watchers, crawlers, and things at the edge of the trees.' },
+    { name:'Classic Creepypasta', count:63, blurb:'The forum-era legends that started it all.' },
+    { name:'Analog Horror', count:37, blurb:'Dread in the grammar of broadcast and tape.' },
+    { name:'Lost Media', count:29, blurb:'Cursed cartridges, missing episodes, haunted files.' },
+    { name:'Liminal Spaces', count:21, blurb:'Places that are wrong in ways you can’t name.' },
+    { name:'Urban Legends', count:54, blurb:'Encounters passed hand to hand until they harden.' },
+  ];
+
+  trending = [
+    { name:'The Mandela Catalogue', cat:'Analog Horror', delta:'+41%' },
+    { name:'The Walten Files', cat:'Analog Horror', delta:'+33%' },
+    { name:'Local58', cat:'Analog Horror', delta:'+27%' },
+    { name:'The Backrooms', cat:'Liminal Spaces', delta:'+19%' },
+    { name:'Siren Head', cat:'Cryptids', delta:'+12%' },
+  ];
+
+  picks = [
+    { name:'The Rake', by:'m_hollow', note:'The purest example of collaborative authorship in the archive — a monster with no author and no origin, only witnesses.' },
+    { name:'Local58', by:'quietfrequency', note:'Dread built entirely from the grammar of public broadcast. Nothing is shown; everything is scheduled.' },
+    { name:'Candle Cove', by:'north_ny_2006', note:'The template for every false-memory story since. You will try to remember whether you watched it.' },
+  ];
+
+  activity = [
+    { who:'m_hollow', role:'Editor', action:'approved a note on', target:'The Rake', time:'2h', kind:'note' },
+    { who:'quietfrequency', role:'Contributor', action:'added a citation to', target:'Local58', time:'4h', kind:'edit' },
+    { who:'the community', role:'', action:'cast 312 new votes on', target:'The Backrooms', time:'6h', kind:'vote' },
+    { who:'kripipasta', role:'Editors', action:'published a new entry:', target:'The Mandela Catalogue — Vol. 4', time:'9h', kind:'new' },
+    { who:'ashen_vhs', role:'Reader', action:'reacted “Chills” to', target:'Siren Head', time:'12h', kind:'react' },
+    { who:'m_hollow', role:'Editor', action:'published revision 12 on', target:'The Rake', time:'1d', kind:'edit' },
+  ];
+
+  i18n = {
+    en: {
+      subtitle:'Internet Horror Archive', searchPh:'Search the archive — entities, categories, eras', submit:'Submit an entry', searchStart:'Start typing to search',
+      threatWordShort:'THREAT', featuredEyebrow:'This week’s featured dossier', featuredKind:'Cryptid · Community Canon',
+      heroDek:'A gaunt, pale watcher said to crouch at the foot of a sleeper’s bed — patiently, without sound — until the moment it decides to move.',
+      readDossier:'Read the dossier', viewMobile:'View on mobile', threatLabel:'Threat', popLabel:'Popularity', severe:'Severe', scrollWord:'SCROLL',
+      feedEyebrow:'The Archive', feedTitle:'Browse all entities', showingWord:'Showing', ofWord:'of',
+      sortWord:'Sort', sorts:['Popular','Threat','Newest'], readEntry:'Read entry', loadMore:'Load more entities',
+      collections:'Collections', catTitle:'Browse by category', entriesWord:'entries', allWord:'All',
+      rising:'Rising', trendingTitle:'Trending this week', curated:'Curated', picksTitle:'Editor’s picks', pickedBy:'Picked by',
+      activityTitle:'Community activity', viewAll:'View all →', directory:'Directory', indexTitle:'The full index',
+      footerAbout:'A community-maintained archive of internet horror — entities, lost media, and the folklore the web invents about itself. Every entry is collaboratively edited and sourced.',
+      exploreWord:'Explore', communityWord:'Community',
+      fExplore:['All entities','Categories','Trending','A–Z index'], fCommunity:['Contribute an entry','Editorial guidelines','Recent revisions','Discord'],
+      est:'EST. MMV · COMMUNITY-EDITED', allFiction:'ALL ENTRIES ARE WORKS OF COLLABORATIVE FICTION',
+      navLabels:['Browse','Categories','Trending','Index'], catNames:{}, catBlurbs:null, eraMap:{},
+    },
+    ru: {
+      subtitle:'Архив интернет-хоррора', searchPh:'Поиск по архиву — сущности, категории, эпохи', submit:'Добавить запись', searchStart:'Начните вводить запрос',
+      threatWordShort:'УГРОЗА', featuredEyebrow:'Досье недели', featuredKind:'Криптид · Канон сообщества',
+      heroDek:'Худой бледный наблюдатель, что, по слухам, сидит на корточках в изножье кровати спящего — терпеливо, беззвучно — пока не решит двинуться.',
+      readDossier:'Читать досье', viewMobile:'Смотреть на телефоне', threatLabel:'Угроза', popLabel:'Популярность', severe:'Высокая', scrollWord:'ВНИЗ',
+      feedEyebrow:'Архив', feedTitle:'Все сущности', showingWord:'Показано', ofWord:'из',
+      sortWord:'Сортировка', sorts:['Популярность','Угроза','Новее'], readEntry:'Читать запись', loadMore:'Показать ещё',
+      collections:'Коллекции', catTitle:'По категориям', entriesWord:'записей', allWord:'Все',
+      rising:'Растёт', trendingTitle:'Популярное за неделю', curated:'Выбор редакции', picksTitle:'Выбор редакции', pickedBy:'Выбрал',
+      activityTitle:'Активность сообщества', viewAll:'Показать всё →', directory:'Указатель', indexTitle:'Полный указатель',
+      footerAbout:'Архив интернет-хоррора, поддерживаемый сообществом, — сущности, потерянные плёнки и фольклор, который сеть придумывает о самой себе. Каждая запись редактируется совместно и снабжена источниками.',
+      exploreWord:'Разделы', communityWord:'Сообщество',
+      fExplore:['Все сущности','Категории','Популярное','Указатель А–Я'], fCommunity:['Предложить запись','Правила редактуры','Последние правки','Discord'],
+      est:'ОСН. MMV · РЕДАКТИРУЕТСЯ СООБЩЕСТВОМ', allFiction:'ВСЕ ЗАПИСИ — ПЛОДЫ КОЛЛЕКТИВНОГО ВЫМЫСЛА',
+      navLabels:['Обзор','Категории','Популярное','Указатель'],
+      catNames:{'Cryptids':'Криптиды','Classic Creepypasta':'Классические крипипасты','Analog Horror':'Аналоговый хоррор','Lost Media':'Потерянные плёнки','Liminal Spaces':'Лиминальные пространства','Urban Legends':'Городские легенды'},
+      catBlurbs:{'Cryptids':'Наблюдатели, ползуны и то, что стоит у кромки деревьев.','Classic Creepypasta':'Легенды эпохи форумов, с которых всё началось.','Analog Horror':'Ужас в грамматике эфира и плёнки.','Lost Media':'Проклятые картриджи, пропавшие серии, зловещие файлы.','Liminal Spaces':'Места, что неправильны так, что не описать словами.','Urban Legends':'Истории, что передают из рук в руки, пока они не затвердеют.'},
+      eraMap:{'Community canon':'Канон сообщества','Modern myth':'Современный миф','Liminal':'Лиминальность','Haunted cartridge':'Проклятый картридж','Cryptid':'Криптид','Lost episode':'Потерянная серия','Analog horror':'Аналоговый хоррор','Broadcast horror':'Эфирный хоррор','Hospital legend':'Больничная легенда','Nocturnal observer':'Ночной наблюдатель','Street encounter':'Уличная встреча','Cursed image':'Проклятое изображение','Contained anomaly':'Изолированная аномалия','Haunted game':'Проклятая игра','In-game ghost':'Призрак в игре','Creepypasta classic':'Классика крипипасты'},
+    },
+  };
+  deksRu = {
+    'the-rake':'Бледный наблюдатель, что сидит в изножье кровати и ждёт, пока вы сами не решитесь посмотреть.',
+    'slender-man':'Безликая фигура в чёрном костюме, что преследует от кромки леса и истончает рассудок тех, кто её ищет.',
+    'backrooms':'Бесконечные гудящие жёлтые комнаты, куда проваливаешься, когда реальность на миг поддаётся.',
+    'ben-drowned':'Подержанный картридж, одержимый утонувшим мальчиком, — и он знает ваше имя.',
+    'siren-head':'Огромное существо с головой-динамиком, что вещает украденные голоса над кромкой леса.',
+    'candle-cove':'Детская передача про пиратов, которую помнят лишь некоторые взрослые — и без всякой ностальгии.',
+    'mandela-catalogue':'Двойники носят лица всех, кому вы доверяете, и в этом различии — весь ужас.',
+    'walten-files':'Закрытая семейная пиццерия и люди, которым так и не позволили уйти.',
+    'local58':'Ночные экстренные выпуски со станции, что должна была замолчать много лет назад.',
+    'expressionless':'Женщина, поступившая в больницу с лицом, стёртым до полного отсутствия черт.',
+    'hachishakusama':'Восьмифутовая женщина в белом, что выбирает одного ребёнка и просто ждёт.',
+    'smiling-man':'Мужчина, что танцующей походкой идёт к вам по пустой улице, улыбаясь слишком широко.',
+    'smile-dog':'Изображение, что приходит с единственным указанием: расскажи другим.',
+    'eyeless-jack':'Фигура в синей маске, что приходит ночью забрать нужное и уйти.',
+    'scp-173':'Бетонная фигура, что движется лишь в тот миг, когда на неё никто не смотрит.',
+    'sonic-exe':'Испорченная игра, где улыбающийся маскот по очереди охотится на персонажей.',
+    'herobrine':'Двойник с пустыми глазами, замеченный за рытьём туннелей в пустом мире.',
+    'russian-sleep':'Испытуемых пятнадцать дней держали без сна стимулирующим газом — и то, что осталось.',
+  };
+  picksRu = [
+    'Монстр без автора и без происхождения, только свидетели — чистейшая коллективная запись в архиве.',
+    'Ужас, выстроенный целиком на грамматике общественного вещания. Всё идёт по расписанию.',
+    'Шаблон для каждой истории о ложной памяти с тех пор.',
+  ];
+  activityRu = [
+    { who:'m_hollow', action:'одобрил заметку к', target:'The Rake', time:'2ч' },
+    { who:'quietfrequency', action:'добавил источник к', target:'Local58', time:'4ч' },
+    { who:'сообщество', action:'отдало 312 голосов за', target:'The Backrooms', time:'6ч' },
+    { who:'kripipasta', action:'опубликовал запись:', target:'The Mandela Catalogue — Vol. 4', time:'9ч' },
+    { who:'ashen_vhs', action:'отреагировал на', target:'Siren Head', time:'12ч' },
+    { who:'m_hollow', action:'опубликовал ревизию 12 к', target:'The Rake', time:'1д' },
+  ];
+
+  componentDidMount() {
+    this._onScroll = this._onScroll.bind(this);
+    window.addEventListener('scroll', this._onScroll, { passive:true });
+    this._onScroll();
+    this._mt = setTimeout(() => this.setState({ meters:true }), 400);
+    this._initParticles();
+    this._io = new IntersectionObserver((ents) => {
+      if (ents.some(e => e.isIntersecting) && this.state.visible < this._feedLen)
+        this.setState(s => ({ visible: Math.min(s.visible + 6, this._feedLen) }));
+    }, { rootMargin:'300px' });
+    const sent = document.getElementById('feed-sentinel');
+    if (sent) this._io.observe(sent);
+    document.addEventListener('click', this._docClick = (e) => {
+      if (!e.target.closest('[data-search]') && !e.target.closest('label')) this.setState({ searchOpen:false });
+    });
+  }
+  componentDidUpdate() {
+    const el = document.getElementById('m-root');
+    if (el) { if (this.props.accentColor) el.style.setProperty('--crimson', this.props.accentColor); if (this.props.fogIntensity != null) el.style.setProperty('--fog', String(this.props.fogIntensity / 100)); }
+    const sent = document.getElementById('feed-sentinel');
+    if (sent && this._io) { this._io.unobserve(sent); this._io.observe(sent); }
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    if (this._pResize) window.removeEventListener('resize', this._pResize);
+    if (this._io) this._io.disconnect();
+    if (this._docClick) document.removeEventListener('click', this._docClick);
+    clearTimeout(this._mt); if (this._raf) cancelAnimationFrame(this._raf);
+  }
+  _onScroll() {
+    if (this._ticking) return; this._ticking = true;
+    requestAnimationFrame(() => {
+      this._ticking = false;
+      const el = document.scrollingElement || document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0;
+      const scrolled = el.scrollTop > 40;
+      if (scrolled !== this.state.scrolled || Math.abs(progress - this.state.progress) > 0.001)
+        this.setState({ scrolled, progress });
+    });
+  }
+  _initParticles() {
+    if (this.props.showParticles === false) return;
+    const c = document.getElementById('home-canvas');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0, parts = [];
+    const resize = () => {
+      const r = c.getBoundingClientRect(); W = r.width; H = r.height;
+      c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.max(24, Math.round(W * H / 16000));
+      parts = Array.from({ length:n }, () => ({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.5+0.3, vy:-(Math.random()*0.24+0.04), vx:(Math.random()-0.5)*0.14, a:Math.random()*0.4+0.06, ph:Math.random()*Math.PI*2 }));
+    };
+    resize(); this._pResize = resize; window.addEventListener('resize', resize);
+    let t = 0;
+    const draw = () => {
+      t += 0.006; ctx.clearRect(0,0,W,H);
+      for (const p of parts) {
+        p.y += p.vy; p.x += p.vx + Math.sin(t + p.ph) * 0.11;
+        if (p.y < -4) { p.y = H + 4; p.x = Math.random()*W; }
+        if (p.x < -4) p.x = W + 4; if (p.x > W + 4) p.x = -4;
+        const tw = 0.6 + 0.4 * Math.sin(t*2 + p.ph);
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283);
+        ctx.fillStyle = 'rgba(222,216,220,' + (p.a * tw) + ')'; ctx.fill();
+      }
+      this._raf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
+  onSearch(e) { this.setState({ q: e.target.value, searchOpen: true }); }
+  onSearchFocus() { this.setState({ searchOpen: true }); }
+  resultClick() { this.setState({ searchOpen: false }); }
+  setCat(e) { this.setState({ activeCat: e.currentTarget.dataset.cat, visible: 9 }); }
+  setSort(e) { this.setState({ sortBy: e.currentTarget.dataset.sort, visible: 9 }); }
+  loadMore() { this.setState(s => ({ visible: Math.min(s.visible + 6, this._feedLen) })); }
+  toggleSave(e) { e.preventDefault(); e.stopPropagation(); const id = e.currentTarget.dataset.id; this.setState(s => ({ saved: { ...s.saved, [id]: !s.saved[id] } })); }
+
+  setLang(e) { this.setState({ lang: e.currentTarget.dataset.lang }); }
+
+  _sorted(list) {
+    const s = this.state.sortBy;
+    const a = [...list];
+    if (s === 'popularity') a.sort((x,y) => y.pop - x.pop);
+    else if (s === 'threat') a.sort((x,y) => y.threat - x.threat);
+    else if (s === 'newest') a.sort((x,y) => y.year - x.year);
+    return a;
+  }
+
+  renderVals() {
+    const st = this.state, on = st.meters;
+    const q = st.q.trim().toLowerCase();
+    const ru = st.lang === 'ru';
+    const t = this.i18n[st.lang] || this.i18n.en;
+    const trc = c => ru ? (t.catNames[c] || c) : c;
+    const tre = e => ru ? (t.eraMap[e] || e) : e;
+
+    const matches = q ? this.entities.filter(e => e.name.toLowerCase().includes(q) || e.cat.toLowerCase().includes(q) || e.era.toLowerCase().includes(q)) : [];
+    const searchResults = matches.slice(0, 6).map(e => ({ name:e.name, cat:trc(e.cat), era:tre(e.era), threat:e.threat, href: (['the-rake','slender-man'].indexOf(e.id) >= 0 ? 'Entity%20Dossier.dc.html?id=' + e.id : '#feed') }));
+
+    const cats = ['All', ...this.categories.map(c => c.name)];
+    const chips = cats.map(c => ({ name:c, label: c === 'All' ? t.allWord : trc(c), active: st.activeCat === c }));
+    const sorts = [ { key:'popularity' }, { key:'threat' }, { key:'newest' } ].map((s,i) => ({ ...s, label: t.sorts[i], active: st.sortBy === s.key }));
+
+    let filtered = st.activeCat === 'All' ? this.entities : this.entities.filter(e => e.cat === st.activeCat);
+    filtered = this._sorted(filtered);
+    this._feedLen = filtered.length;
+    const feed = filtered.slice(0, st.visible).map((e, i) => ({
+      ...e, num: String(i + 1).padStart(2, '0'),
+      threatW: e.threat + '%', saved: !!st.saved[e.id],
+      saveLabel: st.saved[e.id] ? 'Saved' : 'Save',
+      cat: trc(e.cat), era: tre(e.era), dek: ru ? (this.deksRu[e.id] || e.dek) : e.dek, readEntry: t.readEntry,
+      href: (['the-rake','slender-man'].indexOf(e.id) >= 0 ? 'Entity%20Dossier.dc.html?id=' + e.id : '#feed'),
+    }));
+
+    const az = {};
+    [...this.entities].sort((a,b) => a.sortName.localeCompare(b.sortName)).forEach(e => {
+      const L = e.sortName[0].toUpperCase(); (az[L] = az[L] || []).push({ name:e.name, href: (['the-rake','slender-man'].indexOf(e.id) >= 0 ? 'Entity%20Dossier.dc.html?id=' + e.id : '#feed') });
+    });
+    const azGroups = Object.keys(az).sort().map(L => ({ letter:L, items:az[L] }));
+
+    return {
+      scrolled: st.scrolled,
+      progressPct: (st.progress * 100).toFixed(2) + '%',
+      q: st.q, searchOpen: st.searchOpen && (matches.length > 0 || q.length > 0),
+      searchHeading: q ? (ru ? (matches.length + ' результатов') : (matches.length + ' result' + (matches.length === 1 ? '' : 's'))) : t.searchStart,
+      searchResults, noResults: q.length > 0 && matches.length === 0,
+      noResultsText: ru ? ('Ничего не найдено по «' + st.q + '».') : ('No entities match “' + st.q + '”.'),
+      featThreatW: on ? '82%' : '0%',
+      chips, sorts, feed, feedHasMore: st.visible < filtered.length,
+      feedShown: Math.min(st.visible, filtered.length), feedTotal: filtered.length,
+      categories: this.categories.map(c => ({ name: trc(c.name), blurb: ru ? (t.catBlurbs[c.name] || c.blurb) : c.blurb, count: c.count, entriesWord: t.entriesWord })),
+      trending: this.trending.map((it,i) => ({ num: String(i+1).padStart(2,'0'), name: it.name, cat: trc(it.cat), delta: it.delta })),
+      picks: this.picks.map((p,i) => ({ num: String(i+1).padStart(2,'0'), name: p.name, note: ru ? (this.picksRu[i] || p.note) : p.note, by: p.by, pickedBy: t.pickedBy })),
+      activity: ru ? this.activityRu : this.activity,
+      azGroups,
+      langEn: st.lang === 'en', langRu: st.lang === 'ru', setLang: e => this.setLang(e),
+      subtitle: t.subtitle, searchPh: t.searchPh, submit: t.submit,
+      navLinks: t.navLabels.map((label,i) => ({ label, href: ['#feed','#categories','#trending','#index'][i] })),
+      featuredEyebrow: t.featuredEyebrow, featuredKind: t.featuredKind, heroDek: t.heroDek,
+      readDossier: t.readDossier, viewMobile: t.viewMobile, threatLabel: t.threatLabel, popLabel: t.popLabel, severe: t.severe, scrollWord: t.scrollWord,
+      feedEyebrow: t.feedEyebrow, feedTitle: t.feedTitle, showingWord: t.showingWord, ofWord: t.ofWord, sortWord: t.sortWord, loadMore: t.loadMore,
+      collections: t.collections, catTitle: t.catTitle,
+      rising: t.rising, trendingTitle: t.trendingTitle, curated: t.curated, picksTitle: t.picksTitle,
+      activityTitle: t.activityTitle, viewAll: t.viewAll, directory: t.directory, indexTitle: t.indexTitle,
+      footerAbout: t.footerAbout, exploreWord: t.exploreWord, communityWord: t.communityWord, est: t.est, allFiction: t.allFiction,
+      fExplore: t.fExplore.map((label,i) => ({ label, href: ['#feed','#categories','#trending','#index'][i] })),
+      fCommunity: t.fCommunity.map(label => ({ label, href: '#' })),
+      onSearch: e => this.onSearch(e), onSearchFocus: () => this.onSearchFocus(), resultClick: () => this.resultClick(),
+      setCat: e => this.setCat(e), setSort: e => this.setSort(e), loadMore: () => this.loadMore(), toggleSave: e => this.toggleSave(e),
+    };
+  }
+}
+</script>
+</body>
+</html>

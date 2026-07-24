@@ -5,6 +5,7 @@ yarn-error.log
 /backup/
 .next/
 out/
+tsconfig.tsbuildinfo
 # dotenv environment variable files
 .env
 .env.development.local

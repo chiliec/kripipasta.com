@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7"></script>
+<style>
+:root{--bg:#0E0E10;--s1:#141418;--s2:#1A1A20;--s3:#212129;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);--tx:#ECECEF;--tx2:rgba(236,236,239,.66);--tx3:rgba(236,236,239,.42);--crimson:#B85450;--crimson2:#CA6E6A;--crimson-deep:#6E2C2A;--crimson-glow:rgba(184,84,80,.30);--fog:.6;--serif:'Bodoni Moda',Georgia,serif;--sans:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;--mono:ui-monospace,'SFMono-Regular',Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--crimson2);text-decoration:none}
+a:hover{color:#E29A96}
+::selection{background:var(--crimson-deep);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-thumb{background:#2a2a31;border-radius:6px;border:3px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+[data-secbody]{display:grid;grid-template-rows:1fr;transition:grid-template-rows .42s cubic-bezier(.4,0,.2,1),opacity .35s}
+[data-secbody][data-collapsed="true"]{grid-template-rows:0fr;opacity:0}
+[data-chev]{transition:transform .3s ease}
+[data-secheader][data-collapsed="true"] [data-chev]{transform:rotate(-90deg)}
+[data-secheader]:hover [data-sectitle]{color:#fff}
+[data-tocitem]{transition:color .2s,background .2s}
+[data-tocitem]:hover{color:var(--tx)}
+[data-tocbar]{transition:transform .25s ease,opacity .25s;transform:scaleY(0);opacity:0;transform-origin:center}
+[data-tocitem][data-active="true"]{color:var(--tx)}
+[data-tocitem][data-active="true"] [data-tocbar]{transform:scaleY(1);opacity:1}
+[data-tocitem][data-active="true"] [data-tocnum]{color:var(--crimson)}
+[data-spwrap] [data-spbody]{filter:blur(9px);transition:filter .5s ease;user-select:none;pointer-events:none}
+[data-spwrap][data-revealed="true"] [data-spbody]{filter:none;user-select:auto;pointer-events:auto}
+[data-spwrap] [data-spcover]{opacity:1;transition:opacity .35s ease}
+[data-spwrap][data-revealed="true"] [data-spcover]{opacity:0;pointer-events:none}
+[data-relcard]{transition:transform .25s ease,border-color .25s,box-shadow .3s,background .25s}
+[data-relcard]:hover{transform:translateY(-4px);border-color:var(--line2);background:var(--s2)}
+[data-relcard][data-picked="true"]{border-color:var(--crimson);box-shadow:0 0 0 1px var(--crimson),0 0 44px var(--crimson-glow)}
+[data-btn]{transition:background .2s,border-color .2s,color .2s,transform .12s}
+[data-btn]:hover{background:var(--s3);border-color:var(--line2)}
+[data-btn]:active{transform:translateY(1px)}
+[data-btn][data-on="true"]{color:var(--crimson2);border-color:var(--crimson-deep);background:rgba(184,84,80,.10)}
+[data-react]{transition:background .2s,border-color .2s,color .2s}
+[data-react]:hover{border-color:var(--line2);color:var(--tx)}
+[data-react][data-on="true"]{color:var(--crimson2);border-color:var(--crimson-deep);background:rgba(184,84,80,.12)}
+[data-gitem]{transition:transform .3s,border-color .25s,box-shadow .3s}
+[data-gitem]:hover{transform:scale(1.015);border-color:var(--line2);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+[data-navrow]{transition:color .2s,background .2s}
+[data-navrow]:hover{color:var(--tx);background:var(--s2)}
+[data-dotpt]{transition:r .2s,opacity .2s}
+[data-dotpt]:hover{opacity:1}
+@keyframes fogA{0%{transform:translate3d(0,0,0) scale(1.05)}50%{transform:translate3d(3%,-2%,0) scale(1.14)}100%{transform:translate3d(0,0,0) scale(1.05)}}
+@keyframes fogB{0%{transform:translate3d(0,0,0) scale(1.1)}50%{transform:translate3d(-4%,3%,0) scale(1.18)}100%{transform:translate3d(0,0,0) scale(1.1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes scrollcue{0%{transform:translateY(-2px);opacity:0}35%{opacity:1}100%{transform:translateY(9px);opacity:0}}
+#hero-inner{padding:0 48px 66px 260px}
+#page{padding:0 40px 0 252px}
+#main-grid{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:40px;align-items:start;padding:60px 0 90px}
+@media (max-width:980px){#main-grid{grid-template-columns:minmax(0,1fr)}#side-col{order:2}#side-col>div{position:static!important}}
+@media (max-width:720px){#left-rail{display:none!important}#page{padding-left:40px}#hero-inner{padding-left:48px}}
+@media (max-width:560px){#hero-inner{padding:0 22px 44px}#page{padding:0 20px}}
+[data-edittoolbar]{position:fixed;top:16px;right:22px;z-index:300;display:flex;gap:8px;align-items:center;background:linear-gradient(180deg,rgba(24,24,29,.96),rgba(16,16,19,.96));backdrop-filter:blur(14px);border:1px solid var(--line2);border-radius:12px;padding:8px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.ejs-host{background:var(--s1);border:1px solid var(--line2);border-radius:12px;padding:4px 18px;max-width:66ch;color:var(--tx)}
+.ejs-host .ce-paragraph{font-size:17.5px;line-height:1.85;color:var(--tx2)}
+.ejs-host .ce-block__content,.ejs-host .ce-toolbar__content{max-width:none}
+.ejs-host .cdx-block{padding:7px 0}
+.edit-input{width:100%;max-width:66ch;background:var(--s1);border:1px solid var(--line2);border-radius:10px;color:var(--tx);font-family:var(--serif);padding:12px 14px;outline:none}
+.edit-input:focus{border-color:var(--crimson-deep)}
+</style>
+</helmet>
+<div id="root-wrap" style="{{ rootStyle }}">
+
+<div data-edittoolbar>
+  <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><button data-btn onClick="{{ enterEdit }}" style="padding:9px 15px;background:var(--s1);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-family:var(--sans);font-size:12.5px;font-weight:500;cursor:pointer">✎ Edit content</button></sc-if>
+  <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
+    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--crimson2)">Editing</span><span style="display:flex;gap:3px;padding:3px;background:var(--s2);border:1px solid var(--line);border-radius:9px"><button data-btn data-on="{{ langEn }}" data-lang="en" onClick="{{ setLang }}" style="padding:6px 11px;background:none;border:none;border-radius:6px;color:var(--tx2);font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.05em;cursor:pointer">EN</button><button data-btn data-on="{{ langRu }}" data-lang="ru" onClick="{{ setLang }}" style="padding:6px 11px;background:none;border:none;border-radius:6px;color:var(--tx2);font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.05em;cursor:pointer">RU</button></span><button data-btn onClick="{{ cancelEdit }}" style="padding:9px 14px;background:var(--s2);border:1px solid var(--line);border-radius:9px;color:var(--tx2);font-family:var(--sans);font-size:12.5px;cursor:pointer">Cancel</button><button data-btn onClick="{{ saveEdit }}" style="padding:9px 17px;background:var(--crimson-deep);border:1px solid var(--crimson);border-radius:9px;color:#fff;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer">Save</button></span>
+  </sc-if>
+</div>
+
+<div style="position:fixed;top:0;left:0;right:0;height:3px;z-index:120;background:rgba(255,255,255,.05)">
+  <div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));box-shadow:0 0 14px var(--crimson-glow);transition:width .12s linear"></div>
+</div>
+
+<aside id="left-rail" style="position:fixed;top:0;left:0;width:230px;height:100vh;z-index:110;display:flex;flex-direction:column;padding:24px 20px;border-right:1px solid var(--line);background:linear-gradient(180deg,rgba(14,14,16,.86),rgba(14,14,16,.72));backdrop-filter:blur(14px);overflow-y:auto">
+  <div style="display:flex;align-items:center;gap:11px;margin-bottom:26px">
+    <div style="width:11px;height:11px;background:var(--crimson);transform:rotate(45deg);box-shadow:0 0 12px var(--crimson-glow)"></div>
+    <div>
+      <div style="font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.02em;line-height:1">KRIPIPASTA</div>
+      <div style="font-size:8.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--tx3);margin-top:3px">Internet Horror Archive</div>
+    </div>
+  </div>
+
+  <label style="display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--s1);border:1px solid var(--line);border-radius:10px;margin-bottom:24px;cursor:text">
+    <span style="width:12px;height:12px;border:1.5px solid var(--tx3);border-radius:50%;position:relative;flex:none"></span>
+    <input placeholder="Search the archive" style="background:none;border:none;outline:none;color:var(--tx);font-family:var(--sans);font-size:12.5px;width:100%">
+    <span style="font-family:var(--mono);font-size:9px;color:var(--tx3);border:1px solid var(--line);border-radius:4px;padding:2px 5px">/</span>
+  </label>
+
+  <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+    <span>Contents</span><span data-tocnum style="font-family:var(--mono);color:var(--tx3)">{{ progressLabel }}</span>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:1px;margin-bottom:26px">
+    <sc-for list="{{ toc }}" as="t" hint-placeholder-count="12">
+      <a data-tocitem data-active="{{ t.active }}" data-target="{{ t.id }}" href="{{ t.href }}" onClick="{{ tocClick }}" style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:7px;color:var(--tx2);text-decoration:none;font-size:12.5px;position:relative">
+        <span data-tocbar style="position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--crimson);border-radius:2px"></span>
+        <span data-tocnum style="font-family:var(--mono);font-size:10px;color:var(--tx3);min-width:16px">{{ t.num }}</span>
+        <span style="text-wrap:pretty">{{ t.label }}</span>
+      </a>
+    </sc-for>
+  </nav>
+
+  <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">Categories</div>
+  <div style="display:flex;flex-direction:column;gap:1px;margin-bottom:26px">
+    <a data-navrow href="#" style="padding:6px 8px;border-radius:7px;color:var(--tx2);font-size:12.5px">Cryptids</a>
+    <a data-navrow href="#" style="padding:6px 8px;border-radius:7px;color:var(--tx2);font-size:12.5px">Classic Creepypasta</a>
+    <a data-navrow href="#" style="padding:6px 8px;border-radius:7px;color:var(--tx2);font-size:12.5px">Analog Horror</a>
+    <a data-navrow href="#" style="padding:6px 8px;border-radius:7px;color:var(--tx2);font-size:12.5px">Urban Legends</a>
+    <a data-navrow href="#" style="padding:6px 8px;border-radius:7px;color:var(--tx2);font-size:12.5px">Entities</a>
+  </div>
+
+  <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">Recently viewed</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:2px">
+    <a data-navrow href="#" style="display:flex;gap:10px;align-items:center;padding:5px 6px;border-radius:7px;color:var(--tx2)"><span style="width:26px;height:26px;border-radius:6px;background:repeating-linear-gradient(135deg,#1b1b22,#1b1b22 4px,#202028 4px,#202028 8px);flex:none"></span><span style="font-size:12px">Siren Head</span></a>
+    <a data-navrow href="#" style="display:flex;gap:10px;align-items:center;padding:5px 6px;border-radius:7px;color:var(--tx2)"><span style="width:26px;height:26px;border-radius:6px;background:repeating-linear-gradient(135deg,#1b1b22,#1b1b22 4px,#202028 4px,#202028 8px);flex:none"></span><span style="font-size:12px">The Backrooms</span></a>
+    <a data-navrow href="#" style="display:flex;gap:10px;align-items:center;padding:5px 6px;border-radius:7px;color:var(--tx2)"><span style="width:26px;height:26px;border-radius:6px;background:repeating-linear-gradient(135deg,#1b1b22,#1b1b22 4px,#202028 4px,#202028 8px);flex:none"></span><span style="font-size:12px">BEN Drowned</span></a>
+  </div>
+  <div style="margin-top:auto;padding-top:22px;font-family:var(--mono);font-size:9.5px;color:var(--tx3);letter-spacing:.05em">EST. MMV · COMMUNITY-EDITED</div>
+</aside>
+
+<section id="hero" style="position:relative;min-height:92vh;overflow:hidden;display:flex;align-items:flex-end;border-bottom:1px solid var(--line)">
+  <canvas id="rake-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
+  <div style="position:absolute;top:-10%;right:-6%;width:66%;height:120%;z-index:0;background:repeating-linear-gradient(122deg,#141418,#141418 13px,#17171d 13px,#17171d 26px);opacity:.9"></div>
+  <div style="position:absolute;top:22px;right:26px;z-index:0;pointer-events:none"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:rgba(236,236,239,.26);border:1px dashed rgba(236,236,239,.16);padding:7px 12px;border-radius:8px">character artwork — full-bleed portrait</span></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,var(--bg) 20%,rgba(14,14,16,.72) 46%,rgba(14,14,16,.15) 72%,rgba(14,14,16,.55) 100%)"></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(0deg,var(--bg) 2%,rgba(14,14,16,0) 40%)"></div>
+  <div style="position:absolute;top:-30%;left:-10%;width:80%;height:90%;z-index:2;background:radial-gradient(closest-side,rgba(184,84,80,.10),rgba(184,84,80,0) 70%);opacity:var(--fog);animation:fogA 26s ease-in-out infinite;pointer-events:none"></div>
+  <div style="position:absolute;bottom:-30%;right:5%;width:75%;height:90%;z-index:2;background:radial-gradient(closest-side,rgba(150,150,170,.09),rgba(150,150,170,0) 70%);opacity:var(--fog);animation:fogB 34s ease-in-out infinite;pointer-events:none"></div>
+
+  <div id="hero-inner" style="position:relative;z-index:3;width:100%;max-width:1400px;animation:fadeUp .9s ease both">
+    <div style="display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--tx3);margin-bottom:26px">
+      <a href="#" style="color:var(--tx3)">Archive</a><span>/</span><a href="#" style="color:var(--tx3)">Cryptids</a><span>/</span><span style="color:var(--tx2)">The Rake</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+      <span style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson2);font-weight:500">Cryptid Dossier · Entity</span>
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--tx3)"></span>
+      <span style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3)">Community Canon</span>
+    </div>
+    <h1 id="hero-name" style="font-family:var(--serif);font-weight:500;font-size:clamp(66px,10vw,152px);line-height:.92;letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance">{{ title }}</h1>
+    <div style="font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.4vw,30px);color:var(--tx2);margin-bottom:30px">“The Pale Watcher” · also archived as <span style="color:var(--crimson2)">Hminnu</span></div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:760px;background:rgba(20,20,24,.55);backdrop-filter:blur(8px)">
+      <div style="flex:1;min-width:130px;padding:16px 20px;border-right:1px solid var(--line)"><div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">First surfaced</div><div style="font-family:var(--serif);font-size:23px">2005</div></div>
+      <div style="flex:1;min-width:130px;padding:16px 20px;border-right:1px solid var(--line)"><div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Origin</div><div style="font-family:var(--serif);font-size:23px">N. America</div></div>
+      <div style="flex:1;min-width:130px;padding:16px 20px;border-right:1px solid var(--line)"><div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Threat level</div><div style="font-family:var(--serif);font-size:23px;color:var(--crimson2)">Severe</div></div>
+      <div style="flex:1;min-width:130px;padding:16px 20px"><div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Popularity</div><div style="font-family:var(--serif);font-size:23px">91<span style="font-size:13px;color:var(--tx3)"> / 100</span></div></div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:26px">
+      <button data-btn data-on="{{ favorited }}" onClick="{{ toggleFav }}" style="display:flex;align-items:center;gap:9px;padding:11px 18px;background:var(--s1);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">
+        <span style="font-size:14px;line-height:1;color:{{ favColor }}">♥</span>{{ favLabel }}
+      </button>
+      <button data-btn data-on="{{ bookmarked }}" onClick="{{ toggleBookmark }}" style="display:flex;align-items:center;gap:9px;padding:11px 18px;background:var(--s1);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">
+        <span style="width:9px;height:12px;border:1.6px solid currentColor;border-bottom:none;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%);display:inline-block"></span>{{ bookLabel }}
+      </button>
+      <button data-btn data-on="{{ copied }}" onClick="{{ copyLink }}" style="display:flex;align-items:center;gap:9px;padding:11px 18px;background:var(--s1);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">{{ copyLabel }}</button>
+      <div style="display:flex;align-items:center;gap:9px;margin-left:6px;color:var(--tx2);font-size:12.5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--crimson);box-shadow:0 0 8px var(--crimson-glow);animation:pulse 3s ease-in-out infinite"></span>18 min read</div>
+      <div style="display:flex;align-items:baseline;gap:6px;color:var(--tx2);font-size:12.5px"><span style="font-family:var(--serif);font-size:19px;color:var(--tx)">4.6</span> / 5 · 3,120 ratings</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:50%;bottom:22px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--tx3)"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.2em">SCROLL</span><span style="width:1px;height:26px;background:linear-gradient(var(--tx3),transparent);position:relative;overflow:hidden"><span style="position:absolute;top:0;left:0;width:1px;height:8px;background:var(--crimson);animation:scrollcue 2.2s ease-in-out infinite"></span></span></div>
+</section>
+
+<div id="page">
+<div id="main-grid">
+
+  <main id="article-col" style="min-width:0">
+    <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><div style="margin-bottom:26px;display:flex;flex-direction:column;gap:10px"><label style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)">Title</label><input id="edit-title" class="edit-input" style="font-size:26px"><label style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)">Lead paragraph</label><textarea id="edit-lead" class="edit-input" rows="3" style="font-size:18px;line-height:1.5;resize:vertical"></textarea></div></sc-if>
+    <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><p style="font-family:var(--serif);font-size:clamp(22px,2.5vw,30px);line-height:1.42;color:var(--tx);margin:0 0 30px;text-wrap:pretty;max-width:40ch">{{ lead }}</p></sc-if>
+
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:-6px">
+        <span style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#1c1c24,#1c1c24 4px,#232330 4px,#232330 8px);border:1.5px solid var(--bg);display:inline-block"></span>
+        <span style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#22222c,#22222c 4px,#2a2a36 4px,#2a2a36 8px);border:1.5px solid var(--bg);display:inline-block;margin-left:-9px"></span>
+        <span style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#1c1c24,#1c1c24 4px,#232330 4px,#232330 8px);border:1.5px solid var(--bg);display:inline-block;margin-left:-9px"></span>
+      </div>
+      <div style="font-size:12.5px;color:var(--tx2);line-height:1.5">Maintained by <a href="#">the Kripipasta editors</a> · <span style="color:var(--tx3)">34 contributors</span><br><span style="color:var(--tx3)">Last edited 3 days ago · revision 12</span></div>
+      <div style="margin-left:auto;display:flex;gap:9px">
+        <button data-btn style="padding:8px 14px;background:var(--s1);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer">Edit article</button>
+        <button data-btn style="padding:8px 14px;background:var(--s1);border:1px solid var(--line);border-radius:9px;color:var(--tx2);font-family:var(--sans);font-size:12px;cursor:pointer">History</button>
+      </div>
+    </div>
+
+    <section id="sec-overview" style="scroll-margin-top:80px;padding-top:34px">
+      <header data-secheader data-collapsed="{{ collapsed.overview }}" data-section="overview" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">01</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Overview</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.overview }}"><div style="overflow:hidden;min-height:0;padding-top:8px">
+        <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ overviewParas }}" as="p" hint-placeholder-count="2"><p style="font-size:17.5px;line-height:1.85;color:var(--tx2);margin:0 0 20px;max-width:66ch;text-wrap:pretty">{{ p }}</p></sc-for></sc-if>
+        <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><div id="ejs-overview" class="ejs-host" style="margin:0 0 22px"></div></sc-if>
+        <blockquote style="margin:0;padding:22px 28px;border-left:2px solid var(--crimson);background:linear-gradient(90deg,rgba(184,84,80,.07),transparent);border-radius:0 12px 12px 0">
+          <p style="font-family:var(--serif);font-style:italic;font-size:23px;line-height:1.5;margin:0;color:var(--tx)">“It didn’t blink. It waited at the end of the bed until I made myself look — and by then it was already closer.”</p>
+          <footer style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-top:14px">Recurring line — aggregated eyewitness accounts</footer>
+        </blockquote>
+      </div></div>
+    </section>
+
+    <section id="sec-origin" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.origin }}" data-section="origin" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">02</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Origin Story</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.origin }}"><div style="overflow:hidden;min-height:0;padding-top:8px">
+        <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ originParas }}" as="p" hint-placeholder-count="2"><p style="font-size:17.5px;line-height:1.85;color:var(--tx2);margin:0 0 20px;max-width:66ch;text-wrap:pretty">{{ p }}</p></sc-for></sc-if>
+        <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><div id="ejs-origin" class="ejs-host" style="margin:0 0 22px"></div></sc-if>
+        <div style="display:flex;gap:14px;padding:16px 20px;background:var(--s1);border:1px solid var(--line);border-radius:12px;max-width:66ch">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--crimson2);border:1px solid var(--crimson-deep);border-radius:5px;padding:3px 7px;height:fit-content;white-space:nowrap">EDITOR’S NOTE</span>
+          <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><p style="font-size:14.5px;line-height:1.65;color:var(--tx2);margin:0">{{ originNote }}</p></sc-if>
+          <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><textarea id="edit-orignote" class="edit-input" rows="3" style="flex:1;width:auto;min-width:0;font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical;padding:8px 10px"></textarea></sc-if>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-history" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.history }}" data-section="history" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">03</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Internet History</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.history }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="position:relative;padding-left:28px">
+          <div style="position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:linear-gradient(var(--crimson-deep),var(--line))"></div>
+          <div style="position:relative;margin-bottom:26px"><span style="position:absolute;left:-27px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--crimson)"></span><div style="font-family:var(--serif);font-size:21px;color:var(--tx)">2005 · Assembled</div><p style="font-size:15px;line-height:1.65;color:var(--tx2);margin:6px 0 0;max-width:60ch">Built across anonymous threads; the collaborative “evidence” is written and mirrored within days.</p></div>
+          <div style="position:relative;margin-bottom:26px"><span style="position:absolute;left:-27px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--line2)"></span><div style="font-family:var(--serif);font-size:21px;color:var(--tx)">2006 · The lake-house account</div><p style="font-size:15px;line-height:1.65;color:var(--tx2);margin:6px 0 0;max-width:60ch">A single detailed “sighting” surfaces and is later treated as the definitive canonical text.</p></div>
+          <div style="position:relative;margin-bottom:26px"><span style="position:absolute;left:-27px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--line2)"></span><div style="font-family:var(--serif);font-size:21px;color:var(--tx)">2010–2013 · Mass audience</div><p style="font-size:15px;line-height:1.65;color:var(--tx2);margin:6px 0 0;max-width:60ch">YouTube retellings and short films carry the figure far beyond its origin community.</p></div>
+          <div style="position:relative;margin-bottom:26px"><span style="position:absolute;left:-27px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--line2)"></span><div style="font-family:var(--serif);font-size:21px;color:var(--tx)">2018 · Analog-horror wave</div><p style="font-size:15px;line-height:1.65;color:var(--tx2);margin:6px 0 0;max-width:60ch">Reframed as “recovered footage,” the Rake fits neatly into a new documentary-horror grammar.</p></div>
+          <div style="position:relative"><span style="position:absolute;left:-27px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--crimson);border:2px solid var(--crimson);box-shadow:0 0 12px var(--crimson-glow)"></span><div style="font-family:var(--serif);font-size:21px;color:var(--tx)">2024 · Revival</div><p style="font-size:15px;line-height:1.65;color:var(--tx2);margin:6px 0 0;max-width:60ch">A relaunch series and renewed academic interest in collaborative folklore drive a fresh peak.</p></div>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-behavior" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.behavior }}" data-section="behavior" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">04</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Behavior &amp; Abilities</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.behavior }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:66ch">
+          <sc-for list="{{ behavior }}" as="b" hint-placeholder-count="4">
+            <div style="padding:18px 20px;background:var(--s1);border:1px solid var(--line);border-radius:12px">
+              <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><div style="font-family:var(--serif);font-size:18px;margin-bottom:6px">{{ b.title }}</div><p style="font-size:14px;line-height:1.6;color:var(--tx2);margin:0">{{ b.text }}</p></sc-if>
+              <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><input id="{{ b.tId }}" class="edit-input" style="display:block;font-size:16px;margin-bottom:8px;padding:8px 10px"><textarea id="{{ b.xId }}" class="edit-input" rows="2" style="display:block;font-family:var(--sans);font-size:13.5px;line-height:1.5;resize:vertical;padding:8px 10px"></textarea></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-weaknesses" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.weaknesses }}" data-section="weaknesses" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">05</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Weaknesses</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.weaknesses }}"><div style="overflow:hidden;min-height:0;padding-top:8px">
+        <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ weaknessParas }}" as="p" hint-placeholder-count="1"><p style="font-size:17.5px;line-height:1.85;color:var(--tx2);margin:0;max-width:66ch;text-wrap:pretty">{{ p }}</p></sc-for></sc-if>
+        <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><div id="ejs-weaknesses" class="ejs-host"></div></sc-if>
+      </div></div>
+    </section>
+
+    <section id="sec-encounters" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.encounters }}" data-section="encounters" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">06</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Documented Encounters</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.encounters }}"><div style="overflow:hidden;min-height:0;padding-top:8px">
+        <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ encIntroParas }}" as="p" hint-placeholder-count="1"><p style="font-size:17.5px;line-height:1.85;color:var(--tx2);margin:0 0 20px;max-width:66ch;text-wrap:pretty">{{ p }}</p></sc-for>
+          <div data-spwrap data-revealed="{{ spoilers.encounter }}" style="position:relative;max-width:66ch;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+            <div data-spbody style="padding:22px 24px;background:var(--s1)">
+              <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--crimson2);margin-bottom:10px">From the 2006 account</div>
+              <sc-for list="{{ encBodyParas }}" as="p" hint-placeholder-count="1"><p style="font-size:15.5px;line-height:1.7;color:var(--tx);margin:0 0 12px">{{ p }}</p></sc-for>
+            </div>
+            <button data-spcover data-spoiler="encounter" onClick="{{ revealSpoiler }}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(18,18,22,.55);backdrop-filter:blur(2px);border:none;cursor:pointer;color:var(--tx)">
+              <span style="width:26px;height:26px;border:1.5px solid var(--crimson2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--crimson2);font-size:13px">!</span>
+              <span style="font-size:12.5px;font-weight:500">Reveal spoiler</span>
+              <span style="font-size:11px;color:var(--tx3)">A widely-cited detail from the account</span>
+            </button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
+          <div id="ejs-encounters-intro" class="ejs-host" style="margin:0 0 20px"></div>
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--crimson2);margin:0 0 8px">From the 2006 account · spoiler body</div>
+          <div id="ejs-encounters-body" class="ejs-host"></div>
+        </sc-if>
+      </div></div>
+    </section>
+
+    <section id="sec-gallery" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.gallery }}" data-section="gallery" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">07</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Gallery</h2>
+        <span style="font-size:11px;color:var(--tx3)">Click to expand</span>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.gallery }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="5">
+            <button data-gitem data-index="{{ g.index }}" onClick="{{ openLightbox }}" style="position:relative;aspect-ratio:4/3;border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;background:repeating-linear-gradient(135deg,#151519,#151519 10px,#191920 10px,#191920 20px);padding:0">
+              <span style="position:absolute;top:10px;left:11px;font-family:var(--mono);font-size:10px;color:var(--tx3)">{{ g.num }}</span>
+              <span style="position:absolute;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(0deg,rgba(14,14,16,.92),transparent);text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--tx2)">{{ g.label }}</span>
+            </button>
+          </sc-for>
+        </div></sc-if>
+        <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:14px;max-width:66ch">
+          <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="5">
+            <div style="display:flex;gap:14px;align-items:flex-start;padding:14px 16px;background:var(--s1);border:1px solid var(--line);border-radius:12px">
+              <span style="font-family:var(--mono);font-size:11px;color:var(--crimson2);padding-top:12px;white-space:nowrap">{{ g.num }}</span>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+                <input id="{{ g.lId }}" class="edit-input" style="display:block;font-family:var(--mono);font-size:12px;letter-spacing:.04em;padding:7px 10px">
+                <textarea id="{{ g.cId }}" class="edit-input" rows="2" style="display:block;font-family:var(--sans);font-size:13.5px;line-height:1.5;resize:vertical;padding:8px 10px"></textarea>
+              </div>
+            </div>
+          </sc-for>
+        </div></sc-if>
+      </div></div>
+    </section>
+
+    <section id="sec-popularity" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.popularity }}" data-section="popularity" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">08</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Popularity Over Time</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.popularity }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="padding:24px 26px 18px;background:var(--s1);border:1px solid var(--line);border-radius:14px;max-width:66ch">
+          <svg viewBox="0 0 300 116" preserveAspectRatio="none" style="width:100%;height:200px;display:block">
+            <defs><linearGradient id="rakearea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--crimson)" stop-opacity="0.28"/><stop offset="1" stop-color="var(--crimson)" stop-opacity="0"/></linearGradient></defs>
+            <line x1="6" y1="98" x2="294" y2="98" stroke="var(--line)" stroke-width="0.5"/>
+            <line x1="6" y1="58" x2="294" y2="58" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="2 3"/>
+            <line x1="6" y1="18" x2="294" y2="18" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="2 3"/>
+            <path d="{{ chart.area }}" fill="url(#rakearea)"/>
+            <path d="{{ chart.line }}" fill="none" stroke="var(--crimson2)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+            <sc-for list="{{ chart.dots }}" as="d" hint-placeholder-count="8">
+              <circle data-dotpt cx="{{ d.x }}" cy="{{ d.y }}" r="2.4" fill="var(--bg)" stroke="var(--crimson2)" stroke-width="1.4"><title>{{ d.year }} · index {{ d.v }}</title></circle>
+            </sc-for>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--tx3);margin-top:6px"><span>2005</span><span>2011</span><span>2017</span><span>2023</span><span>’25</span></div>
+        </div>
+        <p style="font-size:14px;line-height:1.6;color:var(--tx3);margin:14px 0 0;max-width:60ch">Search and mention volume, indexed to 100. The 2018 analog-horror revival and the 2023 relaunch drove the sharpest gains.</p>
+      </div></div>
+    </section>
+
+    <section id="sec-theories" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.theories }}" data-section="theories" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">09</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Fan Theories</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.theories }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:66ch">
+          <div style="padding:18px 22px;background:var(--s1);border:1px solid var(--line);border-radius:12px">
+            <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><div style="font-family:var(--serif);font-size:19px;margin-bottom:6px">{{ theory0.title }}</div><p style="font-size:14.5px;line-height:1.65;color:var(--tx2);margin:0">{{ theory0.text }}</p></sc-if>
+            <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><input id="{{ theory0.tId }}" class="edit-input" style="display:block;font-size:17px;margin-bottom:8px;padding:8px 10px"><textarea id="{{ theory0.xId }}" class="edit-input" rows="3" style="display:block;font-family:var(--sans);font-size:13.5px;line-height:1.5;resize:vertical;padding:8px 10px"></textarea></sc-if>
+          </div>
+          <div style="padding:18px 22px;background:var(--s1);border:1px solid var(--line);border-radius:12px">
+            <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><div style="font-family:var(--serif);font-size:19px;margin-bottom:6px">{{ theory1.title }}</div><p style="font-size:14.5px;line-height:1.65;color:var(--tx2);margin:0">{{ theory1.text }}</p></sc-if>
+            <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><input id="{{ theory1.tId }}" class="edit-input" style="display:block;font-size:17px;margin-bottom:8px;padding:8px 10px"><textarea id="{{ theory1.xId }}" class="edit-input" rows="3" style="display:block;font-family:var(--sans);font-size:13.5px;line-height:1.5;resize:vertical;padding:8px 10px"></textarea></sc-if>
+          </div>
+          <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}">
+            <div data-spwrap data-revealed="{{ spoilers.theory }}" style="position:relative;border:1px solid var(--crimson-deep);border-radius:12px;overflow:hidden">
+              <div data-spbody style="padding:18px 22px;background:var(--s1)"><div style="font-family:var(--serif);font-size:19px;margin-bottom:6px;color:var(--crimson2)">{{ theory2.title }}</div><p style="font-size:14.5px;line-height:1.65;color:var(--tx);margin:0">{{ theory2.text }}</p></div>
+              <button data-spcover data-spoiler="theory" onClick="{{ revealSpoiler }}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(18,18,22,.6);backdrop-filter:blur(2px);border:none;cursor:pointer;color:var(--tx)"><span style="font-size:12.5px;font-weight:500">Reveal a darker theory</span><span style="font-size:11px;color:var(--tx3)">Read at your discretion</span></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid var(--crimson-deep);border-radius:12px;padding:18px 22px;background:var(--s1)"><input id="{{ theory2.tId }}" class="edit-input" style="display:block;font-size:17px;color:var(--crimson2);margin-bottom:8px;padding:8px 10px"><textarea id="{{ theory2.xId }}" class="edit-input" rows="3" style="display:block;font-family:var(--sans);font-size:13.5px;line-height:1.5;resize:vertical;padding:8px 10px"></textarea></div>
+          </sc-if>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-myths" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.myths }}" data-section="myths" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">10</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Myths &amp; Misconceptions</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.myths }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="display:flex;flex-direction:column;gap:2px;max-width:66ch">
+          <sc-for list="{{ myths }}" as="m" hint-placeholder-count="3">
+            <div style="display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)">
+              <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--serif);font-size:15px;color:var(--crimson2);white-space:nowrap">{{ m.term }}</span><p style="font-size:14.5px;line-height:1.6;color:var(--tx2);margin:0">{{ m.text }}</p></sc-if>
+              <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><input id="{{ m.tId }}" class="edit-input" style="flex:none;width:180px;font-size:14px;color:var(--crimson2);padding:7px 10px"><textarea id="{{ m.xId }}" class="edit-input" rows="2" style="flex:1;width:auto;min-width:0;font-family:var(--sans);font-size:13.5px;line-height:1.5;resize:vertical;padding:7px 10px"></textarea></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-related" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.related }}" data-section="related" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">11</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Related Entities</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.related }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <sc-for list="{{ related }}" as="r" hint-placeholder-count="4">
+            <a data-relcard data-picked="{{ r.picked }}" href="#" style="display:flex;gap:14px;padding:14px;background:var(--s1);border:1px solid var(--line);border-radius:12px;text-decoration:none">
+              <span style="width:56px;height:70px;border-radius:8px;background:repeating-linear-gradient(135deg,#17171d,#17171d 6px,#1c1c24 6px,#1c1c24 12px);flex:none"></span>
+              <span style="display:flex;flex-direction:column;justify-content:center;min-width:0">
+                <span style="font-family:var(--serif);font-size:19px;color:var(--tx);line-height:1.1">{{ r.name }}</span>
+                <span style="font-size:11.5px;color:var(--tx3);margin:5px 0 9px">{{ r.rel }}</span>
+                <span style="display:flex;align-items:center;gap:7px"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--tx3)">THREAT</span><span style="flex:1;height:3px;background:var(--s3);border-radius:2px;overflow:hidden"><span style="display:block;height:100%;width:{{ r.threatW }};background:var(--crimson);transition:width 1s ease"></span></span><span style="font-family:var(--mono);font-size:10px;color:var(--tx2)">{{ r.threat }}</span></span>
+              </span>
+            </a>
+          </sc-for>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-notes" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.notes }}" data-section="notes" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">12</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">Community Notes</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.notes }}"><div style="overflow:hidden;min-height:0;padding-top:14px">
+        <div style="display:flex;gap:14px;padding:18px 20px;background:linear-gradient(90deg,rgba(184,84,80,.06),var(--s1));border:1px solid var(--crimson-deep);border-radius:12px;max-width:66ch;margin-bottom:22px">
+          <span style="font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--crimson2);border:1px solid var(--crimson-deep);border-radius:5px;padding:3px 7px;height:fit-content;white-space:nowrap">PENDING</span>
+          <div style="flex:1">
+            <p style="font-size:14.5px;line-height:1.6;color:var(--tx2);margin:0 0 12px">3 contributors suggest adding a subsection on regional variants — the “crawler” accounts from the Pacific Northwest. Vote to prioritize.</p>
+            <div style="display:flex;gap:9px"><button data-btn style="padding:7px 14px;background:var(--s2);border:1px solid var(--line);border-radius:8px;color:var(--tx);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer">Approve · 27</button><button data-btn style="padding:7px 14px;background:var(--s2);border:1px solid var(--line);border-radius:8px;color:var(--tx2);font-family:var(--sans);font-size:12px;cursor:pointer">Discuss</button><a href="#" style="align-self:center;font-size:12px;margin-left:2px">Suggest a lore update →</a></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-family:var(--serif);font-size:22px;margin:0">Discussion <span style="color:var(--tx3);font-size:15px">· 3</span></h3>
+          <div style="display:flex;gap:8px;font-size:11.5px;color:var(--tx3)"><span style="color:var(--tx)">Top</span><span>New</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{ comments }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex;gap:13px">
+              <span style="width:36px;height:36px;border-radius:50%;background:repeating-linear-gradient(135deg,#1c1c24,#1c1c24 4px,#242430 4px,#242430 8px);flex:none"></span>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px"><span style="font-weight:600;font-size:13px">{{ c.author }}</span><span style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--crimson2);border:1px solid var(--crimson-deep);border-radius:4px;padding:1px 5px">{{ c.role }}</span><span style="font-size:11px;color:var(--tx3)">{{ c.time }}</span></div>
+                <p style="font-size:14px;line-height:1.6;color:var(--tx2);margin:0 0 8px">{{ c.text }}</p>
+                <div style="display:flex;gap:16px;font-size:11.5px;color:var(--tx3)"><span>▲ {{ c.votes }}</span><span data-navrow style="cursor:pointer;padding:0">Reply</span><span data-navrow style="cursor:pointer;padding:0">Share</span></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:11px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)">
+          <span style="width:36px;height:36px;border-radius:50%;background:var(--crimson-deep);flex:none"></span>
+          <input placeholder="Add to the discussion…" style="flex:1;background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:11px 15px;color:var(--tx);font-family:var(--sans);font-size:13px;outline:none">
+          <button data-btn style="padding:0 18px;background:var(--crimson-deep);border:1px solid var(--crimson);border-radius:10px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">Post</button>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sec-references" style="scroll-margin-top:80px;padding-top:30px">
+      <header data-secheader data-collapsed="{{ collapsed.references }}" data-section="references" onClick="{{ toggleSection }}" style="display:flex;align-items:center;gap:16px;cursor:pointer;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--crimson);letter-spacing:.1em">13</span>
+        <h2 data-sectitle style="font-family:var(--serif);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0;flex:1;transition:color .2s">References</h2>
+        <svg data-chev width="14" height="14" viewBox="0 0 14 14" style="color:var(--tx3)"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </header>
+      <div data-secbody data-collapsed="{{ collapsed.references }}"><div style="overflow:hidden;min-height:0;padding-top:10px">
+        <ol style="margin:0;padding:0;list-style:none;counter-reset:ref;max-width:66ch">
+          <sc-for list="{{ references }}" as="r" hint-placeholder-count="6">
+            <li style="counter-increment:ref;position:relative;padding:11px 0 11px 34px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--tx2);line-height:1.55">
+              <span style="position:absolute;left:0;top:11px;font-family:var(--mono);font-size:11px;color:var(--crimson2)">{{ r.num }}</span>
+              <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}">{{ r.text }}</sc-if>
+              <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><input id="{{ r.rId }}" class="edit-input" style="display:block;font-family:var(--sans);font-size:13px;padding:6px 10px"></sc-if>
+            </li>
+          </sc-for>
+        </ol>
+      </div></div>
+    </section>
+  </main>
+
+  <aside id="side-col" style="min-width:0;display:flex;flex-direction:column;gap:18px">
+    <div style="position:sticky;top:22px;display:flex;flex-direction:column;gap:18px">
+
+    <div style="padding:20px 22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3)">Reading progress</span><span style="font-family:var(--serif);font-size:20px;color:var(--tx)">{{ progressLabel }}</span></div>
+      <div style="height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin-bottom:16px"><div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width .12s linear"></div></div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:9px"><div style="font-family:var(--serif);font-size:19px">18<span style="font-size:11px;color:var(--tx3)">m</span></div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:2px">Read</div></div>
+        <div style="flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:9px"><div style="font-family:var(--serif);font-size:19px;color:var(--crimson2)">4.6</div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:2px">Score</div></div>
+        <div style="flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:9px"><div style="font-family:var(--serif);font-size:19px">2.4k</div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:2px">Saves</div></div>
+      </div>
+    </div>
+
+    <div style="padding:22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:16px">Character Facts</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--tx2)">Threat level</span><span style="font-family:var(--mono);color:var(--crimson2)">82 · Severe</span></div><div style="height:5px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ threatW }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width 1.1s cubic-bezier(.22,1,.36,1)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--tx2)">Danger score</span><span style="font-family:var(--mono);color:var(--tx2)">74</span></div><div style="height:5px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ dangerW }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width 1.1s cubic-bezier(.22,1,.36,1) .1s"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--tx2)">Popularity</span><span style="font-family:var(--mono);color:var(--tx2)">91</span></div><div style="height:5px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ popW }};background:linear-gradient(90deg,var(--crimson-deep),var(--crimson));transition:width 1.1s cubic-bezier(.22,1,.36,1) .2s"></div></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12px">
+        <div style="background:var(--s1);padding:11px 13px"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Species</div><div style="color:var(--tx)">Humanoid</div></div>
+        <div style="background:var(--s1);padding:11px 13px"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Status</div><div style="color:var(--tx)">Active</div></div>
+        <div style="background:var(--s1);padding:11px 13px"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Creator</div><div style="color:var(--tx)">Collaborative</div></div>
+        <div style="background:var(--s1);padding:11px 13px"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Year</div><div style="color:var(--tx)">2005</div></div>
+        <div style="background:var(--s1);padding:11px 13px"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Height</div><div style="color:var(--tx)">~6 ft</div></div>
+        <div style="background:var(--s1);padding:11px 13px"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Canon</div><div style="color:var(--tx)">Community</div></div>
+        <div style="background:var(--s1);padding:11px 13px;grid-column:span 2"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Habitat</div><div style="color:var(--tx)">Rural bedrooms · treelines · lake houses</div></div>
+      </div>
+    </div>
+
+    <div style="padding:22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px">Community Score</div>
+      <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:16px">
+        <div style="font-family:var(--serif);font-size:52px;line-height:.9">4.6</div>
+        <div style="padding-bottom:6px">
+          <div style="display:flex;gap:3px;margin-bottom:5px"><span style="flex:1;height:6px;border-radius:2px;background:var(--s3);overflow:hidden"><span style="display:block;height:100%;width:{{ starPct }};background:var(--crimson);transition:width 1.2s ease"></span></span></div>
+          <div style="font-size:11px;color:var(--tx3)">3,120 ratings</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button data-btn data-on="{{ upActive }}" data-vote="up" onClick="{{ vote }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:var(--s2);border:1px solid var(--line);border-radius:10px;color:var(--tx);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">▲ {{ votes.up }}</button>
+        <button data-btn data-on="{{ downActive }}" data-vote="down" onClick="{{ vote }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:var(--s2);border:1px solid var(--line);border-radius:10px;color:var(--tx2);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">▼ {{ votes.down }}</button>
+      </div>
+      <div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:{{ votePct }};background:var(--crimson);transition:width .3s ease"></div></div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:18px">{{ votePct }} found this entry credible</div>
+      <div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">Reactions</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ reactions }}" as="rx" hint-placeholder-count="4">
+          <button data-react data-on="{{ rx.active }}" data-reaction="{{ rx.key }}" onClick="{{ react }}" style="display:flex;align-items:center;gap:7px;padding:7px 12px;background:var(--s2);border:1px solid var(--line);border-radius:20px;color:var(--tx2);font-family:var(--sans);font-size:12px;cursor:pointer">{{ rx.label }} <span style="font-family:var(--mono);font-size:10px;opacity:.8">{{ rx.count }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="padding:22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px">Popular This Week</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ popular }}" as="p" hint-placeholder-count="5">
+          <a data-navrow href="#" style="display:flex;align-items:center;gap:13px;padding:9px 8px;border-radius:9px;color:var(--tx2)"><span style="font-family:var(--serif);font-size:17px;color:var(--tx3);min-width:22px">{{ p.num }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;color:var(--tx)">{{ p.name }}</span><span style="font-size:10.5px;color:var(--tx3)">{{ p.meta }}</span></span></a>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="padding:22px;background:var(--s1);border:1px solid var(--line);border-radius:16px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px">Trending Entities</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ trending }}" as="t" hint-placeholder-count="4">
+          <a data-navrow href="#" style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;color:var(--tx2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--crimson)"></span><span style="flex:1;font-size:13.5px;color:var(--tx)">{{ t.name }}</span><span style="font-family:var(--mono);font-size:11px;color:var(--crimson2)">{{ t.delta }}</span></a>
+        </sc-for>
+      </div>
+    </div>
+
+    <button data-btn onClick="{{ randomEntry }}" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;background:linear-gradient(90deg,var(--s2),var(--s1));border:1px solid var(--line);border-radius:14px;color:var(--tx);font-family:var(--sans);font-size:13.5px;font-weight:500;cursor:pointer"><span style="width:9px;height:9px;background:var(--crimson);transform:rotate(45deg)"></span>Open a random entry</button>
+
+    </div>
+  </aside>
+
+</div>
+</div>
+
+<sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:200;background:rgba(9,9,11,.9);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;animation:fadeUp .25s ease both">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:900px;margin-bottom:16px">
+      <span style="font-family:var(--mono);font-size:12px;color:var(--tx3)">{{ lightboxNum }}</span>
+      <button onClick="{{ closeLightbox }}" style="width:36px;height:36px;border-radius:50%;background:var(--s1);border:1px solid var(--line);color:var(--tx);font-size:18px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div onClick="{{ stop }}" style="display:flex;align-items:center;gap:18px;width:100%;max-width:900px">
+      <button data-btn data-dir="-1" onClick="{{ lightboxNav }}" style="width:46px;height:46px;flex:none;border-radius:50%;background:var(--s1);border:1px solid var(--line);color:var(--tx);font-size:20px;cursor:pointer">‹</button>
+      <div style="flex:1;aspect-ratio:16/10;border-radius:16px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,#141418,#141418 16px,#191920 16px,#191920 32px);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--tx3);border:1px dashed var(--line2);padding:10px 16px;border-radius:8px">{{ lightboxItem.label }}</span></div>
+      <button data-btn data-dir="1" onClick="{{ lightboxNav }}" style="width:46px;height:46px;flex:none;border-radius:50%;background:var(--s1);border:1px solid var(--line);color:var(--tx);font-size:20px;cursor:pointer">›</button>
+    </div>
+    <p onClick="{{ stop }}" style="max-width:640px;text-align:center;font-size:14px;line-height:1.6;color:var(--tx2);margin:20px 0 0">{{ lightboxItem.cap }}</p>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#B85450&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#B85450&quot;,&quot;#9E4B57&quot;,&quot;#8C4A3A&quot;,&quot;#A85C57&quot;,&quot;#7C4A6E&quot;]},&quot;fogIntensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:60,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:10,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showParticles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  state = {
+    progress: 0, active: 'overview', meters: false,
+    votes: { up: 2841, down: 137 }, userVote: null,
+    reactions: { unsettled: 214, chills: 389, fascinated: 512, skeptical: 73 }, userReaction: null,
+    favorited: false, bookmarked: false,
+    collapsed: {}, spoilers: {}, lightbox: null, copied: false, randomPick: null,
+    editMode: false, lang: 'en', content: null,
+  };
+
+  defaultContent = {
+    en: {
+      title:'The Rake',
+      lead:'A gaunt, pale humanoid said to crouch at the foot of a sleeper’s bed and watch — patiently, without sound — until the moment it decides to move.',
+      overview:['The Rake has no confirmed origin, no author, and no single canonical text. Instead it exists as the sum of thousands of overlapping accounts — each one insisting it happened to someone the teller almost knew. That collaborative authorship is precisely why it endures.','Where most internet horror is a story you read, the Rake is a story you are told you might already be inside of — a figure defined less by what it does than by the certainty that it is watching before you ever wake.'],
+      origin:['The modern Rake was assembled in 2005, in a series of image-board threads where anonymous users agreed, in real time, to build a monster together. Someone proposed a creature; others supplied “recovered” evidence — a 12th-century mention, a mistranslated name, a ship’s log, a mother’s video — none of which ever existed outside the thread.','This is fiction wearing the costume of provenance. The fabricated documents were designed to feel found rather than written, and that single move — presenting invention as archive — became the template for a decade of internet horror that followed.'],
+      weaknesses:['No physical vulnerability has ever been documented. The single consistent “defense” across accounts is perception itself: the Rake reportedly retreats — or simply is no longer there — the instant it is looked at directly, or a light is turned on. Whether that is a property of the creature or of the half-waking mind describing it is exactly the ambiguity the story depends on.'],
+      encIntro:['A handful of accounts recur often enough to be treated, within the community, as canonical. The most cited omits a detail many retellings consider the genuinely unsettling part.'],
+      encBody:['In the most-repeated version, the witness claims they understood a single sentence it spoke — and that everyone who hears the sentence repeated aloud sleeps worse for weeks. The “sentence” is never written down the same way twice.'],
+      behavior:[{title:'Watches, then acts',text:'Long periods of stillness at the foot of the bed precede any movement.'},{title:'Unnatural crawl',text:'Moves in a low crawl; disproportionately fast over short distances.'},{title:'Peripheral only',text:'Reported most often at the edge of vision; rarely seen head-on.'},{title:'The half-heard voice',text:'A whisper witnesses cannot reconstruct afterward is frequently reported.'}],
+      theories:[{title:'Sleep-paralysis externalization',text:'A shared name for a near-universal hypnopompic hallucination — the figure at the foot of the bed that thousands describe independently.'},{title:'Memetic entity',text:'It “exists” only insofar as it is retold, and each retelling strengthens it. The story is the organism.'},{title:'The self-reinforcing reading',text:'This theory frames the article you are reading as part of the mechanism — the more you research it before sleeping, the more likely you are to “see” it. Attention is the only thing it actually feeds on.'}],
+      myths:[{term:'Not Slender Man',text:'The two are frequently merged but have separate origins and distinct behaviors.'},{term:'No medieval source',text:'The “historical” documents are modern fabrications written into the 2005 thread.'},{term:'No single video',text:'The canonical “footage” is a composite of many uploads, not one authoritative clip.'}],
+      references:['Anonymous image-board thread archive, 2005 (community mirror).','“Building a Monster Together,” essay on collaborative creepypasta, 2016.','The 2006 “lake-house” account, community transcription.','Analog-horror revival series, 2018–2020.','“Folklore & the Internet,” journal survey, 2021.','Sighting aggregation dataset, community-maintained, 2005–present.'],
+      originNote:'The 1691 record and the “ship’s log” frequently cited in retellings originate from the 2005 thread itself. They are not historical sources, and the archive flags them as fabricated throughout.',
+      gallery:[{label:'concept portrait',cap:'Community concept portrait — the most-reproduced likeness (artist unknown).'},{label:'recovered frame',cap:'Frame from the 2006 lake-house account, widely circulated and never verified.'},{label:'field sketch',cap:'Eyewitness sketch submitted with a 2009 report.'},{label:'sighting map',cap:'Aggregated sighting locations across North America, 2005–present.'},{label:'analog still',cap:'Still from the 2019 analog-horror revival series.'}],
+    },
+    ru: {
+      title:'The Rake',
+      lead:'Худой бледный гуманоид, что, по слухам, сидит на корточках в изножье кровати спящего и смотрит — терпеливо, беззвучно — пока не решит двинуться.',
+      overview:['У Грабель нет ни подтверждённого происхождения, ни автора, ни единого канонического текста. Вместо этого они существуют как сумма тысяч пересекающихся рассказов — каждый уверяет, что это случилось с кем-то, кого рассказчик почти знал. Именно это коллективное авторство и делает их живучими.','Если большинство интернет-хоррора — это история, которую вы читаете, то Грабли — история, о которой вам говорят, что вы, возможно, уже внутри неё.'],
+      origin:['Современные Грабли были собраны в 2005 году в серии тредов на имиджбордах, где анонимы в реальном времени договорились вместе построить монстра.','Это вымысел в костюме достоверности. Поддельные документы были созданы так, чтобы казаться найденными, а не написанными.'],
+      weaknesses:['Никакой физической уязвимости так и не задокументировано. Единственная устойчивая «защита» — само восприятие: Грабли отступают в тот миг, когда на них смотрят прямо или включают свет.'],
+      encIntro:['Несколько рассказов повторяются достаточно часто, чтобы в сообществе их считали каноническими. В самом цитируемом из них опущена деталь, которую многие пересказы считают по-настоящему тревожной.'],
+      encBody:['В самой распространённой версии свидетель утверждает, что понял единственную произнесённую им фразу — и что каждый, кто слышит эту фразу вслух, потом неделями спит хуже. «Фразу» ни разу не записали одинаково.'],
+      behavior:[{title:'Сначала наблюдает',text:'Долгие периоды неподвижности в изножье кровати предшествуют любому движению.'},{title:'Неестественная походка',text:'Передвигается низким ползком; на коротких дистанциях непропорционально быстр.'},{title:'Только боковым зрением',text:'Чаще всего замечают на краю поля зрения; прямо — крайне редко.'},{title:'Полуразличимый голос',text:'Свидетели часто сообщают о шёпоте, который потом не могут воспроизвести.'}],
+      theories:[{title:'Экстернализация сонного паралича',text:'Общее имя для почти универсальной гипнопомпической галлюцинации — фигуры в изножье кровати, которую тысячи описывают независимо друг от друга.'},{title:'Мемная сущность',text:'Существует лишь постольку, поскольку её пересказывают, и каждый пересказ её усиливает. Организм — это сама история.'},{title:'Самоподдерживающееся прочтение',text:'Эта теория представляет статью, которую вы читаете, частью механизма — чем больше вы изучаете его перед сном, тем вероятнее «увидите». Внимание — единственное, чем оно действительно питается.'}],
+      myths:[{term:'Не Слендермен',text:'Их часто смешивают, но у них разное происхождение и разное поведение.'},{term:'Нет средневекового источника',text:'«Исторические» документы — современные подделки, вписанные в тред 2005 года.'},{term:'Нет единого видео',text:'Каноническая «запись» — компоновка множества загрузок, а не один авторитетный клип.'}],
+      references:['Архив анонимного треда с имиджборда, 2005 (зеркало сообщества).','«Строим монстра вместе», эссе о коллективном крипипасте, 2016.','Рассказ о «доме у озера» 2006 года, транскрипция сообщества.','Серия возрождения аналог-хоррора, 2018–2020.','«Фольклор и интернет», журнальный обзор, 2021.','Датасет агрегации наблюдений, поддерживается сообществом, 2005 — настоящее время.'],
+      originNote:'Запись 1691 года и «судовой журнал», часто цитируемые в пересказах, происходят из самого треда 2005 года. Это не исторические источники, и архив повсюду помечает их как сфабрикованные.',
+      gallery:[{label:'концепт-портрет',cap:'Концепт-портрет от сообщества — самое тиражируемое изображение (автор неизвестен).'},{label:'восстановленный кадр',cap:'Кадр из рассказа о доме у озера 2006 года, широко разошёлся и никогда не был подтверждён.'},{label:'полевой набросок',cap:'Набросок очевидца, приложенный к отчёту 2009 года.'},{label:'карта появлений',cap:'Сводные места появлений по Северной Америке, 2005 — настоящее время.'},{label:'аналоговый стоп-кадр',cap:'Стоп-кадр из сериала-возрождения аналогового хоррора 2019 года.'}],
+    },
+  };
+
+  toc = [
+    { id:'overview', num:'01', label:'Overview' },
+    { id:'origin', num:'02', label:'Origin Story' },
+    { id:'history', num:'03', label:'Internet History' },
+    { id:'behavior', num:'04', label:'Behavior & Abilities' },
+    { id:'weaknesses', num:'05', label:'Weaknesses' },
+    { id:'encounters', num:'06', label:'Documented Encounters' },
+    { id:'gallery', num:'07', label:'Gallery' },
+    { id:'popularity', num:'08', label:'Popularity Over Time' },
+    { id:'theories', num:'09', label:'Fan Theories' },
+    { id:'myths', num:'10', label:'Myths & Misconceptions' },
+    { id:'related', num:'11', label:'Related Entities' },
+    { id:'notes', num:'12', label:'Community Notes' },
+    { id:'references', num:'13', label:'References' },
+  ];
+
+  _gal() { return (((this.state.content || this.defaultContent)[this.state.lang]) || {}).gallery || []; }
+
+  related = [
+    { name:'Slender Man', rel:'Frequently conflated', threat:88 },
+    { name:'The Expressionless', rel:'Shared watcher motif', threat:71 },
+    { name:'Hachishakusama', rel:'Nocturnal observer archetype', threat:79 },
+    { name:'The Smiling Man', rel:'Street-level analog', threat:64 },
+  ];
+
+  chartData = { years:[2005,2008,2011,2014,2017,2020,2023,2025], vals:[22,49,71,60,45,66,84,91] };
+
+  comments = [
+    { author:'m_hollow', role:'Editor', time:'2 days ago', text:'Added a note on the 1691 ship\u2019s log being a later fabrication — it comes from the 2005 thread, not any real archive.', votes:64 },
+    { author:'quietfrequency', role:'Contributor', time:'5 days ago', text:'The peripheral-vision detail is the scariest part and the most consistent across accounts. Worth its own subsection?', votes:41 },
+    { author:'north_ny_2006', role:'Reader', time:'1 week ago', text:'Grew up near the lake in the original account. The story warped a lot in retelling — good to see it documented carefully.', votes:28 },
+  ];
+
+  popular = [
+    { name:'Slender Man', meta:'Classic · 2009' },
+    { name:'The Backrooms', meta:'Liminal · 2019' },
+    { name:'BEN Drowned', meta:'Lost media · 2010' },
+    { name:'Siren Head', meta:'Cryptid · 2018' },
+    { name:'Candle Cove', meta:'Lost episode · 2009' },
+  ];
+
+  trending = [
+    { name:'The Mandela Catalogue', delta:'+41%' },
+    { name:'The Walten Files', delta:'+33%' },
+    { name:'Local58', delta:'+27%' },
+    { name:'The Backrooms', delta:'+19%' },
+  ];
+
+  componentDidMount() {
+    this._lsKey = 'kripipasta-rake-content';
+    let content = { en: { ...this.defaultContent.en }, ru: { ...this.defaultContent.ru } };
+    try { const saved = JSON.parse(localStorage.getItem(this._lsKey) || 'null'); if (saved) { if (saved.en) content.en = { ...content.en, ...saved.en }; if (saved.ru) content.ru = { ...content.ru, ...saved.ru }; } } catch (e) {}
+    this.setState({ content });
+    this._onScroll = this._onScroll.bind(this);
+    window.addEventListener('scroll', this._onScroll, { passive:true });
+    window.addEventListener('resize', this._onScroll, { passive:true });
+    this._onScroll();
+    this._mt = setTimeout(() => this.setState({ meters:true }), 450);
+    this._initParticles();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onScroll);
+    if (this._pResize) window.removeEventListener('resize', this._pResize);
+    clearTimeout(this._mt); clearTimeout(this._ct); clearTimeout(this._rt);
+    if (this._raf) cancelAnimationFrame(this._raf);
+  }
+  _onScroll() {
+    if (this._ticking) return; this._ticking = true;
+    requestAnimationFrame(() => {
+      this._ticking = false;
+      const el = document.scrollingElement || document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0;
+      let active = this.state.active;
+      const y = el.scrollTop + 150;
+      for (const t of this.toc) {
+        const node = document.getElementById('sec-' + t.id);
+        if (node && node.offsetTop <= y) active = t.id;
+      }
+      if (progress !== this.state.progress || active !== this.state.active)
+        this.setState({ progress, active });
+    });
+  }
+  _initParticles() {
+    if (this.props.showParticles === false) return;
+    const c = document.getElementById('rake-canvas');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0, parts = [];
+    const resize = () => {
+      const r = c.getBoundingClientRect();
+      W = r.width; H = r.height;
+      c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.max(20, Math.round(W * H / 15000));
+      parts = Array.from({ length:n }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.5 + 0.3,
+        vy: -(Math.random() * 0.24 + 0.04),
+        vx: (Math.random() - 0.5) * 0.14,
+        a: Math.random() * 0.4 + 0.06,
+        ph: Math.random() * Math.PI * 2,
+      }));
+    };
+    resize();
+    this._pResize = resize;
+    window.addEventListener('resize', resize);
+    let t = 0;
+    const draw = () => {
+      t += 0.006;
+      ctx.clearRect(0, 0, W, H);
+      for (const p of parts) {
+        p.y += p.vy; p.x += p.vx + Math.sin(t + p.ph) * 0.11;
+        if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; }
+        if (p.x < -4) p.x = W + 4; if (p.x > W + 4) p.x = -4;
+        const tw = 0.6 + 0.4 * Math.sin(t * 2 + p.ph);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 6.283);
+        ctx.fillStyle = 'rgba(222,216,220,' + (p.a * tw) + ')';
+        ctx.fill();
+      }
+      this._raf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
+  componentDidUpdate() {
+    if (this.state.editMode && this._ejsLang !== this.state.lang) this._mountEditors();
+  }
+  _mountEditors() {
+    if (!window.EditorJS) { clearTimeout(this._ejsWait); this._ejsWait = setTimeout(() => this._mountEditors(), 200); return; }
+    this._destroyEditors();
+    const lang = this.state.lang, c = (this.state.content || this.defaultContent)[lang];
+    const ti = document.getElementById('edit-title'); if (ti) ti.value = c.title || '';
+    const le = document.getElementById('edit-lead'); if (le) le.value = c.lead || '';
+    this._ejs = {};
+    this._ejsMap = { overview:'overview', origin:'origin', weaknesses:'weaknesses', 'encounters-intro':'encIntro', 'encounters-body':'encBody' };
+    Object.keys(this._ejsMap).forEach(id => {
+      const holder = document.getElementById('ejs-' + id);
+      if (!holder) return;
+      const key = this._ejsMap[id];
+      try { this._ejs[id] = new window.EditorJS({ holder, minHeight: 60, data: { blocks: (c[key] || []).map(txt => ({ type:'paragraph', data:{ text: txt } })) } }); } catch (e) {}
+    });
+    (c.behavior||[]).forEach((b,i)=>{ const t=document.getElementById('edit-beh-'+i+'-t'); if(t)t.value=b.title||''; const x=document.getElementById('edit-beh-'+i+'-x'); if(x)x.value=b.text||''; });
+    (c.theories||[]).forEach((b,i)=>{ const t=document.getElementById('edit-th-'+i+'-t'); if(t)t.value=b.title||''; const x=document.getElementById('edit-th-'+i+'-x'); if(x)x.value=b.text||''; });
+    (c.myths||[]).forEach((m,i)=>{ const t=document.getElementById('edit-my-'+i+'-t'); if(t)t.value=m.term||''; const x=document.getElementById('edit-my-'+i+'-x'); if(x)x.value=m.text||''; });
+    (c.references||[]).forEach((r,i)=>{ const el=document.getElementById('edit-ref-'+i); if(el)el.value=r||''; });
+    (c.gallery||[]).forEach((g,i)=>{ const l=document.getElementById('edit-gal-'+i+'-l'); if(l)l.value=g.label||''; const cp=document.getElementById('edit-gal-'+i+'-c'); if(cp)cp.value=g.cap||''; });
+    const nt=document.getElementById('edit-orignote'); if(nt)nt.value=c.originNote||'';
+    this._ejsLang = lang;
+  }
+  _destroyEditors() {
+    if (this._ejs) { Object.keys(this._ejs).forEach(k => { try { this._ejs[k] && this._ejs[k].destroy && this._ejs[k].destroy(); } catch (e) {} }); }
+    this._ejs = null;
+  }
+  async _readLang() {
+    const c = { ...((this.state.content || this.defaultContent)[this.state.lang]) };
+    const ti = document.getElementById('edit-title'); if (ti) c.title = ti.value;
+    const le = document.getElementById('edit-lead'); if (le) c.lead = le.value;
+    if (this._ejs) { for (const id of Object.keys(this._ejs)) { const key = (this._ejsMap && this._ejsMap[id]) || id; try { const out = await this._ejs[id].save(); c[key] = out.blocks.filter(b => b.type === 'paragraph').map(b => (b.data.text || '').trim()).filter(x => x.length); } catch (e) {} } }
+    const rd = (id) => { const el = document.getElementById(id); return el ? el.value : undefined; };
+    if (c.behavior) c.behavior = c.behavior.map((b,i)=>({ title: rd('edit-beh-'+i+'-t') ?? b.title, text: rd('edit-beh-'+i+'-x') ?? b.text }));
+    if (c.theories) c.theories = c.theories.map((b,i)=>({ title: rd('edit-th-'+i+'-t') ?? b.title, text: rd('edit-th-'+i+'-x') ?? b.text }));
+    if (c.myths) c.myths = c.myths.map((m,i)=>({ term: rd('edit-my-'+i+'-t') ?? m.term, text: rd('edit-my-'+i+'-x') ?? m.text }));
+    if (c.references) c.references = c.references.map((r,i)=> rd('edit-ref-'+i) ?? r);
+    if (c.gallery) c.gallery = c.gallery.map((g,i)=>({ label: rd('edit-gal-'+i+'-l') ?? g.label, cap: rd('edit-gal-'+i+'-c') ?? g.cap }));
+    { const nt = rd('edit-orignote'); if (nt !== undefined) c.originNote = nt; }
+    return c;
+  }
+  enterEdit() { this._ejsLang = null; this.setState(s => ({ editMode: true, collapsed: { ...s.collapsed, overview:false, origin:false, weaknesses:false, encounters:false, gallery:false, behavior:false, theories:false, myths:false, references:false } })); }
+  cancelEdit() { this._destroyEditors(); this._ejsLang = null; this.setState({ editMode: false }); }
+  async saveEdit() {
+    const lang = this.state.lang;
+    const c = await this._readLang();
+    const content = { ...(this.state.content || this.defaultContent), [lang]: c };
+    this._destroyEditors(); this._ejsLang = null;
+    this.setState({ content, editMode: false });
+    try { localStorage.setItem(this._lsKey, JSON.stringify(content)); } catch (e) {}
+  }
+  async setLang(e) {
+    const lang = e.currentTarget.dataset.lang;
+    if (lang === this.state.lang) return;
+    if (this.state.editMode) {
+      const c = await this._readLang();
+      const content = { ...(this.state.content || this.defaultContent), [this.state.lang]: c };
+      this._destroyEditors(); this._ejsLang = null;
+      this.setState({ content, lang });
+    } else { this.setState({ lang }); }
+  }
+  toggleSection(e) { const id = e.currentTarget.dataset.section; this.setState(s => ({ collapsed: { ...s.collapsed, [id]: !s.collapsed[id] } })); }
+  revealSpoiler(e) { const id = e.currentTarget.dataset.spoiler; this.setState(s => ({ spoilers: { ...s.spoilers, [id]: true } })); }
+  react(e) {
+    const k = e.currentTarget.dataset.reaction;
+    this.setState(s => {
+      const r = { ...s.reactions }; const was = s.userReaction;
+      if (was) r[was]--;
+      if (was === k) return { userReaction:null, reactions:r };
+      r[k]++; return { userReaction:k, reactions:r };
+    });
+  }
+  vote(e) {
+    const v = e.currentTarget.dataset.vote;
+    this.setState(s => {
+      const votes = { ...s.votes }; const was = s.userVote;
+      if (was === 'up') votes.up--; if (was === 'down') votes.down--;
+      if (was === v) return { userVote:null, votes };
+      votes[v]++; return { userVote:v, votes };
+    });
+  }
+  toggleFav() { this.setState(s => ({ favorited: !s.favorited })); }
+  toggleBookmark() { this.setState(s => ({ bookmarked: !s.bookmarked })); }
+  copyLink() {
+    try { if (navigator.clipboard) navigator.clipboard.writeText(location.href); } catch (e) {}
+    this.setState({ copied:true });
+    clearTimeout(this._ct);
+    this._ct = setTimeout(() => this.setState({ copied:false }), 1800);
+  }
+  tocClick(e) {
+    e.preventDefault();
+    const id = e.currentTarget.dataset.target;
+    const t = document.getElementById('sec-' + id);
+    if (t) { const y = t.getBoundingClientRect().top + window.scrollY - 92; window.scrollTo({ top:y, behavior:'smooth' }); }
+    this.setState({ active:id });
+  }
+  openLightbox(e) { this.setState({ lightbox: +e.currentTarget.dataset.index }); }
+  closeLightbox() { this.setState({ lightbox:null }); }
+  lightboxNav(e) { const n = this._gal().length; const d = +e.currentTarget.dataset.dir; this.setState(s => ({ lightbox: (s.lightbox + d + n) % n })); }
+  randomEntry() {
+    const pick = this.related[Math.floor(Math.random() * this.related.length)].name;
+    this.setState({ randomPick:pick });
+    const t = document.getElementById('sec-related');
+    if (t) { const y = t.getBoundingClientRect().top + window.scrollY - 92; window.scrollTo({ top:y, behavior:'smooth' }); }
+    clearTimeout(this._rt);
+    this._rt = setTimeout(() => this.setState({ randomPick:null }), 2800);
+  }
+
+  renderVals() {
+    const s = this.state, on = s.meters;
+    const lang = s.lang || 'en';
+    const c = ((s.content || this.defaultContent)[lang]) || this.defaultContent[lang];
+    const gal = c.gallery || [];
+    const behavior = (c.behavior||[]).map((b,i)=>({ title:b.title, text:b.text, tId:'edit-beh-'+i+'-t', xId:'edit-beh-'+i+'-x' }));
+    const myths = (c.myths||[]).map((m,i)=>({ term:m.term, text:m.text, tId:'edit-my-'+i+'-t', xId:'edit-my-'+i+'-x' }));
+    const references = (c.references||[]).map((r,i)=>({ text:r, num:String(i+1).padStart(2,'0'), rId:'edit-ref-'+i }));
+    const th = c.theories || [];
+    const mkTh = (i)=>({ title:(th[i]||{}).title, text:(th[i]||{}).text, tId:'edit-th-'+i+'-t', xId:'edit-th-'+i+'-x' });
+    const theory0 = mkTh(0), theory1 = mkTh(1), theory2 = mkTh(2);
+    const total = s.votes.up + s.votes.down;
+    const votePct = Math.round((s.votes.up / total) * 100);
+    const rTotal = Object.values(s.reactions).reduce((a, b) => a + b, 0);
+    const toc = this.toc.map(t => ({ ...t, active: s.active === t.id, href: '#sec-' + t.id }));
+
+    const { years, vals } = this.chartData;
+    const W = 300, H = 100, pad = 8, maxV = 100;
+    const xs = years.map((_, i) => pad + i * ((W - 2 * pad) / (years.length - 1)));
+    const ys = vals.map(v => (H - 2) - (v / maxV) * (H - pad - 2));
+    const line = xs.map((x, i) => (i ? 'L' : 'M') + x.toFixed(1) + ' ' + ys[i].toFixed(1)).join(' ');
+    const area = line + ' L' + xs[xs.length - 1].toFixed(1) + ' ' + H + ' L' + xs[0].toFixed(1) + ' ' + H + ' Z';
+    const dots = xs.map((x, i) => ({ x: x.toFixed(1), y: ys[i].toFixed(1), v: vals[i], year: years[i] }));
+
+    const reactions = [
+      { key:'unsettled', label:'Unsettled' },
+      { key:'chills', label:'Chills' },
+      { key:'fascinated', label:'Fascinated' },
+      { key:'skeptical', label:'Skeptical' },
+    ].map(r => ({ ...r, count: s.reactions[r.key], active: s.userReaction === r.key }));
+
+    const rootStyle = {};
+    if (this.props.accentColor) rootStyle['--crimson'] = this.props.accentColor;
+    if (this.props.fogIntensity != null) rootStyle['--fog'] = String(this.props.fogIntensity / 100);
+
+    return {
+      rootStyle,
+      editMode: s.editMode, notEdit: !s.editMode, langEn: lang === 'en', langRu: lang === 'ru',
+      title: c.title, lead: c.lead, overviewParas: c.overview, originParas: c.origin, weaknessParas: c.weaknesses,
+      encIntroParas: c.encIntro, encBodyParas: c.encBody,
+      behavior, myths, references, theory0, theory1, theory2,
+      enterEdit: () => this.enterEdit(), cancelEdit: () => this.cancelEdit(), saveEdit: () => this.saveEdit(), setLang: e => this.setLang(e),
+      progressPct: (s.progress * 100).toFixed(2) + '%',
+      progressLabel: Math.round(s.progress * 100) + '%',
+      active: s.active, toc,
+      collapsed: s.collapsed, spoilers: s.spoilers,
+      threatW: on ? '82%' : '0%', dangerW: on ? '74%' : '0%', popW: on ? '91%' : '0%',
+      starPct: on ? '92%' : '0%',
+      votes: s.votes, votePct: votePct + '%',
+      upActive: s.userVote === 'up', downActive: s.userVote === 'down',
+      reactions, reactTotal: rTotal,
+      favorited: s.favorited, favLabel: s.favorited ? 'Favorited' : 'Favorite', favColor: s.favorited ? 'var(--crimson2)' : 'var(--tx3)',
+      bookmarked: s.bookmarked, bookLabel: s.bookmarked ? 'Saved' : 'Save',
+      copied: s.copied, copyLabel: s.copied ? 'Link copied' : 'Copy link',
+      lightboxOpen: s.lightbox !== null,
+      lightboxItem: s.lightbox !== null ? (gal[s.lightbox] || {}) : {},
+      lightboxNum: s.lightbox !== null ? (s.lightbox + 1) + ' / ' + gal.length : '',
+      gallery: gal.map((g, i) => ({ ...g, index: i, num: String(i + 1).padStart(2, '0'), lId:'edit-gal-'+i+'-l', cId:'edit-gal-'+i+'-c' })),
+      originNote: c.originNote,
+      related: this.related.map(r => ({ ...r, picked: s.randomPick === r.name, threatW: on ? r.threat + '%' : '0%' })),
+      chart: { line, area, dots },
+      comments: this.comments,
+      popular: this.popular.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0') })),
+      trending: this.trending,
+      toggleSection: e => this.toggleSection(e),
+      revealSpoiler: e => this.revealSpoiler(e),
+      react: e => this.react(e),
+      vote: e => this.vote(e),
+      toggleFav: () => this.toggleFav(),
+      toggleBookmark: () => this.toggleBookmark(),
+      copyLink: () => this.copyLink(),
+      tocClick: e => this.tocClick(e),
+      openLightbox: e => this.openLightbox(e),
+      closeLightbox: () => this.closeLightbox(),
+      lightboxNav: e => this.lightboxNav(e),
+      randomEntry: () => this.randomEntry(),
+      stop: e => e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>
