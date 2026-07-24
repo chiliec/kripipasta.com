@@ -20,13 +20,17 @@ RUN npm run build
 
 # Bundle the redirect-map generator so it can be run with plain node at startup.
 # --tsconfig resolves the @/ path alias (incl. the generated client, which gets
-# bundled in); the Prisma runtime deps stay external and resolve from the
-# standalone node_modules at startup. ESM output (not CJS) so `import.meta.url`
-# used by bundled deps resolves at runtime.
+# bundled in). @prisma/adapter-pg is bundled IN because its `postgres-array` dep
+# is inlined into Next's webpack server chunks — the standalone trace copies only
+# a stub package.json for it, so keeping the adapter external would fail to
+# resolve postgres-array/index.js at startup. pg stays external: it's CommonJS
+# and dynamic-requires Node builtins (events/net/tls), which esbuild's ESM output
+# can't shim; it's traced complete into the standalone node_modules. @prisma/client
+# stays external too and resolves from the full @prisma tree copied below. ESM
+# output (not CJS) so `import.meta.url` used by bundled deps resolves at runtime.
 RUN ./node_modules/.bin/esbuild --bundle --platform=node --format=esm \
   --tsconfig=tsconfig.json \
   --external:@prisma/client \
-  --external:@prisma/adapter-pg \
   --external:pg \
   --outfile=/app/gen-redirects.mjs \
   src/build/gen-legacy-redirects.ts
@@ -50,10 +54,10 @@ COPY --from=builder /app/.next/static ./.next/static
 
 # Prisma schema + migrations for `migrate deploy`.
 COPY --from=builder /app/prisma ./prisma
-# The Prisma 7 client is engineless TS bundled into the standalone server output,
-# and pg is traced into standalone node_modules. The redirect-gen script
-# (gen-redirects.mjs) keeps the Prisma packages external, so copy the full @prisma
-# tree (adapter-pg + its @prisma/driver-adapter-utils dep + client) for it to resolve.
+# The Prisma 7 client is engineless TS bundled into the standalone server output.
+# The redirect-gen script (gen-redirects.mjs) keeps only @prisma/client external
+# (its `runtime/client` + wasm query compiler), so copy the full @prisma tree —
+# the standalone trace stubs these to bare package.json files otherwise.
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # Prisma CLI with its FULL dependency closure, installed into an isolated prefix so
