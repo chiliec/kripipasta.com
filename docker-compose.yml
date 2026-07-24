@@ -3,13 +3,13 @@ services:
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: nocturne
-      POSTGRES_PASSWORD: nocturne
-      POSTGRES_DB: nocturne
+      POSTGRES_USER: kripipasta
+      POSTGRES_PASSWORD: kripipasta
+      POSTGRES_DB: kripipasta
     ports:
       - "5432:5432"
     volumes:
-      - nocturne_pgdata:/var/lib/postgresql/data
+      - kripipasta_pgdata:/var/lib/postgresql/data
 
 volumes:
-  nocturne_pgdata:
+  kripipasta_pgdata:

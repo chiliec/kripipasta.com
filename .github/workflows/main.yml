@@ -13,18 +13,18 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: nocturne
-          POSTGRES_PASSWORD: nocturne
-          POSTGRES_DB: nocturne
+          POSTGRES_USER: kripipasta
+          POSTGRES_PASSWORD: kripipasta
+          POSTGRES_DB: kripipasta
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U nocturne"
+          --health-cmd "pg_isready -U kripipasta"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
     env:
-      DATABASE_URL: postgresql://nocturne:nocturne@localhost:5432/nocturne?schema=public&connection_limit=5
+      DATABASE_URL: postgresql://kripipasta:kripipasta@localhost:5432/kripipasta?schema=public&connection_limit=5
       ADMIN_PASSWORD: ci-password
       ADMIN_SESSION_SECRET: ci-session-secret-0123456789abcdef0123456789abcdef
     steps:

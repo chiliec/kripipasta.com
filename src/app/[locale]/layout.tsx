@@ -26,7 +26,7 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: "Nocturne — Архив интернет-хоррора",
+  title: "Kripipasta — Архив интернет-хоррора",
   description:
     "Архив интернет-хоррора: истории, сущности и городские легенды сети.",
 };
