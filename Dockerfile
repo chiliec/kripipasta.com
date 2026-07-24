@@ -18,6 +18,12 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
+# Bundle the redirect-map generator so it can be run with plain node at startup.
+RUN ./node_modules/.bin/esbuild --bundle --platform=node --format=cjs \
+  --external:@prisma/client \
+  --outfile=/app/gen-redirects.cjs \
+  src/build/gen-legacy-redirects.ts
+
 # ── Runner: minimal standalone image + Prisma CLI for `migrate deploy` ──
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app
@@ -49,6 +55,8 @@ RUN mkdir -p /opt/prisma-cli \
   && cd /opt/prisma-cli \
   && npm init -y >/dev/null 2>&1 \
   && npm install prisma@6.19.3 >/dev/null 2>&1
+
+COPY --from=builder /app/gen-redirects.cjs ./gen-redirects.cjs
 
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh

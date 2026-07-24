@@ -18,7 +18,8 @@
     "db:studio": "prisma studio",
     "db:migrate:legacy": "tsx --env-file=.env src/migrate/run.ts",
     "db:migrate:verify": "tsx --env-file=.env src/migrate/verify.ts",
-    "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts"
+    "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts",
+    "build:redirects": "tsx --env-file=.env src/build/gen-legacy-redirects.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
