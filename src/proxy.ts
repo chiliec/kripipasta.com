@@ -1,55 +1,27 @@
 import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
-import { resolveLegacyRedirect } from "@/lib/legacy-redirect";
-import redirectMap from "../data/legacy-redirects.json";
+import { isLegacyStoryPath, resolveStaticLegacy } from "@/lib/legacy-redirect";
 
 const handleI18n = createMiddleware(routing);
 
-// Build the numeric-keyed lookup once at module load (edge-safe: JSON only).
-const approvedSlugById = new Map<number, string>(
-  Object.entries(redirectMap as Record<string, string>).map(([id, slug]) => [
-    Number(id),
-    slug,
-  ]),
-);
-
-const GONE_HTML = `<!doctype html>
-<html lang="ru">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>История удалена</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#141418;color:#c8c8d0;font-family:Georgia,serif;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}
-h1{color:#B85450;font-size:1.75rem;margin-bottom:1rem}
-p{margin-bottom:1.5rem;line-height:1.6;opacity:.8}
-a{color:#B85450;text-decoration:none}
-a:hover{text-decoration:underline}
-</style></head>
-<body>
-<div>
-<h1>История удалена</h1>
-<p>Эта страница больше не существует.<br>Возможно, материал был удалён или никогда не был опубликован.</p>
-<a href="/ru">← На главную</a>
-</div>
-</body>
-</html>`;
-
-function goneResponse(): NextResponse {
-  return new NextResponse(GONE_HTML, {
-    status: 410,
-    headers: { "content-type": "text/html; charset=utf-8" },
-  });
-}
-
 export default function proxy(req: NextRequest) {
-  const res = resolveLegacyRedirect(req.nextUrl.pathname, approvedSlugById);
+  const { pathname } = req.nextUrl;
+
+  // Legacy `/story/{id}` redirects need a live DB lookup, so they're owned by the
+  // Node route at src/app/story/[id]/route.ts. Pass through untouched — crucially
+  // WITHOUT running handleI18n, which (localePrefix: "always") would 307
+  // /story/123 → /ru/story/123 before the route ever sees it.
+  if (isLegacyStoryPath(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Static legacy rules (no DB): /go.php + old section trees → 301 /ru.
+  const res = resolveStaticLegacy(pathname);
   if (res.kind === "redirect") {
     return NextResponse.redirect(new URL(res.location, req.url), res.status);
   }
-  if (res.kind === "gone") {
-    return goneResponse();
-  }
+
   return handleI18n(req);
 }
 

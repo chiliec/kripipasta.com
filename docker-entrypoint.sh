@@ -7,8 +7,5 @@ echo "→ Applying database migrations (prisma migrate deploy)…"
 # `import "prisma/config"` resolves against the CLI's own node_modules.
 (cd /opt/prisma-cli && node node_modules/prisma/build/index.js migrate deploy)
 
-echo "→ Regenerating legacy redirect map from approved stories…"
-node /app/gen-redirects.mjs || echo "⚠ redirect map generation failed — using committed fallback"
-
 echo "→ Starting Next.js server…"
 exec node server.js
