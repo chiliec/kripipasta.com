@@ -14,9 +14,11 @@ body {
   line-height: 1.6;
 }
 
-a {
-  color: #ca6e6a;
-  text-decoration: none;
+@layer base {
+  a {
+    color: #ca6e6a;
+    text-decoration: none;
+  }
 }
 
 /* Rendered story HTML (already sanitized during ETL). */
