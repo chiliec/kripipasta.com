@@ -18,8 +18,7 @@
     "db:studio": "prisma studio",
     "db:migrate:legacy": "tsx --env-file=.env src/migrate/run.ts",
     "db:migrate:verify": "tsx --env-file=.env src/migrate/verify.ts",
-    "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts",
-    "build:redirects": "tsx --env-file=.env src/build/gen-legacy-redirects.ts"
+    "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",
@@ -40,7 +39,6 @@
     "@types/react-dom": "^19.0.0",
     "@types/sanitize-html": "^2.16.1",
     "dotenv": "^17.4.2",
-    "esbuild": "^0.28.1",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.11",
     "he": "^1.2.0",
