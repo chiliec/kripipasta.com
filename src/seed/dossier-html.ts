@@ -43,3 +43,36 @@ export function referencesHtml(items: string[]): string {
   const body = items.map((i) => `<li>${escapeHtml(i)}</li>`).join("");
   return `<ol class="refs">${body}</ol>`;
 }
+
+// ── Block model ──────────────────────────────────────────────────────────
+// Entity data modules describe section bodies as ordered arrays of typed
+// blocks (pure data, no HTML). renderBlocks() maps each block to the helper
+// above, so all markup lives here and the data files stay declarative.
+export type Block =
+  | { kind: "paragraphs"; items: string[] }
+  | { kind: "blockquote"; quote: string; foot: string }
+  | { kind: "editorNote"; label: string; body: string }
+  | { kind: "definitionList"; items: { t: string; x: string }[] }
+  | { kind: "timeline"; items: { t: string; b: string }[] }
+  | { kind: "references"; items: string[] };
+
+function renderBlock(b: Block): string {
+  switch (b.kind) {
+    case "paragraphs":
+      return paragraphsHtml(b.items);
+    case "blockquote":
+      return blockquoteHtml(b.quote, b.foot);
+    case "editorNote":
+      return editorNoteHtml(b.label, b.body);
+    case "definitionList":
+      return definitionListHtml(b.items);
+    case "timeline":
+      return timelineHtml(b.items);
+    case "references":
+      return referencesHtml(b.items);
+  }
+}
+
+export function renderBlocks(blocks: Block[]): string {
+  return blocks.map(renderBlock).join("");
+}
