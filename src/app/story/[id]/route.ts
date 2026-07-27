@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { parseLegacyStoryId } from "@/lib/legacy-redirect";
 import { goneResponse } from "@/lib/legacy-gone";
@@ -19,10 +19,16 @@ export async function GET(req: NextRequest) {
   });
 
   if (story?.status === "APPROVED") {
-    return NextResponse.redirect(new URL(`/ru/story/${story.slug}`, req.url), {
+    // Relative Location (path-only): the container binds 0.0.0.0:3000, so
+    // resolving against req.url would leak that internal host into the redirect.
+    // A relative reference is valid per RFC 7231 and resolves to the public host.
+    return new Response(null, {
       status: 301,
-      // Redirects are cheap to cache; keep crawler load off the DB.
-      headers: { "Cache-Control": "public, max-age=3600" },
+      headers: {
+        Location: `/ru/story/${story.slug}`,
+        // Redirects are cheap to cache; keep crawler load off the DB.
+        "Cache-Control": "public, max-age=3600",
+      },
     });
   }
 
