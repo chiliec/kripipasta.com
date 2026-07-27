@@ -17,6 +17,7 @@ import {
 } from "@/lib/dossiers";
 import { threatLevelKey, dossierScore100 } from "@/lib/dossier-display";
 import { buildSafe } from "@/lib/build-safe";
+import { stripMissingImages } from "@/lib/available-images";
 import JsonLd from "@/components/JsonLd";
 import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
 
@@ -138,7 +139,7 @@ export default async function DossierPage({
               {dossier.sections.map((s) => (
                 <section key={s.anchor} id={s.anchor} className="mb-12 scroll-mt-24">
                   <h2 className="mb-4 font-serif text-[28px] font-medium text-ink">{s.heading}</h2>
-                  <div className="prose" dangerouslySetInnerHTML={{ __html: s.bodyHtml }} />
+                  <div className="prose" dangerouslySetInnerHTML={{ __html: stripMissingImages(s.bodyHtml) }} />
                 </section>
               ))}
 

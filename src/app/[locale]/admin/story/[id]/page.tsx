@@ -6,6 +6,7 @@ import { isAdmin } from "@/lib/admin-session";
 import { getStoryForModeration } from "@/lib/moderation";
 import { approveStory, rejectStory } from "@/app/[locale]/admin/actions";
 import { formatStoryDate } from "@/lib/story-display";
+import { stripMissingImages } from "@/lib/available-images";
 
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -51,7 +52,7 @@ export default async function AdminStoryPage({
 
       <div
         className="prose mt-8"
-        dangerouslySetInnerHTML={{ __html: story.contentHtml }}
+        dangerouslySetInnerHTML={{ __html: stripMissingImages(story.contentHtml) }}
       />
 
       <div className="mt-10 flex items-center gap-3 border-t border-line pt-8">

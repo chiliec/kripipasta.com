@@ -18,7 +18,8 @@
     "db:studio": "prisma studio",
     "db:migrate:legacy": "tsx --env-file=.env src/migrate/run.ts",
     "db:migrate:verify": "tsx --env-file=.env src/migrate/verify.ts",
-    "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts"
+    "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts",
+    "recover:images": "tsx --env-file=.env src/migrate/recover-images.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",

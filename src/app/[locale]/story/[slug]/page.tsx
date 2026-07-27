@@ -21,6 +21,7 @@ import {
   excerpt,
 } from "@/lib/story-display";
 import { buildSafe } from "@/lib/build-safe";
+import { stripMissingImages } from "@/lib/available-images";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -148,7 +149,7 @@ export default async function StoryPage({
             <div>
               <div
                 className="prose"
-                dangerouslySetInnerHTML={{ __html: story.contentHtml }}
+                dangerouslySetInnerHTML={{ __html: stripMissingImages(story.contentHtml) }}
               />
 
               <VotePanel
