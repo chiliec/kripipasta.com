@@ -27,9 +27,9 @@ describe("GET /story/[id]", () => {
     const res = await get("/story/1-smile-dog.html");
 
     expect(res.status).toBe(301);
-    expect(res.headers.get("location")).toBe(
-      "https://kripipasta.com/ru/story/smile-dog",
-    );
+    // Relative Location — resolves against the public host, not the container's
+    // internal 0.0.0.0:3000 bind address.
+    expect(res.headers.get("location")).toBe("/ru/story/smile-dog");
     expect(res.headers.get("cache-control")).toContain("max-age=3600");
     expect(findUnique).toHaveBeenCalledWith({
       where: { legacyId: 1 },
