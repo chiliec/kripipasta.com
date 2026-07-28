@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Ночные городские улицы",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Первый пик — вирусный тред 2012 года; повторный рост дали видео-пересказы 2015–2019 годов.",
+  heroImage: "/images/dossier-the-smiling-man.jpg",
   sections: [
     {
       anchor: "overview",

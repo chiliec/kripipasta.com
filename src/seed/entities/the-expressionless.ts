@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Больница (1972)",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Один короткий текст с прикреплённым «фото» дал резкий всплеск 2012 года, после чего интерес держится ровными волнами.",
+  heroImage: "/images/dossier-the-expressionless.jpg",
   sections: [
     {
       anchor: "overview",

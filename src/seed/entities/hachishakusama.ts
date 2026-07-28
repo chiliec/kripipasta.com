@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Сельская Япония · двор у дома бабушки и деда",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Первый резкий рост дали англоязычные переводы 2011–2013 годов, второй — волна YouTube-пересказов и хоррор-игр по мотивам.",
+  heroImage: "/images/dossier-hachishakusama.jpg",
   sections: [
     {
       anchor: "overview",

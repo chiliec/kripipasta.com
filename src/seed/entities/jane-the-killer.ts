@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Идёт по следу Джеффа · ночь",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Взлёт на волне популярности Джеффа-убийцы в 2012–2014 годах; после спада персонаж удерживается в обороте как культовый фан-OC, регулярно всплывая в артах, shipping-фанонах и кроссоверах.",
+  heroImage: "/images/dossier-jane-the-killer.jpg",
   sections: [
     {
       anchor: "overview",
