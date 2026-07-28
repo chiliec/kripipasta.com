@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Леса · пригороды · кромка леса",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Волна найденной плёнки 2010 года дала самый резкий ранний всплеск; после 2014 года интерес остыл, а затем восстановился благодаря кино.",
+  heroImage: "/images/dossier-slender-man.jpg",
   sections: [
     {
       anchor: "overview",

@@ -28,6 +28,17 @@ function availableImages(): Set<string> {
 }
 
 /**
+ * True when `src` is safe to render: an external URL, or a `/images/*` path
+ * whose file is present under public/images. Empty/missing local files → false,
+ * so callers can fall back to a placeholder instead of a broken image.
+ */
+export function imageExists(src: string): boolean {
+  if (!src) return false;
+  if (!src.startsWith("/images/")) return true; // external / other paths
+  return availableImages().has(src);
+}
+
+/**
  * Remove `<img>` tags whose `/images/*` file is not present under public/images.
  * External images and locally-present images are left untouched.
  */
