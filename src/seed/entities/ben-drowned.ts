@@ -166,8 +166,8 @@ export const dossier: SeedDossier = {
   ],
   gallery: [
     { image: "/images/83779-majora.jpg", caption: "Картридж The Legend of Zelda: Majora’s Mask — тот самый подержанный носитель с чужим сохранением." },
-    { caption: "Экран выбора файлов с единственной записью «BEN», которую не удаётся стереть насовсем." },
-    { caption: "Статуя Elegy of Emptiness — пустотелый двойник Линка, стоящий там, где его быть не должно." },
+    { image: "/images/dossier-ben-drowned-g2.png", caption: "Экран выбора файлов с единственной записью «BEN», которую не удаётся стереть насовсем." },
+    { image: "/images/dossier-ben-drowned-g3.png", caption: "Статуя Elegy of Emptiness — пустотелый двойник Линка, стоящий там, где его быть не должно." },
     { caption: "Застывший кадр со строкой «You’ve met with a terrible fate, haven’t you?»." },
     { caption: "Глитч-артефакты и обращённая музыка — визуальный язык роликов, подкреплявших текст." },
   ],
