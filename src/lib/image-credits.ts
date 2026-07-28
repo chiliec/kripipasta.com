@@ -41,6 +41,12 @@ export const HERO_IMAGE_CREDITS: Record<string, ImageCredit> = {
     licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0",
     source: "https://commons.wikimedia.org/wiki/File:Тонкий_человек.jpg",
   },
+  "kuchisake-onna": {
+    artist: "Tanapat",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0",
+    source: "https://commons.wikimedia.org/wiki/File:Ehon-Sayoshigure_Kuchisake_onna.jpg",
+  },
 };
 
 export function heroImageCredit(slug: string): ImageCredit | null {
