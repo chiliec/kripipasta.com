@@ -24,6 +24,7 @@ async function upsertDossier(seed: SeedDossier): Promise<void> {
     height: seed.height,
     habitat: seed.habitat,
     popularityCaption: seed.popularityCaption,
+    heroImage: seed.heroImage ?? "",
     language: "ru",
     status: "APPROVED" as const,
     related: seed.related,
@@ -53,7 +54,7 @@ async function upsertDossier(seed: SeedDossier): Promise<void> {
   await prisma.dossierImage.createMany({
     data: seed.gallery.map((g, order) => ({
       dossierId: dossier.id,
-      image: "",
+      image: g.image ?? "",
       caption: g.caption,
       order,
     })),

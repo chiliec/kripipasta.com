@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Файл smile.jpg · сны увидевших",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Резкий подъём приходится на конец 2000-х и рубеж 2010-х, когда smile.jpg расходилась по форумам как одна из первых «вирусных» крипипаст; позже интерес держится ровно за счёт статуса классики жанра и постоянных пересказов.",
+  heroImage: "/images/dossier-smile-dog.png",
   sections: [
     {
       anchor: "overview",

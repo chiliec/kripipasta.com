@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Одиночные миры Minecraft · туннели",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Пик 2010–2011 годов совпал с распространением легенды и шуткой «Removed Herobrine» в патчнотах; позже интерес держится за счёт мемов, фанатских модов и ностальгии по ранней эпохе Minecraft.",
+  heroImage: "/images/dossier-herobrine.png",
   sections: [
     {
       anchor: "overview",

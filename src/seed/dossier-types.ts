@@ -33,8 +33,10 @@ export interface SeedDossier {
   height: string;
   habitat: string;
   popularityCaption: string;
+  /** Site-absolute path under public/images (e.g. "/images/dossier-jeff-the-killer.jpg"). */
+  heroImage?: string;
   sections: SeedSection[];
-  gallery: { caption: string }[];
+  gallery: { image?: string; caption: string }[];
   popularity: { year: number; value: number }[];
   related: SeedRelated[];
 }

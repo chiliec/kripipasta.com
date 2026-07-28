@@ -17,7 +17,8 @@ import {
 } from "@/lib/dossiers";
 import { threatLevelKey, dossierScore100 } from "@/lib/dossier-display";
 import { buildSafe } from "@/lib/build-safe";
-import { stripMissingImages } from "@/lib/available-images";
+import { stripMissingImages, imageExists } from "@/lib/available-images";
+import { heroImageCredit } from "@/lib/image-credits";
 import JsonLd from "@/components/JsonLd";
 import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
 
@@ -73,6 +74,8 @@ export default async function DossierPage({
   const knownSlugs = await getAllPublishedDossierSlugs();
   const threat = t(threatLevelKey(dossier.threatLevel));
   const pop = dossierScore100(dossier.score);
+  const hero = imageExists(dossier.heroImage) ? dossier.heroImage : "";
+  const heroCredit = hero ? heroImageCredit(slug) : null;
 
   const canonical = `${SITE_URL}/${locale}/dossier/${slug}`;
   const articleLd = {
@@ -134,6 +137,31 @@ export default async function DossierPage({
             </dl>
           </header>
 
+          {hero && (
+            <figure className="mb-10 overflow-hidden rounded-[16px] border border-line bg-s3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={hero}
+                alt={dossier.name}
+                className="mx-auto max-h-[560px] w-full object-contain"
+              />
+              {heroCredit && (
+                <figcaption className="border-t border-line px-4 py-2 font-mono text-[10px] text-tx3">
+                  {heroCredit.artist} ·{" "}
+                  <a
+                    href={heroCredit.source}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-ink"
+                  >
+                    {heroCredit.license}
+                  </a>{" "}
+                  · Wikimedia Commons
+                </figcaption>
+              )}
+            </figure>
+          )}
+
           <div className="grid gap-11 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div>
               {dossier.sections.map((s) => (
@@ -149,7 +177,17 @@ export default async function DossierPage({
                   <ul className="grid gap-4 sm:grid-cols-2">
                     {dossier.gallery.map((g, i) => (
                       <li key={i} className="rounded-[14px] border border-line bg-s1 p-3">
-                        <div className="aspect-[4/3] rounded-[10px] bg-s3" />
+                        {imageExists(g.image) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={g.image}
+                            alt={g.caption || dossier.name}
+                            loading="lazy"
+                            className="aspect-[4/3] w-full rounded-[10px] object-cover"
+                          />
+                        ) : (
+                          <div className="aspect-[4/3] rounded-[10px] bg-s3" />
+                        )}
                         {g.caption && (
                           <p className="mt-2 font-mono text-[11px] text-tx3">{g.caption}</p>
                         )}

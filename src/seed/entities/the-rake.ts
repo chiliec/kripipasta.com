@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Сельские спальни · опушки · дома у озёр",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Возрождение аналог-хоррора 2018 года и перезапуск 2023 года дали самый резкий рост.",
+  heroImage: "/images/dossier-the-rake.png",
   sections: [
     {
       anchor: "overview",

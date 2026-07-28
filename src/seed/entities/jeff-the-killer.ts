@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Пригороды · спальни · ночь",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Ранний взлёт на волне YouTube-пересказов 2011–2013 годов; после спада к концу 2010-х персонаж вернулся в оборот благодаря мемам, играм и ремейкам.",
+  heroImage: "/images/dossier-jeff-the-killer.jpg",
   sections: [
     {
       anchor: "overview",
