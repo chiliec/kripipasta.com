@@ -16,7 +16,6 @@ import {
 } from "@/lib/dossiers";
 import { threatLevelKey, dossierScore100 } from "@/lib/dossier-display";
 import { stripMissingImages, imageExists } from "@/lib/available-images";
-import { heroImageCredit } from "@/lib/image-credits";
 import JsonLd from "@/components/JsonLd";
 import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
 
@@ -67,7 +66,6 @@ export default async function DossierPage({
   const threat = t(threatLevelKey(dossier.threatLevel));
   const pop = dossierScore100(dossier.score);
   const hero = imageExists(dossier.heroImage) ? dossier.heroImage : "";
-  const heroCredit = hero ? heroImageCredit(slug) : null;
 
   const canonical = `${SITE_URL}/${locale}/dossier/${slug}`;
   const articleLd = {
@@ -137,20 +135,6 @@ export default async function DossierPage({
                 alt={dossier.name}
                 className="mx-auto max-h-[560px] w-full object-contain"
               />
-              {heroCredit && (
-                <figcaption className="border-t border-line px-4 py-2 font-mono text-[10px] text-tx3">
-                  {heroCredit.artist} ·{" "}
-                  <a
-                    href={heroCredit.source}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-ink"
-                  >
-                    {heroCredit.license}
-                  </a>{" "}
-                  · Wikimedia Commons
-                </figcaption>
-              )}
             </figure>
           )}
 

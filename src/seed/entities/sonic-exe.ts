@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Взломанный ROM Sonic the Hedgehog · зелёные холмы и залитый кровью Green Hill",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Пик пришёлся на 2012–2013 годы, когда паста разошлась по YouTube; после этого интерес держится необычайно высоко за счёт вала фан-игр, ремейков и мемов — редкий случай, когда адаптации переросли оригинал.",
+  heroImage: "/images/dossier-sonic-exe.png",
   sections: [
     {
       anchor: "overview",

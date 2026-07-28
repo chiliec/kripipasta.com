@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Зеркала · тёмные ванные",
   popularityCaption:
     "Интенсивность упоминаний и поисковых запросов, индекс 100. Легенда старше интернета и держится на устном бытовании, но сеть дала ей новые всплески — тематические подборки, фильмы и видеоролики с «проверкой ритуала».",
+  heroImage: "/images/dossier-bloody-mary.jpg",
   sections: [
     {
       anchor: "overview",

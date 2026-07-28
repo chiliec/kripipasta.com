@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Округ Мандела · дома жертв",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Взрывной рост после выхода «Overthrone» в 2021 году сделал серию одним из флагманов жанра аналогового хоррора; интерес держится на пике до сих пор.",
+  heroImage: "/images/dossier-the-mandela-catalogue.png",
   sections: [
     {
       anchor: "overview",
