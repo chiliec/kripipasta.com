@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -16,24 +15,17 @@ import {
   getAllPublishedDossierSlugs,
 } from "@/lib/dossiers";
 import { threatLevelKey, dossierScore100 } from "@/lib/dossier-display";
-import { buildSafe } from "@/lib/build-safe";
 import { stripMissingImages, imageExists } from "@/lib/available-images";
 import { heroImageCredit } from "@/lib/image-credits";
 import JsonLd from "@/components/JsonLd";
 import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
 
-export const revalidate = 3600;
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  const slugs = await buildSafe<string[]>(
-    () => getAllPublishedDossierSlugs(),
-    [],
-  );
-  return routing.locales.flatMap((locale) =>
-    slugs.map((slug) => ({ locale, slug })),
-  );
-}
+// Render against the live DB per request. As an ISR route (revalidate=3600)
+// the detail page served a stale pre-seed snapshot until its window lapsed,
+// and direct DB writes (seeds) never fire revalidatePath — so hero/gallery
+// edits surfaced ~1h late. force-dynamic mirrors the dossier index page
+// (src/app/[locale]/dossier/page.tsx) and reflects DB writes immediately.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
