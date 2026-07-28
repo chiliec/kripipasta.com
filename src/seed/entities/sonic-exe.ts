@@ -164,11 +164,11 @@ export const dossier: SeedDossier = {
     },
   ],
   gallery: [
-    { caption: "Искажённый титульный экран Sonic the Hedgehog с улыбающимся ежом и кровавыми провалами глаз." },
+    { image: "/images/dossier-sonic-exe-g1.png", caption: "Искажённый титульный экран Sonic the Hedgehog с улыбающимся ежом и кровавыми провалами глаз." },
     { caption: "Записанный диск и приложенная записка с просьбой уничтожить файл." },
-    { caption: "Залитая кровью зона Green Hill — знакомый уровень, вывернутый наизнанку." },
-    { caption: "Экран смерти одного из персонажей после проигранной игры в прятки." },
-    { caption: "Финальный кадр: Соник смотрит прямо на игрока со строкой «I AM GOD»." },
+    { image: "/images/dossier-sonic-exe-g3.jpg", caption: "Залитая кровью зона Green Hill — знакомый уровень, вывернутый наизнанку." },
+    { image: "/images/dossier-sonic-exe-g4.png", caption: "Экран смерти одного из персонажей после проигранной игры в прятки." },
+    { image: "/images/dossier-sonic-exe-g5.jpg", caption: "Финальный кадр: Соник смотрит прямо на игрока со строкой «I AM GOD»." },
   ],
   popularity: [2011, 2013, 2015, 2017, 2019, 2021, 2023, 2025].map((year, i) => ({
     year,
