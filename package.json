@@ -43,7 +43,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.12",
     "he": "^1.2.0",
-    "mysql2": "^3.23.1",
+    "mysql2": "^3.23.2",
     "postcss": "^8.5.23",
     "prisma": "^7.9.1",
     "tailwindcss": "^4.0.0",
