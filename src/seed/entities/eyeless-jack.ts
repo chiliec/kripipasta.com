@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Спальни · ночь",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Всплеск на волне YouTube-зачиток и DeviantArt-фан-арта середины 2010-х; после спада персонаж удерживается за счёт кроссоверов с другими крипипастами и фан-игр.",
+  heroImage: "/images/95060-1394827250_ik3tdaz6qrm.jpg",
   sections: [
     {
       anchor: "overview",

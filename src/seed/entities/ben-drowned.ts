@@ -21,6 +21,7 @@ export const dossier: SeedDossier = {
   habitat: "Картридж The Legend of Zelda: Majora’s Mask · Хайрул",
   popularityCaption:
     "Объём поисковых запросов и упоминаний, индекс 100. Резкий всплеск 2010 года совпал с публикацией ARG; после затухания интерес держится за счёт устойчивого культа Majora’s Mask и ретроспектив о ранних крипипастах.",
+  heroImage: "/images/83586-majora.jpg",
   sections: [
     {
       anchor: "overview",
@@ -164,7 +165,7 @@ export const dossier: SeedDossier = {
     },
   ],
   gallery: [
-    { caption: "Картридж The Legend of Zelda: Majora’s Mask — тот самый подержанный носитель с чужим сохранением." },
+    { image: "/images/83779-majora.jpg", caption: "Картридж The Legend of Zelda: Majora’s Mask — тот самый подержанный носитель с чужим сохранением." },
     { caption: "Экран выбора файлов с единственной записью «BEN», которую не удаётся стереть насовсем." },
     { caption: "Статуя Elegy of Emptiness — пустотелый двойник Линка, стоящий там, где его быть не должно." },
     { caption: "Застывший кадр со строкой «You’ve met with a terrible fate, haven’t you?»." },
