@@ -25,8 +25,8 @@ export default function SiteHeader() {
 
         <nav className="hidden items-center gap-5 text-[13px] text-tx2 lg:flex">
           <Link href="/" className="hover:text-ink">{tNav("browse")}</Link>
-          <Link href="/#feed" className="hover:text-ink">{tNav("categories")}</Link>
-          <Link href="/?sort=newest#feed" className="hover:text-ink">{tNav("index")}</Link>
+          <Link href="/#feed" className="hover:text-ink">{tNav("popular")}</Link>
+          <Link href="/?sort=newest#feed" className="hover:text-ink">{tNav("newest")}</Link>
           <Link href="/dossier" className="hover:text-ink">{tNav("dossiers")}</Link>
         </nav>
 

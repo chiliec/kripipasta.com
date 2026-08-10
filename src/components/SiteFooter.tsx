@@ -25,8 +25,8 @@ export default function SiteFooter() {
           </h3>
           <ul className="space-y-2 text-[13.5px] text-tx2">
             <li><Link href="/#feed" className="hover:text-ink">{t("explore.all")}</Link></li>
-            <li><Link href="/#feed" className="hover:text-ink">{t("explore.categories")}</Link></li>
-            <li><Link href="/?sort=newest#feed" className="hover:text-ink">{t("explore.index")}</Link></li>
+            <li><Link href="/#feed" className="hover:text-ink">{t("explore.popular")}</Link></li>
+            <li><Link href="/?sort=newest#feed" className="hover:text-ink">{t("explore.newest")}</Link></li>
           </ul>
         </div>
 
