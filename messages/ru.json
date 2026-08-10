@@ -5,8 +5,8 @@
   },
   "nav": {
     "browse": "Обзор",
-    "categories": "Категории",
-    "index": "Указатель",
+    "popular": "Популярные",
+    "newest": "Новые",
     "dossiers": "Досье"
   },
   "header": {
@@ -89,8 +89,8 @@
     "exploreHeading": "Разделы",
     "explore": {
       "all": "Все истории",
-      "categories": "Категории",
-      "index": "Указатель"
+      "popular": "Популярные",
+      "newest": "Новые"
     },
     "communityHeading": "Сообщество",
     "community": {

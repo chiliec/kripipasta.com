@@ -5,8 +5,8 @@
   },
   "nav": {
     "browse": "Browse",
-    "categories": "Categories",
-    "index": "Index",
+    "popular": "Popular",
+    "newest": "Newest",
     "dossiers": "Dossiers"
   },
   "header": {
@@ -89,8 +89,8 @@
     "exploreHeading": "Explore",
     "explore": {
       "all": "All stories",
-      "categories": "Categories",
-      "index": "Index"
+      "popular": "Popular",
+      "newest": "Newest"
     },
     "communityHeading": "Community",
     "community": {
