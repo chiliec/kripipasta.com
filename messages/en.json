@@ -6,7 +6,6 @@
   "nav": {
     "browse": "Browse",
     "categories": "Categories",
-    "trending": "Trending",
     "index": "Index",
     "dossiers": "Dossiers"
   },
@@ -91,7 +90,6 @@
     "explore": {
       "all": "All stories",
       "categories": "Categories",
-      "trending": "Trending",
       "index": "Index"
     },
     "communityHeading": "Community",
