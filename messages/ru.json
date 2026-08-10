@@ -6,7 +6,6 @@
   "nav": {
     "browse": "Обзор",
     "categories": "Категории",
-    "trending": "Популярное",
     "index": "Указатель",
     "dossiers": "Досье"
   },
@@ -91,7 +90,6 @@
     "explore": {
       "all": "Все истории",
       "categories": "Категории",
-      "trending": "Популярное",
       "index": "Указатель"
     },
     "communityHeading": "Сообщество",
