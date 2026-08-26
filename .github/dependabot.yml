@@ -4,3 +4,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+    ignore:
+      # eslint 10 crashes eslint-config-next's parser stack (scopeManager.addGlobals
+      # is not a function) — drop this once eslint-config-next supports eslint 10.
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
