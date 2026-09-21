@@ -41,7 +41,14 @@ export async function fetchText(url: string): Promise<string | null> {
   if (existsSync(cachePath)) return readFileSync(cachePath, "utf8");
   const res = await requestWithRetry(url);
   if (!res) return null;
-  const text = await res.text();
+  // res.text() streams the body under the same AbortSignal as the fetch() call above;
+  // a stall here throws an uncaught DOMException that bypasses requestWithRetry's catch.
+  let text: string;
+  try {
+    text = await res.text();
+  } catch (err) {
+    throw new NetworkError(`body read failed for ${url}: ${String(err)}`);
+  }
   mkdirSync(CACHE_DIR, { recursive: true });
   writeFileSync(cachePath, text);
   return text;
