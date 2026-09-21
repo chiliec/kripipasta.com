@@ -19,7 +19,8 @@
     "db:migrate:legacy": "tsx --env-file=.env src/migrate/run.ts",
     "db:migrate:verify": "tsx --env-file=.env src/migrate/verify.ts",
     "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts",
-    "recover:images": "tsx --env-file=.env src/migrate/recover-images.ts"
+    "recover:images": "tsx --env-file=.env src/migrate/recover-images.ts",
+    "import:mrakopedia": "tsx --env-file=.env src/import/mrakopedia/run.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
