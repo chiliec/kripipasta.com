@@ -26,6 +26,7 @@ npm run db:migrate:legacy  # tsx src/migrate/run.ts — one-shot ETL from legacy
 npm run db:migrate:verify  # tsx src/migrate/verify.ts — post-ETL sanity checks
 npm run db:seed:dossiers   # tsx src/seed/dossiers.ts — upserts src/seed/entities/*.ts into DB
 npm run recover:images     # tsx src/migrate/recover-images.ts — pulls missing images from Wayback
+npm run import:mrakopedia -- --limit 1000 [--offset 0] [--dry-run]   # tsx src/import/mrakopedia/run.ts — imports top-rated Mrakopedia stories (HTML cached in .cache/)
 ```
 
 Tests are colocated (`foo.ts` + `foo.test.ts`), run with `vitest`/node environment, no DB — pure functions and transforms are unit-tested directly; DB-touching code is kept thin and pushed to the edges so it doesn't need mocking.
@@ -47,6 +48,8 @@ CI (`.github/workflows/main.yml`) runs against a real Postgres 16 service contai
 **Dossier seeding**: dossiers are content-as-code, not admin-authored. Each entity lives in `src/seed/entities/<slug>.ts` (a `SeedDossier` literal — sections as block arrays, gallery, popularity points), registered in `src/seed/entities/index.ts`, and upserted into Postgres by `src/seed/dossiers.ts` (delete-and-recreate children each run, so it's idempotent). `src/seed/dossier-html.ts` renders the block arrays to sanitized HTML.
 
 **Legacy ETL** (`src/migrate/`): one-shot import from the old MySQL dump (`legacy-db.ts` reads it, `transform.ts` maps rows → Prisma shapes, `run.ts` orchestrates). Community-submitted stories with `approved === 2` are deliberately excluded (55% downvote rate — a data-quality call made 2026-07-22, see the comment in `run.ts`). Not re-run in normal development; DB state is a mix of migrated legacy content, seeded dossiers, and live submissions.
+
+**Mrakopedia import** (`src/import/mrakopedia/`): one-shot, re-runnable import of top-rated stories from mrakopedia.net (CC BY-NC-SA 4.0 — the site must stay non-commercial while these are published; every imported story has `Story.sourceUrl` set and the story page renders a source + license line). Ranking comes from the wiki's own rating table, filtered by Wilson score; the `Литература`/`Комиксы` categories and titles with a `(Author Name)` suffix are excluded as published fiction. Ratings are seeded as synthetic `Vote` rows (voterId = sha256("mrakopedia:<pid>:<n>")) so local voting doesn't reset them. Images are copied into `public/images/mrakopedia-*.<ext>`. Idempotent by `sourceUrl`.
 
 **Image handling**: legacy story HTML references `/images/<name>` paths recovered piecemeal from the Wayback Machine into `public/images/`; not all were recoverable. `src/lib/available-images.ts` checks file presence at render time and strips `<img>` tags whose local file is missing, rather than tracking a static "known missing" list — so dropping a recovered file into `public/images/` makes it reappear automatically.
 

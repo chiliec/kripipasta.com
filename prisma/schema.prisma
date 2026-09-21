@@ -45,6 +45,7 @@ model Story {
   score        Float         @default(0)
   legacyId     Int?          @unique
   legacyIp     String?
+  sourceUrl    String        @default("")
   createdAt    DateTime      @default(now())
   approvedAt   DateTime?
   updatedAt    DateTime      @updatedAt
@@ -57,6 +58,7 @@ model Story {
   @@index([status, score])
   @@index([status, createdAt])
   @@index([searchVector], type: Gin)
+  @@index([sourceUrl])
 }
 
 model Tag {

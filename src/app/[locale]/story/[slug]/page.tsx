@@ -152,6 +152,22 @@ export default async function StoryPage({
                 dangerouslySetInnerHTML={{ __html: stripMissingImages(story.contentHtml) }}
               />
 
+              {story.sourceUrl && (
+                <p className="mt-6 font-mono text-[11px] text-tx3">
+                  {t("source")}:{" "}
+                  <a href={story.sourceUrl} className="text-crimson-2">
+                    Мракопедия
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                    className="text-crimson-2"
+                  >
+                    CC BY-NC-SA 4.0
+                  </a>
+                </p>
+              )}
+
               <VotePanel
                 entityType="STORY"
                 entityId={story.id}

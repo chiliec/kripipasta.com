@@ -22,6 +22,7 @@ export interface StoryDetail extends StoryListItem {
   language: string;
   authorName: string;
   authorLink: string;
+  sourceUrl: string;
 }
 
 export interface StoryListResult {
@@ -49,6 +50,7 @@ const detailSelect = {
   language: true,
   authorName: true,
   authorLink: true,
+  sourceUrl: true,
 } satisfies Prisma.StorySelect;
 
 type ListRow = Prisma.StoryGetPayload<{ select: typeof listSelect }>;
