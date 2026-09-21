@@ -16,3 +16,6 @@ tsconfig.tsbuildinfo
 .env.local
 
 tsconfig.tsbuildinfo
+
+# Mrakopedia import HTML cache (src/import/mrakopedia/fetch.ts)
+/.cache/
