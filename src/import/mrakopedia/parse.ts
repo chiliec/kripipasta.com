@@ -94,6 +94,10 @@ function cleanBody(raw: string, imageUrls: string[]): string {
   return sanitizeHtml(raw, {
     allowedTags: false,
     allowedAttributes: false,
+    // This is a transform pass (chrome-stripping, link/image rewriting), not the final
+    // sanitizer — sanitizeStoryHtml() runs before storage. Silence the per-call script/style
+    // warning; it'd otherwise flood stdout with ~2000 lines of noise across a full run.
+    allowVulnerableTags: true,
     exclusiveFilter: (frame) => {
       const cls = frame.attribs.class ?? "";
       if (frame.attribs.id === "toc") return true;
