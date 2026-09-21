@@ -167,7 +167,7 @@ async function main() {
         const link = await tx.storyTag.createMany({ data: [{ storyId, tagId: tag.id }], skipDuplicates: true });
         if (link.count > 0) newTags.push(slug);
       }
-    }, { timeout: 30_000 }); // ~1k vote rows per story; default 5 s is tight over an SSH tunnel
+    }, { timeout: 180_000 }); // up to ~10k vote rows per story; 30s wasn't enough over a laggy SSH tunnel in practice
 
     return { created: !existingId, imagesOk, imagesFailed, newTags };
   }
