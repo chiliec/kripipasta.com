@@ -58,6 +58,12 @@ async function main() {
       if (done % 50 === 0) console.log(`… ${done}/${LIMIT} (${row.title})`);
     } catch (err) {
       if (err instanceof NetworkError) { networkSkips++; skips.push({ title: row.title, reason: `network: ${err.message}` }); continue; }
+      // Prisma transaction expired (P2028) — seen over a laggy SSH tunnel when a single
+      // network stall outlasts the transaction timeout. The transaction itself rolled back
+      // atomically, so it's safe to skip and pick back up on a re-run (idempotent by sourceUrl).
+      if (err && typeof err === "object" && "code" in err && err.code === "P2028") {
+        networkSkips++; skips.push({ title: row.title, reason: `db-timeout: ${String(err)}` }); continue;
+      }
       throw err;
     }
   }
