@@ -35,7 +35,10 @@ const AUTHORED_PAGE = {
 <p>It scratches. It scratches every night, and I cannot sleep anymore because of it.
 </p>
 <p><span id="nav"></span><span id="navigation"></span></p><div align="center" style="margin-top:2em;"><p><b><a href="/wiki/Prev" title="Prev">&lt; Previous</a> | <a href="/wiki/Next" title="Next">Next &gt;</a></b></p></div>
-<div style="margin: 2em 0 .5em;"><hr /> <i>Written by <a href="/wiki/User:Banningk1979" title="User:Banningk1979">Banningk1979</a></i></div>
+<p><br style="clear:both;" /></p><hr />
+<p><i>Written by <a href="/wiki/User:Banningk1979" title="User:Banningk1979">Banningk1979</a><br />Originally uploaded on November 7th, 2012<br />
+<span class="plainlinks">Content is available under <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="http://creativecommons.org/licenses/by-sa/4.0">CC BY-SA</a></span></i>
+</p>
 </div>`,
     },
     categories: [{ sortkey: "", "*": "Suggested_Reading" }, { sortkey: "", "*": "Beings" }],
@@ -66,6 +69,7 @@ describe("parseStoryJson", () => {
     expect(p.authorName).toBe("Banningk1979");
     expect(p.authorLink).toBe("https://creepypasta.fandom.com/wiki/User:Banningk1979");
     expect(p.bodyHtml).not.toContain("Written by");
+    expect(p.bodyHtml).not.toContain("Content is available");
     expect(p.bodyHtml).not.toContain("mw-editsection");
     expect(p.bodyHtml).not.toContain('id="toc"');
     expect(p.bodyHtml).not.toContain('id="nav"');

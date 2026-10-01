@@ -41,8 +41,11 @@ function absolutize(url: string): string {
 type Json = Record<string, unknown>;
 const obj = (v: unknown): Json | null => (v && typeof v === "object" ? (v as Json) : null);
 
-const FOOTER_RE = /<div style="margin: 2em 0 \.5em;">\s*<hr \/>\s*<i>([\s\S]*?)<\/i>\s*<\/div>/;
-const WRITTEN_BY_RE = /Written by\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?\s*([^<]+?)\s*(?:<\/a>)?\s*$/;
+// Two real footer shapes:
+//   <div style="margin: 2em 0 .5em;"><hr /> <i>Original author unknown</i></div>
+//   <hr /><p><i>Written by <a …>Name</a><br />Originally uploaded on …<br /><span>Content is available under …</span></i></p>
+const FOOTER_RE = /(?:<div style="margin: 2em 0 \.5em;">\s*<hr \/>|(?:<hr \/>\s*)?<p>)\s*<i>\s*(?:<b>)?\s*((?:Written by|Original author unknown)[\s\S]*?)<\/i>\s*<\/(?:div|p)>/;
+const WRITTEN_BY_RE = /Written by\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?\s*([^<]+?)\s*(?:<\/a>|<br|$)/;
 const UPLOADED_RE = /<p>\s*<i>Originally uploaded on[^<]*<\/i>\s*<\/p>/g;
 
 /** Strip wiki chrome, absolutize links, canonicalise images, drop empty paragraphs. */
@@ -90,14 +93,6 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
     // <h2><span class="mw-headline" id="…">Title</span></h2> → <h2>Title</h2>
     .replace(/<span class="mw-headline"[^>]*>([\s\S]*?)<\/span>/g, "$1");
 
-  // Series navigation: <p><span id="nav">…</p><div align="center">prev | next</div> — drop from the <p> to the footer.
-  const navAt = body.indexOf('<span id="nav">');
-  if (navAt >= 0) {
-    const pAt = body.lastIndexOf("<p>", navAt);
-    const footerAt = body.indexOf('<div style="margin: 2em 0 .5em;">', navAt);
-    body = body.slice(0, pAt >= 0 ? pAt : navAt) + (footerAt >= 0 ? body.slice(footerAt) : "");
-  }
-
   // Author footer ("Written by X" / "Original author unknown"): lift and remove.
   let authorName = "";
   let authorLink = "";
@@ -111,6 +106,13 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
     body = body.replace(FOOTER_RE, "");
   }
   body = body.replace(UPLOADED_RE, "");
+
+  // Series navigation: <p><span id="nav">…</p><div align="center">prev | next</div> is the last thing before the (now removed) footer.
+  const navAt = body.indexOf('<span id="nav">');
+  if (navAt >= 0) {
+    const pAt = body.lastIndexOf("<p>", navAt);
+    body = body.slice(0, pAt >= 0 ? pAt : navAt);
+  }
 
   const imageUrls: string[] = [];
   const bodyHtml = sanitizeStoryHtml(cleanBody(body, imageUrls).replace(/<a\b[^>]*>\s*<\/a>/g, ""));
