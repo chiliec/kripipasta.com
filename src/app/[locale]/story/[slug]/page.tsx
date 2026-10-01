@@ -9,7 +9,7 @@ import ReadingProgress from "@/components/ReadingProgress";
 import StoryCard from "@/components/StoryCard";
 import VotePanel from "@/components/VotePanel";
 import JsonLd from "@/components/JsonLd";
-import { SITE_NAME, SITE_URL, alternates } from "@/lib/seo";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import {
   getStoryBySlug,
   getRelatedStories,
@@ -19,6 +19,7 @@ import {
   formatStoryDate,
   readingTimeMinutes,
   excerpt,
+  sourceAttribution,
 } from "@/lib/story-display";
 import { buildSafe } from "@/lib/build-safe";
 import { stripMissingImages } from "@/lib/available-images";
@@ -49,7 +50,8 @@ export async function generateMetadata({
   return {
     title: story.title,
     description,
-    alternates: alternates(locale, `/story/${slug}`),
+    // Stories exist in one language only: canonical is the story's own locale, no hreflang pairs.
+    alternates: { canonical: `/${story.language}/story/${slug}` },
     openGraph: {
       title: story.title,
       description,
@@ -75,6 +77,7 @@ export default async function StoryPage({
   if (!story) notFound();
 
   const related = await getRelatedStories(story, 3);
+  const source = sourceAttribution(story.sourceUrl);
   const minutes = readingTimeMinutes(story.contentHtml);
   const posted = formatStoryDate(story.approvedAt ?? story.createdAt, locale);
 
@@ -152,19 +155,21 @@ export default async function StoryPage({
                 dangerouslySetInnerHTML={{ __html: stripMissingImages(story.contentHtml) }}
               />
 
-              {story.sourceUrl && (
+              {source && (
                 <p className="mt-6 font-mono text-[11px] text-tx3">
                   {t("source")}:{" "}
                   <a href={story.sourceUrl} className="text-crimson-2">
-                    Мракопедия
-                  </a>{" "}
-                  ·{" "}
-                  <a
-                    href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-                    className="text-crimson-2"
-                  >
-                    CC BY-NC-SA 4.0
+                    {source.label}
                   </a>
+                  {source.license && (
+                    <>
+                      {" "}
+                      ·{" "}
+                      <a href={source.licenseUrl} className="text-crimson-2">
+                        {source.license}
+                      </a>
+                    </>
+                  )}
                 </p>
               )}
 

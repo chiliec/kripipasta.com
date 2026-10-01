@@ -5,6 +5,7 @@ import {
   readingTimeMinutes,
   formatStoryDate,
   ratingKey,
+  sourceAttribution,
 } from "./story-display";
 
 describe("stripHtml", () => {
@@ -70,5 +71,25 @@ describe("ratingKey", () => {
 
   it("labels low scores negatively", () => {
     expect(ratingKey(3)).toBe("ratingNiche");
+  });
+});
+
+describe("sourceAttribution", () => {
+  it("knows Mrakopedia and the Creepypasta Wiki", () => {
+    expect(sourceAttribution("https://mrakopedia.net/wiki/%D0%9F")).toEqual({
+      label: "Мракопедия",
+      license: "CC BY-NC-SA 4.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    });
+    expect(sourceAttribution("https://creepypasta.fandom.com/wiki/Jeff_the_Killer")).toEqual({
+      label: "Creepypasta Wiki",
+      license: "CC BY-SA 3.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    });
+  });
+  it("falls back to the host with no license, and null for empty", () => {
+    expect(sourceAttribution("https://example.org/x")).toEqual({ label: "example.org" });
+    expect(sourceAttribution("")).toBeNull();
+    expect(sourceAttribution("not a url")).toBeNull();
   });
 });
