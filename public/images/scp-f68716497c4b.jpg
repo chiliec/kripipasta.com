@@ -1,0 +1,15 @@
+A nasty error has occurred. If the problem repeats, please fill (if possible) a bug report.<br/><br/>exception 'OzoneDatabaseException' with message 'error: 
+' in /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/PgConnection.php:57
+Stack trace:
+#0 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/PgConnection.php(86): PgConnection->_init()
+#1 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(105): PgConnection->query('SELECT file.fil...')
+#2 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(118): BaseDBPeer->selectByExplicitQuery(' WHERE file_id ...')
+#3 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(520): BaseDBPeer->selectOneByExplicitQuery(' WHERE file_id ...')
+#4 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(538): BaseDBPeer->selectByPrimaryKey(7094730)
+#5 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/db/DB_Page.php(100): BaseDBPeer->selectByUniqueKey(Array)
+#6 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/utils/UploadedFileFlowController.php(382): DB_Page->getFileByName('ganjawarlord.jp...')
+#7 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/utils/UploadedFileFlowController.php(97): UploadedFileFlowController->serveAttachment(Object(DB_Site), 'files/the-seltz...')
+#8 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/utils/UploadedFileFlowController.php(58): UploadedFileFlowController->serveStuff(Object(DB_Site), 'files/the-seltz...')
+#9 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/web/local.php(32): UploadedFileFlowController->process()
+#10 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/web/router.php(406): require_once('/wikidot/app/re...')
+#11 {main}

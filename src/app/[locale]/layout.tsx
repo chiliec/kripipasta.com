@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Bodoni_Moda, Space_Grotesk } from "next/font/google";
@@ -75,6 +76,13 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${serif.variable} ${sans.variable}`}>
       <body className="bg-bg font-sans text-ink antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        {/* Umami analytics (self-hosted, analytics.nextgensoft.co). The website id
+            is public by design; see infra docs/runbook-analytics.md. */}
+        <Script
+          src="https://analytics.nextgensoft.co/script.js"
+          data-website-id="71a9c507-c14a-4b7b-b122-aff042b90e2a"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

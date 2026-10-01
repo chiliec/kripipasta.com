@@ -1,0 +1,19 @@
+A nasty error has occurred. If the problem repeats, please fill (if possible) a bug report.<br/><br/>exception 'OzoneDatabaseException' with message 'PgConnection->query("SELECT file.file_id, file.page_id, file.site_id, file.filename, file.mimetype, file.description, file.description_short, file.comment, file.size, file.date_added, file.user_id, file.user_string, file.has_resized FROM file  WHERE file_id = '11150809' LIMIT 1") (ERROR): 
+FATAL:  query_wait_timeout
+server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+previous query: ("")
+' in /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/PgConnection.php:127
+Stack trace:
+#0 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(105): PgConnection->query('SELECT file.fil...')
+#1 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(118): BaseDBPeer->selectByExplicitQuery(' WHERE file_id ...')
+#2 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(520): BaseDBPeer->selectOneByExplicitQuery(' WHERE file_id ...')
+#3 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/lib/ozone/php/core/database/BaseDBPeer.php(538): BaseDBPeer->selectByPrimaryKey(11150809)
+#4 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/db/DB_Page.php(100): BaseDBPeer->selectByUniqueKey(Array)
+#5 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/utils/UploadedFileFlowController.php(382): DB_Page->getFileByName('florida_zero.jp...')
+#6 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/utils/UploadedFileFlowController.php(97): UploadedFileFlowController->serveAttachment(Object(DB_Site), 'files/asset-flo...')
+#7 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/php/utils/UploadedFileFlowController.php(58): UploadedFileFlowController->serveStuff(Object(DB_Site), 'files/asset-flo...')
+#8 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/web/local.php(32): UploadedFileFlowController->process()
+#9 /wikidot/app/releases/aaf60abe24b464080911a0d52255b5c368349a32/web/router.php(406): require_once('/wikidot/app/re...')
+#10 {main}
