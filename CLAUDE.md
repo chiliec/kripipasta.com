@@ -27,7 +27,7 @@ npm run db:migrate:verify  # tsx src/migrate/verify.ts — post-ETL sanity check
 npm run db:seed:dossiers   # tsx src/seed/dossiers.ts — upserts src/seed/entities/*.ts into DB
 npm run recover:images     # tsx src/migrate/recover-images.ts — pulls missing images from Wayback
 npm run import:mrakopedia -- --limit 1000 [--offset 0] [--dry-run]   # tsx src/import/mrakopedia/run.ts — imports top-rated Mrakopedia stories (HTML cached in .cache/)
-npm run import:creepypasta-wiki -- [--limit N] [--dry-run]           # tsx src/import/creepypasta-wiki/run.ts — imports curated EN stories from the Creepypasta Wiki (Fandom) as language=en
+npm run import:creepypasta-wiki -- [--limit N] [--offset 0] [--dry-run] # tsx src/import/creepypasta-wiki/run.ts — imports curated EN stories from the Creepypasta Wiki (Fandom) as language=en
 ```
 
 Tests are colocated (`foo.ts` + `foo.test.ts`), run with `vitest`/node environment, no DB — pure functions and transforms are unit-tested directly; DB-touching code is kept thin and pushed to the edges so it doesn't need mocking.

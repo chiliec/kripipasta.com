@@ -20,6 +20,8 @@ const num = (name: string, def: number) => {
   return i >= 0 ? Number(argv[i + 1]) : def;
 };
 const LIMIT = num("--limit", Number.MAX_SAFE_INTEGER);
+// Queue order is deterministic (category listings are cached), so --offset resumes an interrupted run.
+const OFFSET = num("--offset", 0);
 const DRY_RUN = flag("--dry-run");
 
 type Skip = { title: string; reason: string };
@@ -62,14 +64,14 @@ async function main() {
       queue.push({ ...m, tier });
     }
   }
-  console.log(`queue: ${queue.length} pages; topical tags=${topical.size}; limit=${LIMIT} dry=${DRY_RUN}`);
+  console.log(`queue: ${queue.length} pages; topical tags=${topical.size}; limit=${LIMIT} offset=${OFFSET} dry=${DRY_RUN}`);
 
   const state = await loadImportState("en");
   const skips: Skip[] = [];
   const tagDelta = new Map<string, number>();
   let done = 0, created = 0, updated = 0, imagesOk = 0, imagesFailed = 0, networkSkips = 0;
 
-  for (const item of queue) {
+  for (const item of queue.slice(OFFSET)) {
     if (done >= LIMIT) break;
     try {
       const result = await importOne(item);
@@ -78,7 +80,7 @@ async function main() {
       if (result.created) created++; else updated++;
       imagesOk += result.imagesOk; imagesFailed += result.imagesFailed;
       for (const t of result.newTags) tagDelta.set(t, (tagDelta.get(t) ?? 0) + 1);
-      if (done % 50 === 0) console.log(`… ${done} (${item.title})`);
+      if (done % 50 === 0) console.log(`… ${done} +${OFFSET} (${item.title})`);
     } catch (err) {
       if (err instanceof NetworkError) { networkSkips++; skips.push({ title: item.title, reason: `network: ${err.message}` }); continue; }
       // Prisma P2028 = transaction timed out over a laggy tunnel; rolled back atomically, safe to retry on re-run.
