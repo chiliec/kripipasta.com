@@ -39,7 +39,7 @@ export default async function SearchPage({
   const t = await getTranslations("search");
 
   const { q } = await searchParams;
-  const results = await buildSafe(() => search(q), null);
+  const results = await buildSafe(() => search(q, locale), null);
 
   return (
     <>

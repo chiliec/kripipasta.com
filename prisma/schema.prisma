@@ -55,8 +55,8 @@ model Story {
   // the migration (title=A, intro=B, contentHtml=C). Queried via $queryRaw only.
   searchVector Unsupported("tsvector")?
 
-  @@index([status, score])
-  @@index([status, createdAt])
+  @@index([language, status, score])
+  @@index([language, status, approvedAt])
   @@index([searchVector], type: Gin)
   @@index([sourceUrl])
 }

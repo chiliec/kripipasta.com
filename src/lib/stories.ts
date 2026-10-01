@@ -72,14 +72,16 @@ const orderBy: Record<StorySort, Prisma.StoryOrderByWithRelationInput[]> = {
 };
 
 export async function getApprovedStories(opts: {
+  language: string;
   sort?: StorySort;
   tagSlug?: string;
   skip?: number;
   take?: number;
 }): Promise<StoryListResult> {
-  const { sort = "popular", tagSlug, skip = 0, take = 9 } = opts;
+  const { language, sort = "popular", tagSlug, skip = 0, take = 9 } = opts;
   const where: Prisma.StoryWhereInput = {
     status: "APPROVED",
+    language,
     ...(tagSlug ? { tags: { some: { tag: { slug: tagSlug } } } } : {}),
   };
   const [rows, total] = await Promise.all([
@@ -95,9 +97,9 @@ export async function getApprovedStories(opts: {
   return { items: rows.map(toListItem), total };
 }
 
-export async function getFeaturedStory(): Promise<StoryDetail | null> {
+export async function getFeaturedStory(language: string): Promise<StoryDetail | null> {
   const row = await prisma.story.findFirst({
-    where: { status: "APPROVED" },
+    where: { status: "APPROVED", language },
     select: detailSelect,
     orderBy: [{ score: "desc" }, { createdAt: "desc" }],
   });
@@ -113,7 +115,7 @@ export async function getStoryBySlug(slug: string): Promise<StoryDetail | null> 
 }
 
 export async function getRelatedStories(
-  story: Pick<StoryDetail, "id" | "tags">,
+  story: Pick<StoryDetail, "id" | "tags" | "language">,
   take = 3,
 ): Promise<StoryListItem[]> {
   const tagSlugs = story.tags.map((t) => t.slug);
@@ -121,6 +123,7 @@ export async function getRelatedStories(
   const rows = await prisma.story.findMany({
     where: {
       status: "APPROVED",
+      language: story.language,
       id: { not: story.id },
       tags: { some: { tag: { slug: { in: tagSlugs } } } },
     },
@@ -133,13 +136,17 @@ export async function getRelatedStories(
 
 export async function searchApprovedStories(
   query: string,
+  language: string,
   take = 12,
 ): Promise<StoryListItem[]> {
   // Rank by full-text relevance (GIN-indexed searchVector), tie-break on score.
+  // ponytail: 'russian' tsconfig for en rows too — English matches literally, no stemming;
+  // add a per-language generated column if EN search feels bad.
   const ranked = await prisma.$queryRaw<{ id: string }[]>`
     SELECT id
     FROM "Story"
     WHERE status = 'APPROVED'
+      AND language = ${language}
       AND "searchVector" @@ websearch_to_tsquery('russian', ${query})
     ORDER BY ts_rank("searchVector", websearch_to_tsquery('russian', ${query})) DESC,
              score DESC
@@ -155,22 +162,24 @@ export async function searchApprovedStories(
   return ids.map((id) => byId.get(id)).filter((s): s is StoryListItem => !!s);
 }
 
-export async function getAllApprovedSlugs(): Promise<string[]> {
+/** All locales when `language` is omitted (story pages are reachable from either locale). */
+export async function getAllApprovedSlugs(language?: string): Promise<string[]> {
   const rows = await prisma.story.findMany({
-    where: { status: "APPROVED" },
+    where: { status: "APPROVED", ...(language ? { language } : {}) },
     select: { slug: true },
   });
   return rows.map((r) => r.slug);
 }
 
 export async function getFilterTags(
+  language: string,
   take = 8,
 ): Promise<{ slug: string; name: string }[]> {
   return prisma.tag.findMany({
     // `frequency` counts all 9,681 legacy stories, but only APPROVED stories are
     // browsable — so the top-frequency tags often have zero approved stories and
-    // their chips lead to an empty grid. Restrict to tags with ≥1 approved story.
-    where: { stories: { some: { story: { status: "APPROVED" } } } },
+    // their chips lead to an empty grid. Restrict to tags with ≥1 approved story in this locale.
+    where: { stories: { some: { story: { status: "APPROVED", language } } } },
     orderBy: { frequency: "desc" },
     take,
     select: { slug: true, name: true },

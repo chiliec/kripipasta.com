@@ -26,11 +26,12 @@ export interface SearchResults {
 
 export async function search(
   raw: string | undefined | null,
+  language: string,
 ): Promise<SearchResults | null> {
   const query = normalizeQuery(raw);
   if (!query) return null;
   const [stories, dossiers] = await Promise.all([
-    searchApprovedStories(query),
+    searchApprovedStories(query, language),
     searchPublishedDossiers(query),
   ]);
   return { query, stories, dossiers, total: stories.length + dossiers.length };
