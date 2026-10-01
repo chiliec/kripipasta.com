@@ -27,6 +27,7 @@ npm run db:migrate:verify  # tsx src/migrate/verify.ts — post-ETL sanity check
 npm run db:seed:dossiers   # tsx src/seed/dossiers.ts — upserts src/seed/entities/*.ts into DB
 npm run recover:images     # tsx src/migrate/recover-images.ts — pulls missing images from Wayback
 npm run import:mrakopedia -- --limit 1000 [--offset 0] [--dry-run]   # tsx src/import/mrakopedia/run.ts — imports top-rated Mrakopedia stories (HTML cached in .cache/)
+npm run import:creepypasta-wiki -- [--limit N] [--dry-run]           # tsx src/import/creepypasta-wiki/run.ts — imports curated EN stories from the Creepypasta Wiki (Fandom) as language=en
 ```
 
 Tests are colocated (`foo.ts` + `foo.test.ts`), run with `vitest`/node environment, no DB — pure functions and transforms are unit-tested directly; DB-touching code is kept thin and pushed to the edges so it doesn't need mocking.
@@ -49,7 +50,9 @@ CI (`.github/workflows/main.yml`) runs against a real Postgres 16 service contai
 
 **Legacy ETL** (`src/migrate/`): one-shot import from the old MySQL dump (`legacy-db.ts` reads it, `transform.ts` maps rows → Prisma shapes, `run.ts` orchestrates). Community-submitted stories with `approved === 2` are deliberately excluded (55% downvote rate — a data-quality call made 2026-07-22, see the comment in `run.ts`). Not re-run in normal development; DB state is a mix of migrated legacy content, seeded dossiers, and live submissions.
 
-**Mrakopedia import** (`src/import/mrakopedia/`): one-shot, re-runnable import of top-rated stories from mrakopedia.net (CC BY-NC-SA 4.0 — the site must stay non-commercial while these are published; every imported story has `Story.sourceUrl` set and the story page renders a source + license line). Ranking comes from the wiki's own rating table, filtered by Wilson score; the `Литература`/`Комиксы` categories and titles with a `(Author Name)` suffix are excluded as published fiction. Ratings are seeded as synthetic `Vote` rows (voterId = sha256("mrakopedia:<pid>:<n>")) so local voting doesn't reset them. Images are copied into `public/images/mrakopedia-*.<ext>`. Idempotent by `sourceUrl`.
+**Content imports** (`src/import/`): `src/import/shared/` holds the generic pieces (disk-cached throttled fetch under `.cache/<source>/`, prefixed image naming, the per-story write transaction with synthetic votes); each source has its own `parse`/`select`/`run`. **Mrakopedia** (`src/import/mrakopedia/`): one-shot, re-runnable import of top-rated stories from mrakopedia.net (CC BY-NC-SA 4.0 — the site must stay non-commercial while these are published; every imported story has `Story.sourceUrl` set and the story page renders a source + license line). Ranking comes from the wiki's own rating table, filtered by Wilson score; the `Литература`/`Комиксы` categories and titles with a `(Author Name)` suffix are excluded as published fiction. Ratings are seeded as synthetic `Vote` rows (voterId = sha256("mrakopedia:<pid>:<n>")) so local voting doesn't reset them. Images are copied into `public/images/mrakopedia-*.<ext>`. Idempotent by `sourceUrl`. **Creepypasta Wiki** (`src/import/creepypasta-wiki/`): uses the Fandom MediaWiki API (CC BY-SA 3.0), stores stories as `language: "en"`, and seeds votes by curation tier (PotM > Spotlighted Pastas > Suggested Reading > Historical Archive, 100 votes each at 94/90/86/78%) since Fandom exposes no ratings; images need `?format=original` or the CDN serves WebP, saved as `public/images/creepypasta-*`. `src/lib/story-display.ts#sourceAttribution` maps `sourceUrl` host → label/license for the story page.
+
+**Locale partitioning**: `Story.language` (`ru`/`en`) partitions every listing — feed, featured story, related stories, search, tag chips and sitemap take the route locale (`src/lib/stories.ts`), backed by `(language, status, score)` / `(language, status, approvedAt)` indexes. Single story pages are reachable from either locale prefix and canonicalise to their own language; the sitemap lists each story once under its locale with no hreflang alternates. Full-text search still uses the `'russian'` tsconfig for both languages (English matches literally, no stemming).
 
 **Image handling**: legacy story HTML references `/images/<name>` paths recovered piecemeal from the Wayback Machine into `public/images/`; not all were recoverable. `src/lib/available-images.ts` checks file presence at render time and strips `<img>` tags whose local file is missing, rather than tracking a static "known missing" list — so dropping a recovered file into `public/images/` makes it reappear automatically.
 
@@ -58,3 +61,13 @@ CI (`.github/workflows/main.yml`) runs against a real Postgres 16 service contai
 **Sanitization**: all user- and legacy-sourced HTML (story bodies, dossier sections) is passed through `src/lib/sanitize.ts` (`sanitize-html`) before storage/render — never trust `contentHtml`/`bodyHtml` as pre-sanitized just because it's already in the DB from the ETL.
 
 **Deploy**: Docker image built remotely (`builder.remote: ssh://axveer-builder` in `config/deploy.yml`, since the box can't cross-build amd64 locally) and shipped via Kamal to a single VPS behind kamal-proxy, which terminates TLS and does host-based routing. `/api/health` is DB-backed and deliberately excluded from the i18n proxy matcher so the healthcheck's non-www Host header is never redirected. `next.config.ts` 308-redirects `www` → apex, scoped by `host` header for the same reason. Secrets (`DATABASE_URL`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`) come from Kamal's secret env, sourced from a SOPS-encrypted file — not committed.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
