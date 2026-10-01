@@ -65,6 +65,16 @@ const SOURCES: Record<string, SourceAttribution> = {
     license: "CC BY-SA 3.0",
     licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
   },
+  "scp-wiki.wikidot.com": {
+    label: "SCP Foundation",
+    license: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+  },
+  "trollpasta.com": {
+    label: "Trollpasta Wiki",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+  },
 };
 
 /** Attribution line data for an imported story's sourceUrl; null when there is no source. */
