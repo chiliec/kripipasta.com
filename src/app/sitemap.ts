@@ -19,19 +19,27 @@ function entry(path: string): MetadataRoute.Sitemap[number] {
     url: `${SITE_URL}/${routing.defaultLocale}${path}`,
     alternates: { languages },
     changeFrequency: path === "" ? "daily" : "weekly",
-    priority: path === "" ? 1 : path.startsWith("/story/") ? 0.8 : 0.6,
+    priority: path === "" ? 1 : 0.6,
   };
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [storySlugs, dossierSlugs] = await Promise.all([
-    buildSafe<string[]>(() => getAllApprovedSlugs(), []),
+  const [dossierSlugs, ...storySlugsByLocale] = await Promise.all([
     buildSafe<string[]>(() => getAllPublishedDossierSlugs(), []),
+    ...routing.locales.map((l) => buildSafe<string[]>(() => getAllApprovedSlugs(l), [])),
   ]);
 
+  // Stories exist in one language only: list each under its own locale, no hreflang alternates.
+  const stories: MetadataRoute.Sitemap = routing.locales.flatMap((l, i) =>
+    storySlugsByLocale[i].map((slug) => ({
+      url: `${SITE_URL}/${l}/story/${slug}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+  );
+
   return [
-    ...STATIC_PATHS,
-    ...storySlugs.map((s) => `/story/${s}`),
-    ...dossierSlugs.map((s) => `/dossier/${s}`),
-  ].map(entry);
+    ...[...STATIC_PATHS, ...dossierSlugs.map((s) => `/dossier/${s}`)].map(entry),
+    ...stories,
+  ];
 }

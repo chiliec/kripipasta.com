@@ -1,0 +1,118 @@
+import { describe, it, expect } from "vitest";
+import {
+  apiUrl, canonicalImageUrl, downloadUrl, parseCategoryMembers, parseFirstRevision, parseStoryJson,
+} from "./parse";
+
+const IMG = "https://static.wikia.nocookie.net/creepypasta/images/6/6c/Dragon-tattoo-1.gif/revision/latest";
+
+const ARCHIVE_PAGE = {
+  parse: {
+    title: "29th Dragon",
+    pageid: 36481,
+    text: {
+      "*": `<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><figure class="thumb mw-halign-right show-info-icon" typeof="mw:File/Thumb" style="width: 300px"> <a href="${IMG}?cb=20120308151948" class="mw-file-description image"><img alt="Dragon-tattoo-1" src="${IMG}/scale-to-width-down/300?cb=20120308151948" decoding="async" loading="lazy" width="300" height="266" class="thumbimage" data-image-name="Dragon-tattoo-1.gif" data-image-key="Dragon-tattoo-1.gif" /></a> <figcaption class="thumbcaption"> <a href="/wiki/File:Dragon-tattoo-1.gif" class="internal" title="Enlarge"><svg><use xlink:href="#wds-icons-zoom-small"></use></svg></a>The tattoo</figcaption></figure>
+<p>My uncle has a tattoo of a <a href="/wiki/Dragons" title="Dragons">dragon</a>.
+</p><p>It moves at night.
+</p>
+<p></p>
+<div style="margin: 2em 0 .5em;"><hr /> <i>Original author unknown</i></div>
+<p><i>Originally uploaded on March 8th, 2012</i>
+</p>
+<!-- NewPP limit report Cached time: 20260928144512 -->
+</div>`,
+    },
+    categories: [{ sortkey: "", "*": "Historical_Archive" }, { sortkey: "", "*": "PotM" }, { sortkey: "", "*": "Beings" }],
+  },
+};
+
+const AUTHORED_PAGE = {
+  parse: {
+    title: "The Thing in the Walls",
+    pageid: 777,
+    text: {
+      "*": `<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div id="toc" class="toc"><ul><li>1 Part one</li></ul></div>
+<h2><span class="mw-headline" id="Part_one">Part one</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/wiki/X?action=edit">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>It scratches. It scratches every night, and I cannot sleep anymore because of it.
+</p>
+<p><span id="nav"></span><span id="navigation"></span></p><div align="center" style="margin-top:2em;"><p><b><a href="/wiki/Prev" title="Prev">&lt; Previous</a> | <a href="/wiki/Next" title="Next">Next &gt;</a></b></p></div>
+<div style="margin: 2em 0 .5em;"><hr /> <i>Written by <a href="/wiki/User:Banningk1979" title="User:Banningk1979">Banningk1979</a></i></div>
+</div>`,
+    },
+    categories: [{ sortkey: "", "*": "Suggested_Reading" }, { sortkey: "", "*": "Beings" }],
+  },
+};
+
+describe("parseStoryJson", () => {
+  it("extracts title, categories (spaces), body, intro, images; strips chrome and footer", () => {
+    const p = parseStoryJson(ARCHIVE_PAGE)!;
+    expect(p.pageid).toBe(36481);
+    expect(p.title).toBe("29th Dragon");
+    expect(p.categories).toEqual(["Historical Archive", "PotM", "Beings"]);
+    expect(p.authorName).toBe("");
+    expect(p.authorLink).toBe("");
+    expect(p.imageUrls).toEqual([IMG]);
+    expect(p.bodyHtml).toContain(`src="${IMG}"`);
+    expect(p.bodyHtml).toContain('href="https://creepypasta.fandom.com/wiki/Dragons"');
+    expect(p.bodyHtml).not.toContain("<!--");
+    expect(p.bodyHtml).not.toContain("Original author unknown");
+    expect(p.bodyHtml).not.toContain("Originally uploaded");
+    expect(p.bodyHtml).not.toContain("data-image-name");
+    expect(p.bodyHtml).not.toContain("<svg");
+    expect(p.intro).toBe("My uncle has a tattoo of a dragon.");
+  });
+
+  it("lifts the author footer, drops toc/editsection/nav block", () => {
+    const p = parseStoryJson(AUTHORED_PAGE)!;
+    expect(p.authorName).toBe("Banningk1979");
+    expect(p.authorLink).toBe("https://creepypasta.fandom.com/wiki/User:Banningk1979");
+    expect(p.bodyHtml).not.toContain("Written by");
+    expect(p.bodyHtml).not.toContain("mw-editsection");
+    expect(p.bodyHtml).not.toContain('id="toc"');
+    expect(p.bodyHtml).not.toContain('id="nav"');
+    expect(p.bodyHtml).not.toContain("Previous");
+    expect(p.bodyHtml).toContain("<h2>Part one</h2>");
+    expect(p.bodyHtml).toContain("It scratches.");
+  });
+
+  it("returns null for error / missing responses", () => {
+    expect(parseStoryJson({ error: { code: "missingtitle" } })).toBeNull();
+    expect(parseStoryJson(null)).toBeNull();
+  });
+});
+
+describe("parseFirstRevision", () => {
+  it("reads the single oldest revision", () => {
+    const json = { query: { pages: { "36481": { pageid: 36481, revisions: [{ user: "CreepySpork", timestamp: "2012-03-08T15:17:40Z" }] } } } };
+    expect(parseFirstRevision(json)).toEqual({ date: new Date("2012-03-08T15:17:40Z"), user: "CreepySpork" });
+  });
+  it("returns null when absent", () => {
+    expect(parseFirstRevision({ query: { pages: { "-1": { missing: "" } } } })).toBeNull();
+  });
+});
+
+describe("parseCategoryMembers", () => {
+  it("lists members and the continuation token", () => {
+    const json = {
+      continue: { cmcontinue: "page|ABC|123", continue: "-||" },
+      query: { categorymembers: [{ pageid: 1, ns: 0, title: "A" }, { pageid: 2, ns: 0, title: "B" }] },
+    };
+    expect(parseCategoryMembers(json)).toEqual({ members: [{ pageid: 1, title: "A" }, { pageid: 2, title: "B" }], next: "page|ABC|123" });
+    expect(parseCategoryMembers({ query: { categorymembers: [] } })).toEqual({ members: [], next: null });
+  });
+});
+
+describe("image urls", () => {
+  it("canonicalises thumbs and cache-busters, rejects foreign hosts", () => {
+    expect(canonicalImageUrl(`${IMG}/scale-to-width-down/300?cb=1`)).toBe(IMG);
+    expect(canonicalImageUrl(`${IMG}?cb=1`)).toBe(IMG);
+    expect(canonicalImageUrl("https://example.com/x.png")).toBeNull();
+    expect(downloadUrl(IMG)).toBe(`${IMG}?format=original`);
+  });
+});
+
+describe("apiUrl", () => {
+  it("encodes params and appends format=json", () => {
+    expect(apiUrl({ action: "parse", page: "Jeff the Killer", prop: "text|categories" }))
+      .toBe("https://creepypasta.fandom.com/api.php?action=parse&page=Jeff+the+Killer&prop=text%7Ccategories&format=json");
+  });
+});

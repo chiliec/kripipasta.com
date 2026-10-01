@@ -1,16 +1,14 @@
-import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { prisma } from "@/lib/db";
-import { slugify } from "@/lib/slugify";
 import { stripHtml } from "@/lib/story-display";
-import type { Prisma } from "@/generated/prisma/client";
 import { BASE_URL, parseHistoryDate, parseRatingTable, parseStoryPage, type RatingRow } from "./parse";
 import {
   EXCLUDED_CATEGORIES, deriveVotes, hasAuthorSuffix, historyUrl, normalizeTitle, rankRows,
-  tagCategories, uniqueSlug,
+  tagCategories,
 } from "./select";
-import { localImageName, rewriteImageSrcs } from "./images";
-import { NetworkError, downloadFile, fetchText } from "./fetch";
+import { localImageName, rewriteImageSrcs } from "../shared/images";
+import { NetworkError, downloadFile, fetchText } from "../shared/fetch";
+import { loadImportState, writeStory } from "../shared/write";
 
 const RATING_URL = `${BASE_URL}/wiki/%D0%A0%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3:%D0%9E%D0%B1%D1%89%D0%B8%D0%B9_%D1%80%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3`;
 const IMAGES_DIR = join(process.cwd(), "public", "images");
@@ -30,16 +28,12 @@ const DRY_RUN = flag("--dry-run");
 type Skip = { title: string; reason: string };
 
 async function main() {
-  const ratingHtml = await fetchText(RATING_URL);
+  const ratingHtml = await fetchText(RATING_URL, "mrakopedia");
   if (!ratingHtml) throw new Error("rating table not found");
   const ranked = rankRows(parseRatingTable(ratingHtml));
   console.log(`rating table: ${ranked.length} rows; limit=${LIMIT} offset=${OFFSET} dry=${DRY_RUN}`);
 
-  // Existing state, loaded once.
-  const existing = await prisma.story.findMany({ select: { id: true, slug: true, title: true, sourceUrl: true } });
-  const takenSlugs = new Set(existing.map((s) => s.slug));
-  const titleToSource = new Map(existing.map((s) => [normalizeTitle(s.title), s.sourceUrl]));
-  const idBySource = new Map(existing.filter((s) => s.sourceUrl).map((s) => [s.sourceUrl, s.id]));
+  const state = await loadImportState("ru");
 
   const skips: Skip[] = [];
   const tagDelta = new Map<string, number>();
@@ -86,7 +80,7 @@ async function main() {
     row: RatingRow,
     sourceUrl: string,
   ): Promise<{ skip: string } | { created: boolean; imagesOk: number; imagesFailed: number; newTags: string[] }> {
-    const html = await fetchText(sourceUrl);
+    const html = await fetchText(sourceUrl, "mrakopedia");
     if (!html) return { skip: "not-found" };
     const parsed = parseStoryPage(html);
     if (!parsed) return { skip: "not-a-story" };
@@ -95,17 +89,17 @@ async function main() {
     if (excluded) return { skip: `category: ${excluded}` };
     if (hasAuthorSuffix(parsed.title)) return { skip: "author-suffix" };
     if (stripHtml(parsed.bodyHtml).length < MIN_TEXT_CHARS) return { skip: "too-short" };
-    const dupSource = titleToSource.get(normalizeTitle(parsed.title));
+    const dupSource = state.titleToSource.get(normalizeTitle(parsed.title));
     if (dupSource !== undefined && dupSource !== sourceUrl) return { skip: "duplicate-title" };
 
-    const date = parseHistoryDate((await fetchText(historyUrl(row.href))) ?? "") ?? new Date();
+    const date = parseHistoryDate((await fetchText(historyUrl(row.href), "mrakopedia")) ?? "") ?? new Date();
 
     // Images: download originals, rewrite src to /images/<name>; failures stay as
     // /images/<name> so stripMissingImages() hides them at render.
     const srcMap = new Map<string, string>();
     let imagesOk = 0, imagesFailed = 0;
     for (const url of parsed.imageUrls) {
-      const name = localImageName(url);
+      const name = localImageName(url, "mrakopedia");
       srcMap.set(url, `/images/${name}`);
       if (DRY_RUN) continue;
       if (await downloadFile(url, join(IMAGES_DIR, name))) imagesOk++; else imagesFailed++;
@@ -114,68 +108,38 @@ async function main() {
 
     const { likes, dislikes, score } = deriveVotes(row.ratingPct, row.votes);
     const tagNames = tagCategories(parsed.categories);
-    const existingId = idBySource.get(sourceUrl);
+    const existingId = state.idBySource.get(sourceUrl);
 
     if (DRY_RUN) {
       console.log(`  ok    ${String(row.ratingPct).padStart(3)}% ${String(row.votes).padStart(5)} ${date.getUTCFullYear()} ${parsed.title}  [${tagNames.join(", ")}]${parsed.authorName ? `  by ${parsed.authorName}` : ""}`);
       return { created: !existingId, imagesOk: parsed.imageUrls.length, imagesFailed: 0, newTags: [] };
     }
 
-    const data = {
-      title: parsed.title,
-      intro: parsed.intro,
-      contentHtml,
-      language: "ru",
-      status: "APPROVED" as const,
-      authorName: parsed.authorName,
-      authorLink: parsed.authorLink,
-      sourceUrl,
-      likeCount: likes,
-      dislikeCount: dislikes,
-      score,
-      createdAt: date,
-      approvedAt: date,
-    };
-
-    const newTags: string[] = [];
-    await prisma.$transaction(async (tx) => {
-      let storyId = existingId;
-      if (storyId) {
-        await tx.story.update({ where: { id: storyId }, data });
-      } else {
-        const slug = uniqueSlug(slugify(parsed.title), takenSlugs);
-        storyId = (await tx.story.create({ data: { ...data, slug }, select: { id: true } })).id;
-        idBySource.set(sourceUrl, storyId);
-        titleToSource.set(normalizeTitle(parsed.title), sourceUrl);
-
-        const votes: Prisma.VoteCreateManyInput[] = [];
-        for (let i = 0; i < likes + dislikes; i++) {
-          votes.push({
-            entityType: "STORY",
-            entityId: storyId,
-            voterId: createHash("sha256").update(`mrakopedia:${parsed.pid}:${i}`).digest("hex"),
-            value: i < likes ? 1 : -1,
-          });
-        }
-        for (let i = 0; i < votes.length; i += 2000) {
-          await tx.vote.createMany({ data: votes.slice(i, i + 2000), skipDuplicates: true });
-        }
-      }
-
-      for (const name of tagNames) {
-        const slug = slugify(name);
-        const tag = await tx.tag.upsert({
-          where: { slug },
-          create: { slug, name, frequency: 0 },
-          update: {},
-          select: { id: true },
-        });
-        const link = await tx.storyTag.createMany({ data: [{ storyId, tagId: tag.id }], skipDuplicates: true });
-        if (link.count > 0) newTags.push(slug);
-      }
-    }, { timeout: 180_000 }); // up to ~10k vote rows per story; 30s wasn't enough over a laggy SSH tunnel in practice
-
-    return { created: !existingId, imagesOk, imagesFailed, newTags };
+    const { created, newTags } = await writeStory(
+      {
+        data: {
+          title: parsed.title,
+          intro: parsed.intro,
+          contentHtml,
+          language: "ru",
+          status: "APPROVED",
+          authorName: parsed.authorName,
+          authorLink: parsed.authorLink,
+          sourceUrl,
+          likeCount: likes,
+          dislikeCount: dislikes,
+          score,
+          createdAt: date,
+          approvedAt: date,
+        },
+        likes,
+        dislikes,
+        voterNamespace: `mrakopedia:${parsed.pid}`,
+        tagNames,
+      },
+      state,
+    );
+    return { created, imagesOk, imagesFailed, newTags };
   }
 }
 

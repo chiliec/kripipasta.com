@@ -1,6 +1,8 @@
 import { wilsonScore } from "@/lib/scoring/wilson";
 import { BASE_URL, type RatingRow } from "./parse";
 
+export { normalizeTitle, uniqueSlug } from "../shared/text";
+
 /** Mrakopedia's own convention: professional/published fiction lives here. Comics are image-only. */
 export const EXCLUDED_CATEGORIES: ReadonlySet<string> = new Set(["Литература", "Комиксы"]);
 
@@ -27,19 +29,8 @@ export function hasAuthorSuffix(title: string): boolean {
   return /\(([А-ЯЁA-Z][а-яёa-z]*\.?\s*){1,3}[А-ЯЁA-Z][а-яёa-z-]+\)$/.test(title.trim());
 }
 
-export function normalizeTitle(title: string): string {
-  return title.toLowerCase().replace(/ё/g, "е").replace(/[^\p{L}\p{N}]+/gu, "");
-}
-
 export function tagCategories(categories: string[]): string[] {
   return categories.filter((c) => !META_CATEGORIES.has(c) && !c.startsWith("Мракопедия"));
-}
-
-export function uniqueSlug(base: string, taken: Set<string>): string {
-  let slug = base;
-  for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
-  taken.add(slug);
-  return slug;
 }
 
 export function historyUrl(href: string): string {

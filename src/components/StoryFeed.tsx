@@ -20,21 +20,23 @@ function href(params: { sort: StorySort; tag?: string; take?: number }) {
 }
 
 export default async function StoryFeed({
+  locale,
   sort,
   tagSlug,
   take,
 }: {
+  locale: string;
   sort: StorySort;
   tagSlug?: string;
   take: number;
 }) {
   const t = await getTranslations("feed");
   const [{ items, total }, tags] = await Promise.all([
-    buildSafe(() => getApprovedStories({ sort, tagSlug, take }), {
+    buildSafe(() => getApprovedStories({ language: locale, sort, tagSlug, take }), {
       items: [],
       total: 0,
     }),
-    buildSafe(() => getFilterTags(7), []),
+    buildSafe(() => getFilterTags(locale, 7), []),
   ]);
 
   const sorts: { key: StorySort; label: string }[] = [

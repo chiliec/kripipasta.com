@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-const CACHE_DIR = join(process.cwd(), ".cache", "mrakopedia");
+const CACHE_ROOT = join(process.cwd(), ".cache");
 const USER_AGENT = "kripipasta-import/0.1 (+https://kripipasta.com)";
 const MIN_GAP_MS = 700;
 const RETRY_DELAYS_MS = [2000, 4000, 8000];
@@ -36,8 +36,9 @@ async function requestWithRetry(url: string): Promise<Response | null> {
 }
 
 /** GET a text page, cached on disk by URL hash. Returns null on 404. */
-export async function fetchText(url: string): Promise<string | null> {
-  const cachePath = join(CACHE_DIR, `${createHash("sha1").update(url).digest("hex")}.html`);
+export async function fetchText(url: string, source: string): Promise<string | null> {
+  const cacheDir = join(CACHE_ROOT, source);
+  const cachePath = join(cacheDir, `${createHash("sha1").update(url).digest("hex")}.html`);
   if (existsSync(cachePath)) return readFileSync(cachePath, "utf8");
   const res = await requestWithRetry(url);
   if (!res) return null;
@@ -49,7 +50,7 @@ export async function fetchText(url: string): Promise<string | null> {
   } catch (err) {
     throw new NetworkError(`body read failed for ${url}: ${String(err)}`);
   }
-  mkdirSync(CACHE_DIR, { recursive: true });
+  mkdirSync(cacheDir, { recursive: true });
   writeFileSync(cachePath, text);
   return text;
 }

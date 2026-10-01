@@ -47,3 +47,34 @@ export function ratingKey(
   if (score10 >= 5) return "ratingMixed";
   return "ratingNiche";
 }
+
+export interface SourceAttribution {
+  label: string;
+  license?: string;
+  licenseUrl?: string;
+}
+
+const SOURCES: Record<string, SourceAttribution> = {
+  "mrakopedia.net": {
+    label: "Мракопедия",
+    license: "CC BY-NC-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  },
+  "creepypasta.fandom.com": {
+    label: "Creepypasta Wiki",
+    license: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+  },
+};
+
+/** Attribution line data for an imported story's sourceUrl; null when there is no source. */
+export function sourceAttribution(sourceUrl: string): SourceAttribution | null {
+  if (!sourceUrl) return null;
+  let host: string;
+  try {
+    host = new URL(sourceUrl).hostname;
+  } catch {
+    return null;
+  }
+  return SOURCES[host] ?? { label: host };
+}

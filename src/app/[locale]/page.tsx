@@ -38,7 +38,7 @@ export default async function HomePage({
   const sort = parseSort(sp.sort);
   const take = parseTake(sp.take);
   const tagSlug = sp.tag || undefined;
-  const featured = await buildSafe(() => getFeaturedStory(), null);
+  const featured = await buildSafe(() => getFeaturedStory(locale), null);
 
   const websiteLd = {
     "@context": "https://schema.org",
@@ -96,7 +96,7 @@ export default async function HomePage({
           </section>
         )}
 
-        <StoryFeed sort={sort} tagSlug={tagSlug} take={take} />
+        <StoryFeed locale={locale} sort={sort} tagSlug={tagSlug} take={take} />
       </main>
       <SiteFooter />
     </>
