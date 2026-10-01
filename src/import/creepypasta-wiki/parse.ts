@@ -1,26 +1,8 @@
 import sanitizeHtml from "sanitize-html";
 import { sanitizeStoryHtml } from "@/lib/sanitize";
 import { excerpt, stripHtml } from "@/lib/story-display";
+import { type ParsedPage, mediawikiBody, obj } from "../shared/mediawiki";
 import { BASE_URL } from "./select";
-
-export const API_URL = `${BASE_URL}/api.php`;
-
-export function apiUrl(params: Record<string, string>): string {
-  return `${API_URL}?${new URLSearchParams({ ...params, format: "json" })}`;
-}
-
-export interface ParsedPage {
-  pageid: number;
-  title: string;
-  categories: string[];
-  /** Cleaned, sanitized body. Image src are canonical static.wikia URLs (…/revision/latest). */
-  bodyHtml: string;
-  intro: string;
-  authorName: string;
-  authorLink: string;
-  /** Canonical image URLs referenced by bodyHtml, deduped, document order. */
-  imageUrls: string[];
-}
 
 const IMAGE_RE = /^(https:\/\/static\.wikia\.nocookie\.net\/.+?\/revision\/latest)(?:\/|\?|$)/;
 
@@ -37,9 +19,6 @@ export function downloadUrl(canonical: string): string {
 function absolutize(url: string): string {
   return url.startsWith("/") ? `${BASE_URL}${url}` : url;
 }
-
-type Json = Record<string, unknown>;
-const obj = (v: unknown): Json | null => (v && typeof v === "object" ? (v as Json) : null);
 
 // Two real footer shapes:
 //   <div style="margin: 2em 0 .5em;"><hr /> <i>Original author unknown</i></div>
@@ -85,13 +64,7 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
     .map((c) => String(obj(c)?.["*"] ?? "").replace(/_/g, " "))
     .filter(Boolean);
 
-  // Inner HTML of div.mw-parser-output.
-  const open = text.indexOf("mw-parser-output");
-  let body = open >= 0 ? text.slice(text.indexOf(">", open) + 1, text.lastIndexOf("</div>")) : text;
-  body = body
-    .replace(/<!--[\s\S]*?-->/g, "")
-    // <h2><span class="mw-headline" id="…">Title</span></h2> → <h2>Title</h2>
-    .replace(/<span class="mw-headline"[^>]*>([\s\S]*?)<\/span>/g, "$1");
+  let body = mediawikiBody(text);
 
   // Author footer ("Written by X" / "Original author unknown"): lift and remove.
   let authorName = "";
@@ -121,30 +94,4 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
   const intro = excerpt(firstPara.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim(), bodyHtml, 300);
 
   return { pageid: parse.pageid, title: parse.title, categories, bodyHtml, intro, authorName, authorLink, imageUrls };
-}
-
-/** Parse `prop=revisions&rvdir=newer&rvlimit=1&rvprop=timestamp|user`. */
-export function parseFirstRevision(json: unknown): { date: Date; user: string } | null {
-  const pages = obj(obj(obj(json)?.query)?.pages);
-  if (!pages) return null;
-  for (const page of Object.values(pages)) {
-    const revs = obj(page)?.revisions;
-    const rev = Array.isArray(revs) ? obj(revs[0]) : null;
-    if (rev && typeof rev.timestamp === "string") {
-      return { date: new Date(rev.timestamp), user: typeof rev.user === "string" ? rev.user : "" };
-    }
-  }
-  return null;
-}
-
-/** Parse `list=categorymembers`; `next` is the cmcontinue token for the following page. */
-export function parseCategoryMembers(json: unknown): { members: { pageid: number; title: string }[]; next: string | null } {
-  const root = obj(json);
-  const raw = obj(root?.query)?.categorymembers;
-  const members = (Array.isArray(raw) ? raw : [])
-    .map((m) => obj(m))
-    .filter((m): m is Json => !!m && typeof m.pageid === "number" && typeof m.title === "string")
-    .map((m) => ({ pageid: m.pageid as number, title: m.title as string }));
-  const next = obj(root?.continue)?.cmcontinue;
-  return { members, next: typeof next === "string" ? next : null };
 }
