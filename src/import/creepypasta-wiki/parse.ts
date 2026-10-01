@@ -25,6 +25,9 @@ function absolutize(url: string): string {
 //   <hr /><p><i>Written by <a …>Name</a> (or Credited to&#160;<span><a …><span>Name</span></a></span>)<br />Originally uploaded on …<br /><span>Content is available under …</span></i></p>
 const FOOTER_RE = /(?:<div style="margin: 2em 0 \.5em;">\s*<hr \/>|(?:<hr \/>\s*)?<p>)\s*<i>\s*(?:<b>)?\s*((?:Written by|Credited to|Original author unknown)[\s\S]*?)<\/i>\s*<\/(?:div|p)>/;
 const UPLOADED_RE = /<p>\s*<i>Originally uploaded on[^<]*<\/i>\s*<\/p>/g;
+// Freeform footers FOOTER_RE misses (stacked <i> lines, stray wikitext, "Originally uploaded" first): cut a short tail.
+const TAIL_FOOTER_RE = /(?:<hr \/>\s*)?<p>\s*<i>\s*(?:Written by|Credited to|Originally uploaded)[\s\S]*$/;
+const MAX_TAIL_CHARS = 1500;
 
 /** Strip wiki chrome, absolutize links, canonicalise images, drop empty paragraphs. */
 function cleanBody(raw: string, imageUrls: string[]): string {
@@ -78,6 +81,15 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
     body = body.replace(FOOTER_RE, "");
   }
   body = body.replace(UPLOADED_RE, "");
+  const tail = body.match(TAIL_FOOTER_RE);
+  if (tail && tail[0].length <= MAX_TAIL_CHARS) {
+    const m = tail[0].match(AUTHOR_CREDIT_RE);
+    if (m && !authorName) {
+      authorName = stripHtml(m[2]);
+      authorLink = m[1] ? absolutize(m[1]) : "";
+    }
+    body = body.slice(0, tail.index);
+  }
 
   // Series navigation: <p><span id="nav">…</p><div align="center">prev | next</div> is the last thing before the (now removed) footer.
   const navAt = body.indexOf('<span id="nav">');

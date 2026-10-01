@@ -88,6 +88,21 @@ describe("parseStoryJson", () => {
     expect(p.bodyHtml).toContain("six more");
   });
 
+  it("cuts freeform trailing footers (stacked <i> lines, 'Originally uploaded' first)", () => {
+    const text = `<div class="mw-parser-output"><p>"One night I'll wake up to see him staring at me."
+</p>
+<hr />
+<p><i>Originally uploaded on August 8th, 2010</i><br />
+<i>Credited to <a target="_blank" rel="nofollow noreferrer noopener" href="https://example.com/rake">Bryan Somerville</a></i><br />
+<i>Earliest story source found <a href="https://example.com/src">here</a></i>
+</p></div>`;
+    const p = parseStoryJson({ parse: { title: "The Rake", pageid: 2, text: { "*": text }, categories: [] } })!;
+    expect(p.authorName).toBe("Bryan Somerville");
+    expect(p.authorLink).toBe("https://example.com/rake");
+    expect(p.bodyHtml).not.toMatch(/Originally uploaded|Credited to|Earliest story/);
+    expect(p.bodyHtml).toContain("staring at me");
+  });
+
   it("returns null for error / missing responses", () => {
     expect(parseStoryJson({ error: { code: "missingtitle" } })).toBeNull();
     expect(parseStoryJson(null)).toBeNull();
