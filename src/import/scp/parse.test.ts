@@ -10,8 +10,13 @@ const PAGE = `<html><body><div id="main-content"><div id="page-title">Unfinished
 <p>Marion Wheeler walks into the office and <a href="/scp-055">forgets</a>.</p>
 <div class="collapsible-block"><div class="collapsible-block-folded"><a class="collapsible-block-link" href="javascript:;">+ Show the memo</a></div><div class="collapsible-block-unfolded" style="display:none"><div class="collapsible-block-unfolded-link"><a class="collapsible-block-link" href="javascript:;">- Hide the memo</a></div><div class="collapsible-block-content"><p>The memo says nothing.</p></div></div></div>
 <div class="scp-image-block block-right" style="width:300px;"><img src="//scp-wiki.wdfiles.com/local--files/unfinished-business/counter.png" style="width:300px;" alt="counter.png" class="image" /><div class="scp-image-caption" style="width:300px;"><p>The counter</p></div></div>
+<p><img src="http://scp-wiki.wikidot.com/local--files/unfinished-business/old.jpg" alt="old" /> <span class="printuser avatarhover"><a href="http://www.wikidot.com/user:info/qntm"><img class="small" src="https://www.wikidot.com/avatar.php?userid=1&amp;size=small" alt="qntm" /></a></span></p>
 <p>She writes it down.<sup class="footnoteref"><a href="javascript:;" id="footnoteref-1" class="footnoteref">1</a></sup></p>
 <div class="footnotes-footer"><div class="title">Footnotes</div><div id="footnote-1" class="footnote-footer"><a href="javascript:;">1</a>. Again.</div></div>
+<div class="code"><pre><span class="hl-code">div.page-rate-widget-box .rate-points {
+    color: #333;
+}</span></pre></div>
+<div class="code"><pre>Login: E_Mann</pre></div>
 <div class="licensebox"><div class="collapsible-block"><div class="collapsible-block-folded"><a class="collapsible-block-link" href="javascript:;">+ Licensing / Citation</a></div><div class="collapsible-block-unfolded" style="display:none"><div class="collapsible-block-unfolded-link"><a class="collapsible-block-link" href="javascript:;">- Licensing / Citation</a></div><div class="collapsible-block-content"><p><strong>Cite this page as:</strong></p><blockquote><p>"Unfinished Business" by qntm, from the SCP Wiki. Licensed under CC-BY-SA.</p></blockquote></div></div></div></div>
 <p>For information on how to use this component, see the <a href="/component:license-box">License Box component</a>. To read about licensing content, visit the <a href="/licensing-guide">Licensing Guide</a>.</p>
 <div class="content-separator" style="display: none:"></div>
@@ -25,7 +30,8 @@ describe("parseTalePage", () => {
   it("keeps the story, lifts the byline, unwraps collapsibles and drops wiki chrome", () => {
     const p = parseTalePage(PAGE)!;
     expect(p.bylineAuthor).toBe("qntm");
-    expect(p.imageUrls).toEqual([IMG]);
+    expect(p.imageUrls).toEqual([IMG, "https://scp-wiki.wdfiles.com/local--files/unfinished-business/old.jpg"]);
+    expect(p.bodyHtml).not.toContain("avatar.php");
     expect(p.bodyHtml).toContain(`src="${IMG}"`);
     expect(p.bodyHtml).toContain('href="https://scp-wiki.wikidot.com/scp-055"');
     expect(p.bodyHtml).toContain("The memo says nothing.");
@@ -33,6 +39,8 @@ describe("parseTalePage", () => {
     expect(p.bodyHtml).toContain("Footnotes");
     expect(p.bodyHtml).toContain("Again.");
     expect(p.bodyHtml).not.toContain("+2110");
+    expect(p.bodyHtml).not.toContain("rate-points");
+    expect(p.bodyHtml).toContain("Login: E_Mann");
     expect(p.bodyHtml).not.toContain("I like it");
     expect(p.bodyHtml).not.toContain("qntm");
     expect(p.bodyHtml).not.toContain("Show the memo");

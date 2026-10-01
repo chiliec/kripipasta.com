@@ -17,12 +17,20 @@ const TAGS_OPEN = '<div class="page-tags">';
 // <div style="text-align: right; margin-right: 2em; margin-top: -20px;"><p>by <a href="/x-s-author-page">x</a></p></div>
 const BYLINE_RE = /<div style="text-align: right;[^"]*">\s*<p>\s*(?:by|written by)\s+(?:<a[^>]*>)?([^<]{1,80}?)(?:<\/a>)?\s*(?:<br\s*\/?>[\s\S]*?)?<\/p>\s*<\/div>/i;
 const DROP_CLASS_RE = /\b(page-rate-widget-box|licensebox|creditRate|info-container|footer-wikiwalk-nav|heritage-rating-module|collapsible-block-folded|collapsible-block-unfolded-link|content-separator|page-tags)\b/;
+const CSS_RULE_RE = /\{[^{}]*?[-\w]+\s*:[^{};]*;/;
 const DROP_TAGS = new Set(["script", "style", "iframe", "form", "input", "svg"]);
 
 function absolutize(url: string): string {
   if (url.startsWith("//")) return `https:${url}`;
   if (url.startsWith("/")) return `${BASE_URL}${url}`;
   return url;
+}
+
+/** Wikidot serves `<site>.wikidot.com/local--files/…` as a redirect to `<site>.wdfiles.com/local--files/…`; old pages use http. */
+function imageSrc(src: string): string {
+  return absolutize(src)
+    .replace(/^http:\/\//, "https://")
+    .replace(/^https:\/\/([\w-]+)\.wikidot\.com\/local--files\//, "https://$1.wdfiles.com/local--files/");
 }
 
 /** Story HTML from a wikidot tale page. Null when #page-content is missing (redirect/error page). */
@@ -47,7 +55,10 @@ export function parseTalePage(html: string): ParsedTale | null {
     allowVulnerableTags: true, // transform pass only; sanitizeStoryHtml() runs before storage
     exclusiveFilter: (frame) => {
       if (DROP_TAGS.has(frame.tag)) return true;
+      if (frame.tag === "img" && (frame.attribs.src ?? "").includes("wikidot.com/avatar.php")) return true;
       if (DROP_CLASS_RE.test(frame.attribs.class ?? "")) return true;
+      // Theme CSS published as a code block; in-story code blocks (terminal logs) stay.
+      if (/\bcode\b/.test(frame.attribs.class ?? "") && CSS_RULE_RE.test(frame.text)) return true;
       if (frame.tag === "p" && frame.text.includes("For information on how to use this component")) return true;
       if (frame.tag === "p" && !frame.text.trim() && frame.mediaChildren.length === 0) return true;
       return false;
@@ -55,7 +66,7 @@ export function parseTalePage(html: string): ParsedTale | null {
     transformTags: {
       a: (tag, attribs) => ({ tagName: tag, attribs: { ...attribs, href: absolutize(attribs.href ?? "") } }),
       img: (tag, attribs) => {
-        const src = absolutize(attribs.src ?? "");
+        const src = imageSrc(attribs.src ?? "");
         if (/^https:\/\/[^/]+\.wdfiles\.com\//.test(src) && !imageUrls.includes(src)) imageUrls.push(src);
         const kept: Record<string, string> = { src };
         for (const k of ["alt", "title", "width", "height"]) if (attribs[k]) kept[k] = attribs[k];
