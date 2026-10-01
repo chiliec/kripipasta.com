@@ -45,7 +45,23 @@ Originally on Geoshea's Lost Episodes Wiki
   },
 };
 
+const page = (text: string) => ({ parse: { title: "T", pageid: 1, text: { "*": `<div class="mw-parser-output"><p>Body.</p>${text}</div>` }, categories: [] } });
+
 describe("parseStoryJson", () => {
+  it("handles the 'Written by' wiki-user footer and unlinked credits", () => {
+    const written = parseStoryJson(page(`<hr />\n<p><i>\nWritten by <a href="/wiki/User:Meaty" title="User:Meaty">Meaty</a><br />\n<span class="plainlinks">Content is available under <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA</a></span></i></p>`))!;
+    expect(written.authorName).toBe("Meaty");
+    expect(written.authorLink).toBe("https://trollpasta.com/wiki/User:Meaty");
+    expect(written.bodyHtml).not.toContain("Content is available");
+
+    const plain = parseStoryJson(page(`<hr /><p><i>Credited to&#160;Solitarix&#160;</i>\n<br />\n</p><h2 id="YouTube_readings">YouTube readings</h2>`))!;
+    expect(parseStoryJson(page(`<table><tbody><tr><td><b>IT'S JUST A JOKE, BRO!</b></td></tr></tbody></table>`))!.bodyHtml).not.toContain("JOKE");
+    expect(plain.authorName).toBe("Solitarix");
+    expect(plain.authorLink).toBe("");
+    expect(plain.bodyHtml).not.toContain("Credited");
+    expect(plain.bodyHtml).not.toContain("YouTube");
+  });
+
   it("lifts the 'Credited to' footer and strips comments, embeds and chrome", () => {
     const p = parseStoryJson(CREDITED_PAGE)!;
     expect(p.pageid).toBe(1234);

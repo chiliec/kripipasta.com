@@ -22,13 +22,16 @@ function absolutize(url: string): string {
   return url.startsWith("/") ? `${BASE_URL}${url}` : url;
 }
 
-// Template:By-cpwuser, two shapes:
-//   <hr />\n<p><i>\nCredited to <a href="…" class="extiw">Name</a>\n</i>\n</p>
+// Template:By, shapes seen:
+//   <hr />\n<p><i>\nCredited to <a href="…" class="extiw">Name</a>\n</i>\n</p>   (also followed by <br />, or "Credited to&#160;Name&#160;" unlinked)
+//   <hr />\n<p><i>\nWritten by <a href="/wiki/User:Name">Name</a><br />\n<span class="plainlinks">Content is available under …</span></i></p>
 //   <hr /><p><i>\nOriginally on Geoshea's Lost Episodes Wiki\n</i></p>
-const FOOTER_RE = /<hr \/>\s*<p>\s*<i>\s*((?:Credited to|Originally on)[\s\S]*?)<\/i>\s*<\/p>/;
-const CREDITED_RE = /Credited to\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?\s*([^<]+?)\s*(?:<\/a>|$)/;
+const FOOTER_RE = /<hr \/>\s*<p>\s*<i>\s*((?:Credited to|Written by|Originally on)[\s\S]*?)<\/i>\s*(?:<br \/>\s*)?<\/p>/;
+const CREDITED_RE = /(?:Credited to|Written by)(?:\s|&#160;)*(?:<span[^>]*>)?\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?(?:<span>)?\s*([^<]+?)(?:\s|&#160;)*(?:<\/|<br|$)/;
+// Comments widget: a header table styled #5d7994 followed by the comments body; always the tail of the page.
+const COMMENTS_RE = /<table[^>]*#5d7994/;
 
-/** Strip wiki chrome, the comments widget and video embeds; absolutize links; canonicalise images. */
+/** Strip wiki chrome and video embeds; absolutize links; canonicalise images. */
 function cleanBody(raw: string, imageUrls: string[]): string {
   return sanitizeHtml(raw, {
     allowedTags: false,
@@ -36,12 +39,13 @@ function cleanBody(raw: string, imageUrls: string[]): string {
     allowVulnerableTags: true, // transform pass only; sanitizeStoryHtml() runs before storage
     exclusiveFilter: (frame) => {
       const cls = frame.attribs.class ?? "";
-      const style = frame.attribs.style ?? "";
-      if (frame.attribs.id === "toc" || frame.attribs.id === "comments-body") return true;
+      if (frame.attribs.id === "toc") return true;
       if (frame.tag === "svg") return true;
       if (/\b(mw-editsection|catlinks|printfooter)\b|embedvideo/.test(cls)) return true;
-      // Comments widget: a #5d7994 header table + a table left empty once #comments-body is dropped.
-      if (frame.tag === "table" && (style.includes("#5d7994") || (!frame.text.trim() && frame.mediaChildren.length === 0))) return true;
+      // Warning-banner templates ("NSFW WARNING", "IT'S JUST A JOKE, BRO!").
+      if (frame.tag === "table" && /NSFW WARNING|IT'S JUST A JOKE/.test(frame.text)) return true;
+      // Heading over the (stripped) embedded readings.
+      if (/^h\d$/.test(frame.tag) && /^youtube readings?$/i.test(frame.text.trim())) return true;
       if (frame.tag === "p" && !frame.text.trim() && frame.mediaChildren.length === 0) return true;
       return false;
     },
@@ -69,6 +73,8 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
     .filter(Boolean);
 
   let body = mediawikiBody(text);
+  const commentsAt = body.search(COMMENTS_RE);
+  if (commentsAt >= 0) body = body.slice(0, commentsAt);
 
   let authorName = "";
   let authorLink = "";
