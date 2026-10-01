@@ -1,7 +1,7 @@
 import sanitizeHtml from "sanitize-html";
 import { sanitizeStoryHtml } from "@/lib/sanitize";
 import { excerpt, stripHtml } from "@/lib/story-display";
-import { type ParsedPage, mediawikiBody, obj } from "../shared/mediawiki";
+import { AUTHOR_CREDIT_RE, type ParsedPage, mediawikiBody, obj } from "../shared/mediawiki";
 import { BASE_URL } from "./select";
 
 const IMAGE_RE = /^(https:\/\/static\.wikia\.nocookie\.net\/.+?\/revision\/latest)(?:\/|\?|$)/;
@@ -22,9 +22,8 @@ function absolutize(url: string): string {
 
 // Two real footer shapes:
 //   <div style="margin: 2em 0 .5em;"><hr /> <i>Original author unknown</i></div>
-//   <hr /><p><i>Written by <a …>Name</a><br />Originally uploaded on …<br /><span>Content is available under …</span></i></p>
-const FOOTER_RE = /(?:<div style="margin: 2em 0 \.5em;">\s*<hr \/>|(?:<hr \/>\s*)?<p>)\s*<i>\s*(?:<b>)?\s*((?:Written by|Original author unknown)[\s\S]*?)<\/i>\s*<\/(?:div|p)>/;
-const WRITTEN_BY_RE = /Written by\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?\s*([^<]+?)\s*(?:<\/a>|<br|$)/;
+//   <hr /><p><i>Written by <a …>Name</a> (or Credited to&#160;<span><a …><span>Name</span></a></span>)<br />Originally uploaded on …<br /><span>Content is available under …</span></i></p>
+const FOOTER_RE = /(?:<div style="margin: 2em 0 \.5em;">\s*<hr \/>|(?:<hr \/>\s*)?<p>)\s*<i>\s*(?:<b>)?\s*((?:Written by|Credited to|Original author unknown)[\s\S]*?)<\/i>\s*<\/(?:div|p)>/;
 const UPLOADED_RE = /<p>\s*<i>Originally uploaded on[^<]*<\/i>\s*<\/p>/g;
 
 /** Strip wiki chrome, absolutize links, canonicalise images, drop empty paragraphs. */
@@ -71,7 +70,7 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
   let authorLink = "";
   const footer = body.match(FOOTER_RE);
   if (footer) {
-    const m = footer[1].match(WRITTEN_BY_RE);
+    const m = footer[1].match(AUTHOR_CREDIT_RE);
     if (m) {
       authorName = stripHtml(m[2]);
       authorLink = m[1] ? absolutize(m[1]) : "";

@@ -13,6 +13,9 @@ export function apiUrl(apiBase: string, params: Record<string, string>): string 
   return `${apiBase}?${new URLSearchParams({ ...params, format: "json" })}`;
 }
 
+/** Author line inside a wiki footer: "Credited to|Written by" + optional span/link wrapper. [1] = href, [2] = name. */
+export const AUTHOR_CREDIT_RE = /(?:Credited to|Written by)(?:\s|&#160;)*(?:<span[^>]*>)?\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?(?:<span>)?\s*([^<]+?)(?:\s|&#160;)*(?:<\/|<br|$)/;
+
 export interface ParsedPage {
   pageid: number;
   title: string;

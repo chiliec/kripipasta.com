@@ -76,6 +76,18 @@ describe("parseStoryJson", () => {
     expect(p.bodyHtml).toContain("It scratches.");
   });
 
+  it("lifts the 'Credited to' external-link footer", () => {
+    const text = `<div class="mw-parser-output"><p>A week later six more had marked me as a friend.
+</p>
+<p><span id="credit"></span><br style="clear:both;" /></p><hr /><p><i>Credited to&#160;<span class="plainlinks"><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="http://unxmaal.com/archives/1849/"><span>Eric Dodd&#160;</span></a></span><br />Originally uploaded on February 28th, 2012</i></p></div>`;
+    const p = parseStoryJson({ parse: { title: "Friend", pageid: 1, text: { "*": text }, categories: [] } })!;
+    expect(p.authorName).toBe("Eric Dodd");
+    expect(p.authorLink).toBe("http://unxmaal.com/archives/1849/");
+    expect(p.bodyHtml).not.toContain("Credited to");
+    expect(p.bodyHtml).not.toContain("Originally uploaded");
+    expect(p.bodyHtml).toContain("six more");
+  });
+
   it("returns null for error / missing responses", () => {
     expect(parseStoryJson({ error: { code: "missingtitle" } })).toBeNull();
     expect(parseStoryJson(null)).toBeNull();
