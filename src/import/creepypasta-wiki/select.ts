@@ -25,6 +25,9 @@ export const META_CATEGORIES: ReadonlySet<string> = new Set([
   ...TIERS, "Reddit Pastas", "Pages with broken file links", "Noindexed pages", "Archived pages",
   "Content", "Contextual", "CC-BY-SA files", "CC-BY files", "CC0", "User Stories",
   "Writers' Showcase", "Writers' Workshop", "Longpasta", "Micropasta", "NSFW",
+  // Author collections / admin housekeeping that happen to have ≥50 members.
+  "AGB", "Admin Blogs", "Article Subpages", "DFPC15", "EmpyrealInvective", "Jdeschene", "MakRalston",
+  "Mmpratt99 deviantart", "Talk Archives", "Template documentation", "The Vesper's Bell",
 ]);
 
 export function bestTier(categories: string[]): Tier | null {

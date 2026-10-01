@@ -20,8 +20,8 @@ describe("tierVotes", () => {
 
 describe("tagCategories", () => {
   it("keeps topical categories and drops tier/meta/excluded ones", () => {
-    const topical = new Set(["Beings", "Disappearances", "PotM", "Historical Archive", "NSFW", "EAP"]);
-    expect(tagCategories(["Historical Archive", "PotM", "Beings", "Disappearances", "NSFW", "EAP", "Obscure"], topical))
+    const topical = new Set(["Beings", "Disappearances", "PotM", "Historical Archive", "NSFW", "EAP", "MakRalston"]);
+    expect(tagCategories(["Historical Archive", "PotM", "Beings", "Disappearances", "NSFW", "EAP", "MakRalston", "Obscure"], topical))
       .toEqual(["Beings", "Disappearances"]);
   });
 });
