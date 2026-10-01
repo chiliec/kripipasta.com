@@ -3,13 +3,18 @@ import { localImageName, rewriteImageSrcs } from "./images";
 
 describe("localImageName", () => {
   it("is deterministic, prefixed, and keeps a lowercase extension", () => {
-    const a = localImageName("https://mrakopedia.net/w/images/1/1a/Scary.JPG");
+    const a = localImageName("https://mrakopedia.net/w/images/1/1a/Scary.JPG", "mrakopedia");
     expect(a).toMatch(/^mrakopedia-[0-9a-f]{12}\.jpg$/);
-    expect(localImageName("https://mrakopedia.net/w/images/1/1a/Scary.JPG")).toBe(a);
-    expect(localImageName("https://mrakopedia.net/w/images/1/1a/Other.png")).not.toBe(a);
+    expect(localImageName("https://mrakopedia.net/w/images/1/1a/Scary.JPG", "mrakopedia")).toBe(a);
+    expect(localImageName("https://mrakopedia.net/w/images/1/1a/Other.png", "mrakopedia")).not.toBe(a);
+  });
+  it("takes the extension from the last segment that has one (Fandom /revision/latest URLs)", () => {
+    expect(
+      localImageName("https://static.wikia.nocookie.net/creepypasta/images/6/6c/Dragon-tattoo-1.gif/revision/latest", "creepypasta"),
+    ).toMatch(/^creepypasta-[0-9a-f]{12}\.gif$/);
   });
   it("falls back to .bin without an extension", () => {
-    expect(localImageName("https://mrakopedia.net/w/images/1/1a/noext")).toMatch(/\.bin$/);
+    expect(localImageName("https://mrakopedia.net/w/images/1/1a/noext", "mrakopedia")).toMatch(/\.bin$/);
   });
 });
 

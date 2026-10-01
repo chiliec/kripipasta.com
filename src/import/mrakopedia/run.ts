@@ -9,7 +9,7 @@ import {
   EXCLUDED_CATEGORIES, deriveVotes, hasAuthorSuffix, historyUrl, normalizeTitle, rankRows,
   tagCategories, uniqueSlug,
 } from "./select";
-import { localImageName, rewriteImageSrcs } from "./images";
+import { localImageName, rewriteImageSrcs } from "../shared/images";
 import { NetworkError, downloadFile, fetchText } from "../shared/fetch";
 
 const RATING_URL = `${BASE_URL}/wiki/%D0%A0%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3:%D0%9E%D0%B1%D1%89%D0%B8%D0%B9_%D1%80%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3`;
@@ -105,7 +105,7 @@ async function main() {
     const srcMap = new Map<string, string>();
     let imagesOk = 0, imagesFailed = 0;
     for (const url of parsed.imageUrls) {
-      const name = localImageName(url);
+      const name = localImageName(url, "mrakopedia");
       srcMap.set(url, `/images/${name}`);
       if (DRY_RUN) continue;
       if (await downloadFile(url, join(IMAGES_DIR, name))) imagesOk++; else imagesFailed++;
