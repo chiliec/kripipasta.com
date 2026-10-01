@@ -1,7 +1,7 @@
 import sanitizeHtml from "sanitize-html";
 import { sanitizeStoryHtml } from "@/lib/sanitize";
 import { excerpt, stripHtml } from "@/lib/story-display";
-import { type ParsedPage, mediawikiBody, obj } from "../shared/mediawiki";
+import { AUTHOR_CREDIT_RE, type ParsedPage, mediawikiBody, obj } from "../shared/mediawiki";
 import { BASE_URL } from "./select";
 
 const IMAGE_HOST = "https://static.wikitide.net/trollpastawiki/";
@@ -27,7 +27,6 @@ function absolutize(url: string): string {
 //   <hr />\n<p><i>\nWritten by <a href="/wiki/User:Name">Name</a><br />\n<span class="plainlinks">Content is available under …</span></i></p>
 //   <hr /><p><i>\nOriginally on Geoshea's Lost Episodes Wiki\n</i></p>
 const FOOTER_RE = /<hr \/>\s*<p>\s*<i>\s*((?:Credited to|Written by|Originally on)[\s\S]*?)<\/i>\s*(?:<br \/>\s*)?<\/p>/;
-const CREDITED_RE = /(?:Credited to|Written by)(?:\s|&#160;)*(?:<span[^>]*>)?\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?(?:<span>)?\s*([^<]+?)(?:\s|&#160;)*(?:<\/|<br|$)/;
 // Comments widget: a header table styled #5d7994 followed by the comments body; always the tail of the page.
 const COMMENTS_RE = /<table[^>]*#5d7994/;
 
@@ -80,7 +79,7 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
   let authorLink = "";
   const footer = body.match(FOOTER_RE);
   if (footer) {
-    const m = footer[1].match(CREDITED_RE);
+    const m = footer[1].match(AUTHOR_CREDIT_RE);
     if (m) {
       authorName = stripHtml(m[2]);
       authorLink = m[1] ? absolutize(m[1]) : "";

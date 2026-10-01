@@ -43,7 +43,7 @@ export interface WriteStoryInput {
 
 /**
  * Upsert one imported story by sourceUrl inside a single transaction.
- * Votes are created on first insert only; re-runs update fields and tags.
+ * Votes and vote counts are set on first insert only; re-runs update content fields and tags.
  */
 export async function writeStory(
   { data, likes, dislikes, voterNamespace, tagNames }: WriteStoryInput,
@@ -55,7 +55,9 @@ export async function writeStory(
   await prisma.$transaction(async (tx) => {
     let storyId = existingId;
     if (storyId) {
-      await tx.story.update({ where: { id: storyId }, data });
+      // Counts track the Vote rows (seeded on insert only, plus live votes) — don't reset them on re-runs.
+      const { likeCount: _l, dislikeCount: _d, score: _s, ...fields } = data;
+      await tx.story.update({ where: { id: storyId }, data: fields });
     } else {
       const slug = uniqueSlug(slugify(data.title), state.takenSlugs);
       storyId = (await tx.story.create({ data: { ...data, slug }, select: { id: true } })).id;
