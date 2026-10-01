@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 /** Stable local filename for a remote image: "<prefix>-<sha1(url)[0:12]>.<ext>". */
 export function localImageName(absUrl: string, prefix: string): string {
   const hash = createHash("sha1").update(absUrl).digest("hex").slice(0, 12);
-  const path = absUrl.split("?")[0];
+  const path = new URL(absUrl).pathname;
   // Extension from the last path segment that has one — Fandom URLs end in /revision/latest.
   const ext =
     path
