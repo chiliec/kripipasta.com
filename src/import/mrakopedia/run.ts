@@ -10,7 +10,7 @@ import {
   tagCategories, uniqueSlug,
 } from "./select";
 import { localImageName, rewriteImageSrcs } from "./images";
-import { NetworkError, downloadFile, fetchText } from "./fetch";
+import { NetworkError, downloadFile, fetchText } from "../shared/fetch";
 
 const RATING_URL = `${BASE_URL}/wiki/%D0%A0%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3:%D0%9E%D0%B1%D1%89%D0%B8%D0%B9_%D1%80%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3`;
 const IMAGES_DIR = join(process.cwd(), "public", "images");
@@ -30,7 +30,7 @@ const DRY_RUN = flag("--dry-run");
 type Skip = { title: string; reason: string };
 
 async function main() {
-  const ratingHtml = await fetchText(RATING_URL);
+  const ratingHtml = await fetchText(RATING_URL, "mrakopedia");
   if (!ratingHtml) throw new Error("rating table not found");
   const ranked = rankRows(parseRatingTable(ratingHtml));
   console.log(`rating table: ${ranked.length} rows; limit=${LIMIT} offset=${OFFSET} dry=${DRY_RUN}`);
@@ -86,7 +86,7 @@ async function main() {
     row: RatingRow,
     sourceUrl: string,
   ): Promise<{ skip: string } | { created: boolean; imagesOk: number; imagesFailed: number; newTags: string[] }> {
-    const html = await fetchText(sourceUrl);
+    const html = await fetchText(sourceUrl, "mrakopedia");
     if (!html) return { skip: "not-found" };
     const parsed = parseStoryPage(html);
     if (!parsed) return { skip: "not-a-story" };
@@ -98,7 +98,7 @@ async function main() {
     const dupSource = titleToSource.get(normalizeTitle(parsed.title));
     if (dupSource !== undefined && dupSource !== sourceUrl) return { skip: "duplicate-title" };
 
-    const date = parseHistoryDate((await fetchText(historyUrl(row.href))) ?? "") ?? new Date();
+    const date = parseHistoryDate((await fetchText(historyUrl(row.href), "mrakopedia")) ?? "") ?? new Date();
 
     // Images: download originals, rewrite src to /images/<name>; failures stay as
     // /images/<name> so stripMissingImages() hides them at render.
