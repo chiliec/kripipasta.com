@@ -21,7 +21,9 @@
     "db:seed:dossiers": "tsx --env-file=.env src/seed/dossiers.ts",
     "recover:images": "tsx --env-file=.env src/migrate/recover-images.ts",
     "import:mrakopedia": "tsx --env-file=.env src/import/mrakopedia/run.ts",
-    "import:creepypasta-wiki": "tsx --env-file=.env src/import/creepypasta-wiki/run.ts"
+    "import:creepypasta-wiki": "tsx --env-file=.env src/import/creepypasta-wiki/run.ts",
+    "import:trollpasta": "tsx --env-file=.env src/import/trollpasta/run.ts",
+    "import:scp": "tsx --env-file=.env src/import/scp/run.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",

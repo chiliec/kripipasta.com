@@ -75,6 +75,18 @@ describe("ratingKey", () => {
 });
 
 describe("sourceAttribution", () => {
+  it("knows the SCP wiki and the Trollpasta Wiki", () => {
+    expect(sourceAttribution("https://scp-wiki.wikidot.com/unfinished-business")).toEqual({
+      label: "SCP Foundation",
+      license: "CC BY-SA 3.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    });
+    expect(sourceAttribution("https://trollpasta.com/wiki/Blood_Whistle")).toEqual({
+      label: "Trollpasta Wiki",
+      license: "CC BY-SA 4.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    });
+  });
   it("knows Mrakopedia and the Creepypasta Wiki", () => {
     expect(sourceAttribution("https://mrakopedia.net/wiki/%D0%9F")).toEqual({
       label: "Мракопедия",

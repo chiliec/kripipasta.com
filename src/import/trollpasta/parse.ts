@@ -4,30 +4,34 @@ import { excerpt, stripHtml } from "@/lib/story-display";
 import { type ParsedPage, mediawikiBody, obj } from "../shared/mediawiki";
 import { BASE_URL } from "./select";
 
-const IMAGE_RE = /^(https:\/\/static\.wikia\.nocookie\.net\/.+?\/revision\/latest)(?:\/|\?|$)/;
+const IMAGE_HOST = "https://static.wikitide.net/trollpastawiki/";
+// "//static.wikitide.net/trollpastawiki/thumb/1/1e/Name.jpg/300px-Name.jpg" → "https://static.wikitide.net/trollpastawiki/1/1e/Name.jpg"
+const IMAGE_RE = /^(?:https?:)?\/\/static\.wikitide\.net\/trollpastawiki\/(?:thumb\/)?([0-9a-f]\/[0-9a-f]{2}\/[^/?#]+)/;
 
-/** "…/Name.gif/revision/latest/scale-to-width-down/300?cb=1" → "…/Name.gif/revision/latest". */
 export function canonicalImageUrl(src: string): string | null {
-  return src.match(IMAGE_RE)?.[1] ?? null;
+  const m = src.match(IMAGE_RE);
+  return m ? `${IMAGE_HOST}${m[1]}` : null;
 }
 
-/** The CDN transcodes to WebP unless asked for the original. */
+/** WikiTide serves originals as-is (no WebP transcoding). */
 export function downloadUrl(canonical: string): string {
-  return `${canonical}?format=original`;
+  return canonical;
 }
 
 function absolutize(url: string): string {
   return url.startsWith("/") ? `${BASE_URL}${url}` : url;
 }
 
-// Two real footer shapes:
-//   <div style="margin: 2em 0 .5em;"><hr /> <i>Original author unknown</i></div>
-//   <hr /><p><i>Written by <a …>Name</a><br />Originally uploaded on …<br /><span>Content is available under …</span></i></p>
-const FOOTER_RE = /(?:<div style="margin: 2em 0 \.5em;">\s*<hr \/>|(?:<hr \/>\s*)?<p>)\s*<i>\s*(?:<b>)?\s*((?:Written by|Original author unknown)[\s\S]*?)<\/i>\s*<\/(?:div|p)>/;
-const WRITTEN_BY_RE = /Written by\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?\s*([^<]+?)\s*(?:<\/a>|<br|$)/;
-const UPLOADED_RE = /<p>\s*<i>Originally uploaded on[^<]*<\/i>\s*<\/p>/g;
+// Template:By, shapes seen:
+//   <hr />\n<p><i>\nCredited to <a href="…" class="extiw">Name</a>\n</i>\n</p>   (also followed by <br />, or "Credited to&#160;Name&#160;" unlinked)
+//   <hr />\n<p><i>\nWritten by <a href="/wiki/User:Name">Name</a><br />\n<span class="plainlinks">Content is available under …</span></i></p>
+//   <hr /><p><i>\nOriginally on Geoshea's Lost Episodes Wiki\n</i></p>
+const FOOTER_RE = /<hr \/>\s*<p>\s*<i>\s*((?:Credited to|Written by|Originally on)[\s\S]*?)<\/i>\s*(?:<br \/>\s*)?<\/p>/;
+const CREDITED_RE = /(?:Credited to|Written by)(?:\s|&#160;)*(?:<span[^>]*>)?\s*(?:<a[^>]*href="([^"]+)"[^>]*>)?(?:<span>)?\s*([^<]+?)(?:\s|&#160;)*(?:<\/|<br|$)/;
+// Comments widget: a header table styled #5d7994 followed by the comments body; always the tail of the page.
+const COMMENTS_RE = /<table[^>]*#5d7994/;
 
-/** Strip wiki chrome, absolutize links, canonicalise images, drop empty paragraphs. */
+/** Strip wiki chrome and video embeds; absolutize links; canonicalise images. */
 function cleanBody(raw: string, imageUrls: string[]): string {
   return sanitizeHtml(raw, {
     allowedTags: false,
@@ -37,7 +41,11 @@ function cleanBody(raw: string, imageUrls: string[]): string {
       const cls = frame.attribs.class ?? "";
       if (frame.attribs.id === "toc") return true;
       if (frame.tag === "svg") return true;
-      if (/\b(mw-editsection|catlinks|printfooter)\b/.test(cls)) return true;
+      if (/\b(mw-editsection|catlinks|printfooter)\b|embedvideo/.test(cls)) return true;
+      // Warning-banner templates ("NSFW WARNING", "IT'S JUST A JOKE, BRO!").
+      if (frame.tag === "table" && /NSFW WARNING|IT'S JUST A JOKE/.test(frame.text)) return true;
+      // Heading over the (stripped) embedded readings.
+      if (/^h\d$/.test(frame.tag) && /^youtube readings?$/i.test(frame.text.trim())) return true;
       if (frame.tag === "p" && !frame.text.trim() && frame.mediaChildren.length === 0) return true;
       return false;
     },
@@ -45,7 +53,7 @@ function cleanBody(raw: string, imageUrls: string[]): string {
       a: (tag, attribs) => ({ tagName: tag, attribs: { ...attribs, href: absolutize(attribs.href ?? "") } }),
       img: (tag, attribs) => {
         const src = canonicalImageUrl(attribs.src ?? "") ?? attribs.src ?? "";
-        if (src.startsWith("https://static.wikia.nocookie.net/") && !imageUrls.includes(src)) imageUrls.push(src);
+        if (src.startsWith(IMAGE_HOST) && !imageUrls.includes(src)) imageUrls.push(src);
         const kept: Record<string, string> = { src };
         for (const k of ["alt", "title", "width", "height"]) if (attribs[k]) kept[k] = attribs[k];
         return { tagName: tag, attribs: kept };
@@ -65,32 +73,24 @@ export function parseStoryJson(json: unknown): ParsedPage | null {
     .filter(Boolean);
 
   let body = mediawikiBody(text);
+  const commentsAt = body.search(COMMENTS_RE);
+  if (commentsAt >= 0) body = body.slice(0, commentsAt);
 
-  // Author footer ("Written by X" / "Original author unknown"): lift and remove.
   let authorName = "";
   let authorLink = "";
   const footer = body.match(FOOTER_RE);
   if (footer) {
-    const m = footer[1].match(WRITTEN_BY_RE);
+    const m = footer[1].match(CREDITED_RE);
     if (m) {
       authorName = stripHtml(m[2]);
       authorLink = m[1] ? absolutize(m[1]) : "";
     }
     body = body.replace(FOOTER_RE, "");
   }
-  body = body.replace(UPLOADED_RE, "");
-
-  // Series navigation: <p><span id="nav">…</p><div align="center">prev | next</div> is the last thing before the (now removed) footer.
-  const navAt = body.indexOf('<span id="nav">');
-  if (navAt >= 0) {
-    const pAt = body.lastIndexOf("<p>", navAt);
-    body = body.slice(0, pAt >= 0 ? pAt : navAt);
-  }
 
   const imageUrls: string[] = [];
   const bodyHtml = sanitizeStoryHtml(cleanBody(body, imageUrls).replace(/<a\b[^>]*>\s*<\/a>/g, ""));
   const firstPara = bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? "";
-  // Inline tags (links, emphasis) are removed without padding so "a <a>dragon</a>." stays "a dragon."
   const intro = excerpt(firstPara.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim(), bodyHtml, 300);
 
   return { pageid: parse.pageid, title: parse.title, categories, bodyHtml, intro, authorName, authorLink, imageUrls };

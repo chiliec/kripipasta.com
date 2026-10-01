@@ -1,7 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  apiUrl, canonicalImageUrl, downloadUrl, parseCategoryMembers, parseFirstRevision, parseStoryJson,
-} from "./parse";
+import { canonicalImageUrl, downloadUrl, parseStoryJson } from "./parse";
 
 const IMG = "https://static.wikia.nocookie.net/creepypasta/images/6/6c/Dragon-tattoo-1.gif/revision/latest";
 
@@ -84,39 +82,11 @@ describe("parseStoryJson", () => {
   });
 });
 
-describe("parseFirstRevision", () => {
-  it("reads the single oldest revision", () => {
-    const json = { query: { pages: { "36481": { pageid: 36481, revisions: [{ user: "CreepySpork", timestamp: "2012-03-08T15:17:40Z" }] } } } };
-    expect(parseFirstRevision(json)).toEqual({ date: new Date("2012-03-08T15:17:40Z"), user: "CreepySpork" });
-  });
-  it("returns null when absent", () => {
-    expect(parseFirstRevision({ query: { pages: { "-1": { missing: "" } } } })).toBeNull();
-  });
-});
-
-describe("parseCategoryMembers", () => {
-  it("lists members and the continuation token", () => {
-    const json = {
-      continue: { cmcontinue: "page|ABC|123", continue: "-||" },
-      query: { categorymembers: [{ pageid: 1, ns: 0, title: "A" }, { pageid: 2, ns: 0, title: "B" }] },
-    };
-    expect(parseCategoryMembers(json)).toEqual({ members: [{ pageid: 1, title: "A" }, { pageid: 2, title: "B" }], next: "page|ABC|123" });
-    expect(parseCategoryMembers({ query: { categorymembers: [] } })).toEqual({ members: [], next: null });
-  });
-});
-
 describe("image urls", () => {
   it("canonicalises thumbs and cache-busters, rejects foreign hosts", () => {
     expect(canonicalImageUrl(`${IMG}/scale-to-width-down/300?cb=1`)).toBe(IMG);
     expect(canonicalImageUrl(`${IMG}?cb=1`)).toBe(IMG);
     expect(canonicalImageUrl("https://example.com/x.png")).toBeNull();
     expect(downloadUrl(IMG)).toBe(`${IMG}?format=original`);
-  });
-});
-
-describe("apiUrl", () => {
-  it("encodes params and appends format=json", () => {
-    expect(apiUrl({ action: "parse", page: "Jeff the Killer", prop: "text|categories" }))
-      .toBe("https://creepypasta.fandom.com/api.php?action=parse&page=Jeff+the+Killer&prop=text%7Ccategories&format=json");
   });
 });
