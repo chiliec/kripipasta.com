@@ -32,8 +32,8 @@ ENV NODE_ENV=production \
 
 # Next.js standalone server + static assets.
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
 # Prisma schema + migrations for `migrate deploy`.
 COPY --from=builder /app/prisma ./prisma
