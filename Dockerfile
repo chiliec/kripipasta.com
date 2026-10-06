@@ -52,7 +52,8 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 RUN mkdir -p /opt/prisma-cli \
   && cd /opt/prisma-cli \
   && npm init -y >/dev/null 2>&1 \
-  && npm install prisma@7.9.0 >/dev/null 2>&1 \
+  && npm pkg set 'overrides.deepmerge-ts=^8.0.2' 'overrides.mysql2=^3.24.5' \
+  && npm install prisma@7.10.0 >/dev/null 2>&1 \
   && printf '%s\n' \
     'import { defineConfig, env } from "prisma/config";' \
     'export default defineConfig({' \
