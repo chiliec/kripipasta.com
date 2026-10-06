@@ -1,5 +1,4 @@
 import { fileURLToPath } from "node:url";
-import { writeFile, mkdir } from "node:fs/promises";
 import { PrismaClient, type Prisma } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import type { Connection } from "mysql2/promise";
@@ -198,17 +197,6 @@ export async function importArchive(c: Connection): Promise<number> {
   return total;
 }
 
-export async function writeSlugMap(): Promise<number> {
-  const stories = await prisma.story.findMany({
-    select: { slug: true, legacyId: true },
-    orderBy: { legacyId: "asc" },
-  });
-  const map = stories.map((s) => ({ legacyId: s.legacyId, slug: s.slug }));
-  await mkdir("data", { recursive: true });
-  await writeFile("data/legacy-slug-map.json", JSON.stringify(map, null, 2));
-  return map.length;
-}
-
 async function main(): Promise<void> {
   const c = await connectLegacy();
   try {
@@ -228,8 +216,6 @@ async function main(): Promise<void> {
     const archived = await importArchive(c);
     console.log(`LegacyArchive rows: ${archived}`);
 
-    const mapped = await writeSlugMap();
-    console.log(`Slug-map entries: ${mapped} → data/legacy-slug-map.json`);
   } finally {
     await c.end();
     await prisma.$disconnect();

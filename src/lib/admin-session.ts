@@ -14,10 +14,6 @@ export async function isAdmin(): Promise<boolean> {
   return verifySession(store.get(COOKIE)?.value, secret());
 }
 
-export async function requireAdmin(): Promise<void> {
-  if (!(await isAdmin())) throw new Error("UNAUTHORIZED");
-}
-
 export async function startAdminSession(): Promise<void> {
   const store = await cookies();
   store.set(COOKIE, sessionToken(secret()), {
